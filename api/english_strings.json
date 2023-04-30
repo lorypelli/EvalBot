@@ -1,0 +1,22 @@
+{
+    "RUN_CMD_NAME": "run",
+    "RUN_CMD_DESCRIPTION": "Run a code {{(Piston API)}}",
+    "LANGS_CMD_NAME": "languages",
+    "LANGS_CMD_DESCRIPTION": "Show supported programming languages",
+    "INVITE_CMD_NAME": "invite",
+    "INVITE_CMD_DESCRIPTION": "Get the bot invite link",
+    "VOTE_CMD_NAME": "vote",
+    "VOTE_CMD_DESCRIPTION": "Vote for the bot on topgg",
+    "SIZE_CMD_NAME": "size",
+    "SIZE_CMD_DESCRIPTION": "Get the size of an npm package",
+    "SIZE_OPTION_NAME": "name",
+    "SIZE_OPTION_DESCRIPTION": "Name of the npm package",
+    "CONVERT_CMD_NAME": "convert",
+    "CONVERT_CMD_DESCRIPTION": "Convert a decimal number into binary one or vice versa",
+    "CONVERT_FIRST_OPTION_NAME": "system",
+    "CONVERT_FIRST_OPTION_DESCRIPTION": "Convert into binary or decimal?",
+    "CONVERT_FIRST_OPTION_FIST_CHOICE_NAME": "Decimal to Binary",
+    "CONVERT_FIRST_OPTION_SECOND_CHOICE_NAME": "Binary to Decimal",
+    "CONVERT_SECOND_OPTION_NAME": "number",
+    "CONVERT_SECOND_OPTION_DESCRIPTION": "The number to convert"
+}
