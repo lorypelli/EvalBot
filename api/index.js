@@ -1153,7 +1153,7 @@ module.exports = async (request, response) => {
                         fields: [
                             { name: "Language", value: "```" + "\n" + runtimes[index].language + "\n" + "```", inline: false },
                             { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
-                            { name: "Input code", value: "```" + runtimes[index].language + "\n" + code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
+                            { name: "Input", value: "```" + runtimes[index].language + "\n" + code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
                             { name: "Output", value: "```" + runtimes[index].language + "\n" + result.run.output.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
                             { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                         ],
@@ -1387,7 +1387,7 @@ module.exports = async (request, response) => {
                         fields: [
                             { name: "Language", value: "```" + "\n" + runtimes[index].language + "\n" + "```", inline: false },
                             { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
-                            { name: "Input code", value: "```" + runtimes[index].language + "\n" + code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
+                            { name: "Input", value: "```" + runtimes[index].language + "\n" + code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
                             { name: "Output", value: "```" + runtimes[index].language + "\n" + result.run.output.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
                             { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                         ],
@@ -1489,8 +1489,8 @@ module.exports = async (request, response) => {
                         }
                     }
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                            method: "POST",
+                        content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
+                            method: "PATCH",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
                                 embeds: [runembed],
