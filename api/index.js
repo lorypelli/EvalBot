@@ -381,11 +381,24 @@ module.exports = async (request, response) => {
                                             components: [
                                                 {
                                                     type: 4,
-                                                    label: "Input (separate with comma)",
-                                                    style: TextStyleTypes.SHORT,
+                                                    label: "Input",
+                                                    style: TextStyleTypes.PARAGRAPH,
                                                     custom_id: "input",
                                                     required: false,
-                                                    placeholder: "(optional)"
+                                                    placeholder: "(separate with a new line)"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            type: 1,
+                                            components: [
+                                                {
+                                                    type: 4,
+                                                    label: "Packages (python only)",
+                                                    style: TextStyleTypes.PARAGRAPH,
+                                                    custom_id: "packages",
+                                                    required: false,
+                                                    placeholder: "(separate with a new line)"
                                                 }
                                             ]
                                         }
@@ -1002,11 +1015,24 @@ module.exports = async (request, response) => {
                                         components: [
                                             {
                                                 type: 4,
-                                                label: "Input (separate with comma)",
-                                                style: TextStyleTypes.SHORT,
+                                                label: "Input",
+                                                style: TextStyleTypes.PARAGRAPH,
                                                 custom_id: "input",
                                                 required: false,
-                                                placeholder: "(optional)"
+                                                placeholder: "(separate with a new line)"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        type: 1,
+                                        components: [
+                                            {
+                                                type: 4,
+                                                label: "Packages (python only)",
+                                                style: TextStyleTypes.PARAGRAPH,
+                                                custom_id: "packages",
+                                                required: false,
+                                                placeholder: "(separate with a new line)"
                                             }
                                         ]
                                     }
@@ -1060,6 +1086,7 @@ module.exports = async (request, response) => {
                     let language = message.data.components[0].components[0].value.toLowerCase()
                     let code = message.data.components[1].components[0].value
                     let input = "" || message.data.components[2].components[0].value
+                    let packages = "" || message.data.components[3].components[0].value
                     let version
                     let index
                     for (let i = 0; i < runtimes.length; i++) {
@@ -1090,7 +1117,15 @@ module.exports = async (request, response) => {
                             })
                         })
                     }
-                    if (runtimes[index].language == "go") {
+                    if (runtimes[index].language == "python") {
+                        packages = packages.split("\n")
+                        let imports = []
+                        for (let i = 0; i < packages.length; i++) {
+                            imports.push(`import ${packages[i]}`)
+                        }
+                        code = imports.join("\n") + "\n" + code
+                    }
+                    else if (runtimes[index].language == "go") {
                         if (code.includes("func main() {")) code = code
                         else {
                             code = "package main" + "\n" + "import \"fmt\"" + "\n" + "func main() {" + "\n" + "  " + code.replace(/\n/g, "\n  ") + "\n" + "}"
@@ -1142,7 +1177,7 @@ module.exports = async (request, response) => {
                                 "content": code
                             }],
                             "stdin": input,
-                            "args": input.split(",")
+                            "args": input.split("\n")
                         })
                     })
                     result = await result.json()
@@ -1162,7 +1197,10 @@ module.exports = async (request, response) => {
                         }
                     }
                     if (input) {
-                        runembed.fields.push({ name: "Input from user", value: "```" + "\n" + input.replace(/,/g, "\n") + "\n" + "```", inline: false })
+                        runembed.fields.push({ name: "Input from user", value: "```" + "\n" + input + "\n" + "```", inline: false })
+                    }
+                    if (packages && runtimes[index].language == "python") {
+                        runembed.fields.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
                     }
                     if (code.length > 925) {
                         runembed = {
@@ -1294,6 +1332,7 @@ module.exports = async (request, response) => {
                     let language = message.data.components[0].components[0].value.toLowerCase()
                     let code = message.data.components[1].components[0].value
                     let input = "" || message.data.components[2].components[0].value
+                    let packages = "" || message.data.components[3].components[0].value
                     let version
                     let index
                     for (let i = 0; i < runtimes.length; i++) {
@@ -1324,7 +1363,15 @@ module.exports = async (request, response) => {
                             })
                         })
                     }
-                    if (runtimes[index].language == "go") {
+                    if (runtimes[index].language == "python") {
+                        packages = packages.split("\n")
+                        let imports = []
+                        for (let i = 0; i < packages.length; i++) {
+                            imports.push(`import ${packages[i]}`)
+                        }
+                        code = imports.join("\n") + "\n" + code
+                    }
+                    else if (runtimes[index].language == "go") {
                         if (code.includes("func main() {")) code = code
                         else {
                             code = "package main" + "\n" + "import \"fmt\"" + "\n" + "func main() {" + "\n" + "  " + code.replace(/\n/g, "\n  ") + "\n" + "}"
@@ -1376,7 +1423,7 @@ module.exports = async (request, response) => {
                                 "content": code
                             }],
                             "stdin": input,
-                            "args": input.split(",")
+                            "args": input.split("\n")
                         })
                     })
                     result = await result.json()
@@ -1396,7 +1443,10 @@ module.exports = async (request, response) => {
                         }
                     }
                     if (input) {
-                        runembed.fields.push({ name: "Input from user", value: "```" + "\n" + input.replace(/,/g, "\n") + "\n" + "```", inline: false })
+                        runembed.fields.push({ name: "Input from user", value: "```" + "\n" + input + "\n" + "```", inline: false })
+                    }
+                    if (packages && runtimes[index].language == "python") {
+                        runembed.fields.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
                     }
                     if (code.length > 925) {
                         runembed = {
