@@ -9,7 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "code-to-image": "^3.0.0",
     "discord-interactions": "^3.3.0",
     "node-fetch-native": "^1.1.0",
     "os": "^0.1.2",
