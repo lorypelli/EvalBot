@@ -167,19 +167,19 @@ module.exports = async (request, response) => {
             body: JSON.stringify({
                 server_count: guilds.length
             })
-        }))
+        }).then(res => res.json()))
         console.log(await fetch(`https://discordbotlist.com/api/v1/bots/${process.env.ID}/stats`, {
             method: "POST",
             headers: { "Authorization": process.env.DBL, "Content-Type": "application/json" },
             body: JSON.stringify({
                 guilds: guilds.length
             })
-        }))
+        }).then(res => res.json()))
         console.log(await fetch(`https://discordbotlist.com/api/v1/bots/${process.env.ID}/commands`, {
             method: "POST",
             headers: { "Authorization": `Bot ${process.env.DBL}`, "Content-Type": "application/json" },
             body: JSON.stringify([RUN_CMD, LANGS_CMD, INVITE_CMD, VOTE_CMD, SIZE_CMD, EVAL_CMD, REGISTER_CMD, INFO_CMD, CONVERT_CMD])
-        }))
+        }).then(res => res.json()))
         let runtimes = await fetch("https://emkc.org/api/v2/piston/runtimes")
         runtimes = await runtimes.json()
         let signature = request.headers["x-signature-ed25519"]
@@ -207,7 +207,7 @@ module.exports = async (request, response) => {
                             flags: InteractionResponseFlags.EPHEMERAL
                         }
                     })
-                }))
+                }).then(res => res.json()))
             })
         }
         if (message.type === InteractionType.PING) {
@@ -250,7 +250,7 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        }))
+                        }).then(res => res.json()))
                     })
                 }
                 case VOTE_CMD.name: {
@@ -283,7 +283,7 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        }))
+                        }).then(res => res.json()))
                     })
                 }
                 case LANGS_CMD.name: {
@@ -335,7 +335,7 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        }))
+                        }).then(res => res.json()))
                     })
                 }
                 case RUN_CMD.name: {
@@ -405,7 +405,7 @@ module.exports = async (request, response) => {
                                     ]
                                 }
                             })
-                        }))
+                        }).then(res => res.json()))
                     })
                 }
                 case SIZE_CMD.name: {
@@ -426,7 +426,7 @@ module.exports = async (request, response) => {
                                     content: "There was an error, try again!",
                                     flags: InteractionResponseFlags.EPHEMERAL
                                 })
-                            }))
+                            }).then(res => res.json()))
                         })
                     }
                     result = await result.json()
@@ -459,7 +459,7 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        }))
+                        }).then(res => res.json()))
                     })
                 }
                 case EVAL_CMD.name: {
@@ -482,7 +482,7 @@ module.exports = async (request, response) => {
                                     content: "❌ You can't do this",
                                     flags: InteractionResponseFlags.EPHEMERAL
                                 })
-                            }))
+                            }).then(res => res.json()))
                         })
                     }
                     try {
@@ -494,7 +494,7 @@ module.exports = async (request, response) => {
                                 body: JSON.stringify({
                                     content: "```js" + "\n" + JSON.stringify(code, null, 2) + "\n" + "```"
                                 })
-                            }))
+                            }).then(res => res.json()))
                         })
                     }
                     catch (e) {
@@ -505,7 +505,7 @@ module.exports = async (request, response) => {
                                 body: JSON.stringify({
                                     content: "```js" + "\n" + e + "\n" + "```"
                                 })
-                            }))
+                            }).then(res => res.json()))
                         })
                     }
                 }
@@ -529,19 +529,19 @@ module.exports = async (request, response) => {
                                     content: "❌ You can't do this",
                                     flags: InteractionResponseFlags.EPHEMERAL
                                 })
-                            }))
+                            }).then(res => res.json()))
                         })
                     }
                     console.log(await fetch(`https://discord.com/api/v10/applications/${process.env.ID}/commands`, {
                         method: "PUT",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify([RUN_CMD, LANGS_CMD, INVITE_CMD, VOTE_CMD, SIZE_CMD, CONVERT_CMD])
-                    }))
+                    }).then(res => res.json()))
                     console.log(await fetch(`https://discord.com/api/v10/applications/${process.env.ID}/guilds/818058268978315286/commands`, {
                         method: "PUT",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify([EVAL_CMD, REGISTER_CMD, INFO_CMD])
-                    }))
+                    }).then(res => res.json()))
                     return response.send({
                         content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                             method: "POST",
@@ -549,7 +549,7 @@ module.exports = async (request, response) => {
                             body: JSON.stringify({
                                 content: "Done!"
                             })
-                        }))
+                        }).then(res => res.json()))
                     })
                 }
                 case INFO_CMD.name: {
@@ -572,7 +572,7 @@ module.exports = async (request, response) => {
                                     content: "❌ You can't do this",
                                     flags: InteractionResponseFlags.EPHEMERAL
                                 })
-                            }))
+                            }).then(res => res.json()))
                         })
                     }
                     return response.send({
@@ -594,7 +594,7 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        }))
+                        }).then(res => res.json()))
                     })
                 }
                 case CONVERT_CMD.name: {
@@ -624,7 +624,7 @@ module.exports = async (request, response) => {
                                             content: "❌ The binary number isn't valid",
                                             flags: InteractionResponseFlags.EPHEMERAL
                                         })
-                                    }))
+                                    }).then(res => res.json()))
                                 })
                             }
                             number = parseInt(message.data.options[1].value, 2)
@@ -641,7 +641,7 @@ module.exports = async (request, response) => {
                                     flags: InteractionResponseFlags.EPHEMERAL
                                 }
                             })
-                        }))
+                        }).then(res => res.json()))
                     })
                 }
             }
@@ -696,7 +696,7 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        }))
+                        }).then(res => res.json()))
                     })
                 }
                 case "next2": {
@@ -747,7 +747,7 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        }))
+                        }).then(res => res.json()))
                     })
                 }
                 case "next3": {
@@ -799,7 +799,7 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        }))
+                        }).then(res => res.json()))
                     })
                 }
                 case "previous2": {
@@ -851,7 +851,7 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        }))
+                        }).then(res => res.json()))
                     })
                 }
                 case "previous3": {
@@ -902,7 +902,7 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        }))
+                        }).then(res => res.json()))
                     })
                 }
                 case "previous4": {
@@ -953,7 +953,7 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        }))
+                        }).then(res => res.json()))
                     })
                 }
             }
@@ -970,7 +970,7 @@ module.exports = async (request, response) => {
                                     flags: InteractionResponseFlags.EPHEMERAL
                                 }
                             })
-                        }))
+                        }).then(res => res.json()))
                     })
                 }
                 return response.send({
@@ -1039,7 +1039,7 @@ module.exports = async (request, response) => {
                                 ]
                             }
                         })
-                    }))
+                    }).then(res => res.json()))
                 })
             }
             else if (message.data.custom_id.split(" - ")[0] === "delete") {
@@ -1055,7 +1055,7 @@ module.exports = async (request, response) => {
                                     flags: InteractionResponseFlags.EPHEMERAL
                                 }
                             })
-                        }))
+                        }).then(res => res.json()))
                     })
                 }
                 console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
@@ -1069,7 +1069,7 @@ module.exports = async (request, response) => {
                     content: console.log(await fetch(`https://discord.com/api/v10/channels/${message.channel_id}/messages/${message.message.id}`, {
                         method: "DELETE",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
-                    }))
+                    }).then(res => res.json()))
                 })
             }
         }
@@ -1114,7 +1114,7 @@ module.exports = async (request, response) => {
                                     content: "Unknown Language!",
                                     flags: InteractionResponseFlags.EPHEMERAL
                                 })
-                            }))
+                            }).then(res => res.json()))
                         })
                     }
                     if (runtimes[index].language == "python") {
@@ -1318,7 +1318,7 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        }))
+                        }).then(res => res.json()))
                     })
                 }
                 case "runedit": {
@@ -1360,7 +1360,7 @@ module.exports = async (request, response) => {
                                     content: "Unknown Language!",
                                     flags: InteractionResponseFlags.EPHEMERAL
                                 })
-                            }))
+                            }).then(res => res.json()))
                         })
                     }
                     if (runtimes[index].language == "python") {
@@ -1564,7 +1564,7 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        }))
+                        }).then(res => res.json()))
                     })
                 }
             }
