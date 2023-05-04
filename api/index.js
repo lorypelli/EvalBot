@@ -1219,11 +1219,11 @@ module.exports = async (request, response) => {
                         }
                     }
                     if (result.run.output.length > 925) {
-                        let url = console.log(await fetch("https://dpaste.com/api/v2/", {
+                        let url = await fetch("https://dpaste.com/api/v2/", {
                             method: "POST",
                             headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "EvalBot" },
                             body: `title=Evaluation%20Result&content=${result.run.output}&expiry_days=365`
-                        }))
+                        })
                         url = await url.text()
                         runembed = {
                             color: 0x607387,
@@ -1241,11 +1241,11 @@ module.exports = async (request, response) => {
                         }
                     }
                     if (code.length > 925 && result.run.output.length > 925) {
-                        let url = console.log(await fetch("https://dpaste.com/api/v2/", {
+                        let url = await fetch("https://dpaste.com/api/v2/", {
                             method: "POST",
                             headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "EvalBot" },
                             body: `title=Evaluation%20Result&content=${result.run.output}&expiry_days=365`
-                        }))
+                        })
                         url = await url.text()
                         runembed = {
                             color: 0x607387,
@@ -1465,11 +1465,11 @@ module.exports = async (request, response) => {
                         }
                     }
                     if (result.run.output.length > 925) {
-                        let url = console.log(await fetch("https://dpaste.com/api/v2/", {
+                        let url = await fetch("https://dpaste.com/api/v2/", {
                             method: "POST",
                             headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "EvalBot" },
                             body: `title=Evaluation%20Result&content=${result.run.output}&expiry_days=365`
-                        }))
+                        })
                         url = await url.text()
                         runembed = {
                             color: 0x607387,
@@ -1487,11 +1487,11 @@ module.exports = async (request, response) => {
                         }
                     }
                     if (code.length > 925 && result.run.output.length > 925) {
-                        let url = console.log(await fetch("https://dpaste.com/api/v2/", {
+                        let url = await fetch("https://dpaste.com/api/v2/", {
                             method: "POST",
                             headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "EvalBot" },
                             body: `title=Evaluation%20Result&content=${result.run.output}&expiry_days=365`
-                        }))
+                        })
                         url = await url.text()
                         runembed = {
                             color: 0x607387,
