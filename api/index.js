@@ -161,25 +161,25 @@ module.exports = async (request, response) => {
             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
         })
         guilds = await guilds.json()
-        await fetch(`https://top.gg/api/bots/${process.env.ID}/stats`, {
+        console.log(await fetch(`https://top.gg/api/bots/${process.env.ID}/stats`, {
             method: "POST",
             headers: { "Authorization": process.env.TOPGG, "Content-Type": "application/json" },
             body: JSON.stringify({
                 server_count: guilds.length
             })
-        })
-        await fetch(`https://discordbotlist.com/api/v1/bots/${process.env.ID}/stats`, {
+        }))
+        console.log(await fetch(`https://discordbotlist.com/api/v1/bots/${process.env.ID}/stats`, {
             method: "POST",
             headers: { "Authorization": process.env.DBL, "Content-Type": "application/json" },
             body: JSON.stringify({
                 guilds: guilds.length
             })
-        })
-        await fetch(`https://discordbotlist.com/api/v1/bots/${process.env.ID}/commands`, {
+        }))
+        console.log(await fetch(`https://discordbotlist.com/api/v1/bots/${process.env.ID}/commands`, {
             method: "POST",
             headers: { "Authorization": `Bot ${process.env.DBL}`, "Content-Type": "application/json" },
             body: JSON.stringify([RUN_CMD, LANGS_CMD, INVITE_CMD, VOTE_CMD, SIZE_CMD, EVAL_CMD, REGISTER_CMD, INFO_CMD, CONVERT_CMD])
-        })
+        }))
         let runtimes = await fetch("https://emkc.org/api/v2/piston/runtimes")
         runtimes = await runtimes.json()
         let signature = request.headers["x-signature-ed25519"]
@@ -197,7 +197,7 @@ module.exports = async (request, response) => {
         let message = request.body
         if (user.username == "EvalBot Beta" && (message.member?.user.id || message.user.id) != "604339998312890379") {
             return response.send({
-                content: await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                content: console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                     method: "POST",
                     headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -207,7 +207,7 @@ module.exports = async (request, response) => {
                             flags: InteractionResponseFlags.EPHEMERAL
                         }
                     })
-                })
+                }))
             })
         }
         if (message.type === InteractionType.PING) {
@@ -220,7 +220,7 @@ module.exports = async (request, response) => {
         else if (message.type === InteractionType.APPLICATION_COMMAND) {
             switch (message.data.name) {
                 case INVITE_CMD.name: {
-                    await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -229,9 +229,9 @@ module.exports = async (request, response) => {
                                 flags: InteractionResponseFlags.EPHEMERAL
                             }
                         })
-                    })
+                    }))
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
+                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                             method: "POST",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -250,11 +250,11 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        })
+                        }))
                     })
                 }
                 case VOTE_CMD.name: {
-                    await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -263,9 +263,9 @@ module.exports = async (request, response) => {
                                 flags: InteractionResponseFlags.EPHEMERAL
                             }
                         })
-                    })
+                    }))
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
+                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                             method: "POST",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -283,11 +283,11 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        })
+                        }))
                     })
                 }
                 case LANGS_CMD.name: {
-                    await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -296,13 +296,13 @@ module.exports = async (request, response) => {
                                 flags: InteractionResponseFlags.EPHEMERAL
                             }
                         })
-                    })
+                    }))
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
                     }
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
+                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                             method: "POST",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -335,12 +335,12 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        })
+                        }))
                     })
                 }
                 case RUN_CMD.name: {
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                        content: console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                             method: "POST",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -405,33 +405,33 @@ module.exports = async (request, response) => {
                                     ]
                                 }
                             })
-                        })
+                        }))
                     })
                 }
                 case SIZE_CMD.name: {
-                    await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify({
                             type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE
                         })
-                    })
+                    }))
                     let result = await fetch(`https://packagephobia.com/v2/api.json?p=${message.data.options[0].value}`)
                     if (result.status != 200) {
                         return response.send({
-                            content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
+                            content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                                 method: "POST",
                                 headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                                 body: JSON.stringify({
                                     content: "There was an error, try again!",
                                     flags: InteractionResponseFlags.EPHEMERAL
                                 })
-                            })
+                            }))
                         })
                     }
                     result = await result.json()
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
+                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                             method: "POST",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -459,11 +459,11 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        })
+                        }))
                     })
                 }
                 case EVAL_CMD.name: {
-                    await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -472,45 +472,45 @@ module.exports = async (request, response) => {
                                 flags: InteractionResponseFlags.EPHEMERAL
                             }
                         })
-                    })
+                    }))
                     if ((message.member?.user.id || message.user.id) != "604339998312890379") {
                         return response.send({
-                            content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
+                            content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                                 method: "POST",
                                 headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                                 body: JSON.stringify({
                                     content: "❌ You can't do this",
                                     flags: InteractionResponseFlags.EPHEMERAL
                                 })
-                            })
+                            }))
                         })
                     }
                     try {
                         let code = eval(message.data.options[0].value.slice(0, 950))
                         return response.send({
-                            content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
+                            content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                                 method: "POST",
                                 headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                                 body: JSON.stringify({
                                     content: "```js" + "\n" + JSON.stringify(code, null, 2) + "\n" + "```"
                                 })
-                            })
+                            }))
                         })
                     }
                     catch (e) {
                         return response.send({
-                            content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
+                            content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                                 method: "POST",
                                 headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                                 body: JSON.stringify({
                                     content: "```js" + "\n" + e + "\n" + "```"
                                 })
-                            })
+                            }))
                         })
                     }
                 }
                 case REGISTER_CMD.name: {
-                    await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -519,41 +519,41 @@ module.exports = async (request, response) => {
                                 flags: InteractionResponseFlags.EPHEMERAL
                             }
                         })
-                    })
+                    }))
                     if ((message.member?.user.id || message.user.id) != "604339998312890379") {
                         return response.send({
-                            content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
+                            content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                                 method: "POST",
                                 headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                                 body: JSON.stringify({
                                     content: "❌ You can't do this",
                                     flags: InteractionResponseFlags.EPHEMERAL
                                 })
-                            })
+                            }))
                         })
                     }
-                    await fetch(`https://discord.com/api/v10/applications/${process.env.ID}/commands`, {
+                    console.log(await fetch(`https://discord.com/api/v10/applications/${process.env.ID}/commands`, {
                         method: "PUT",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify([RUN_CMD, LANGS_CMD, INVITE_CMD, VOTE_CMD, SIZE_CMD, CONVERT_CMD])
-                    })
-                    await fetch(`https://discord.com/api/v10/applications/${process.env.ID}/guilds/818058268978315286/commands`, {
+                    }))
+                    console.log(await fetch(`https://discord.com/api/v10/applications/${process.env.ID}/guilds/818058268978315286/commands`, {
                         method: "PUT",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify([EVAL_CMD, REGISTER_CMD, INFO_CMD])
-                    })
+                    }))
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
+                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                             method: "POST",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
                                 content: "Done!"
                             })
-                        })
+                        }))
                     })
                 }
                 case INFO_CMD.name: {
-                    await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -562,21 +562,21 @@ module.exports = async (request, response) => {
                                 flags: InteractionResponseFlags.EPHEMERAL
                             }
                         })
-                    })
+                    }))
                     if ((message.member?.user.id || message.user.id) != "604339998312890379") {
                         return response.send({
-                            content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
+                            content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                                 method: "POST",
                                 headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                                 body: JSON.stringify({
                                     content: "❌ You can't do this",
                                     flags: InteractionResponseFlags.EPHEMERAL
                                 })
-                            })
+                            }))
                         })
                     }
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
+                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                             method: "POST",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -594,11 +594,11 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        })
+                        }))
                     })
                 }
                 case CONVERT_CMD.name: {
-                    await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -607,7 +607,7 @@ module.exports = async (request, response) => {
                                 flags: InteractionResponseFlags.EPHEMERAL
                             }
                         })
-                    })
+                    }))
                     let number = message.data.options[1].value
                     switch (message.data.options[0].value) {
                         case "Decimal to Binary": {
@@ -617,14 +617,14 @@ module.exports = async (request, response) => {
                         case "Binary to Decimal": {
                             if (message.data.options[1].value.toString().includes("2") || message.data.options[1].value.toString().includes("3") || message.data.options[1].value.toString().includes("4") || message.data.options[1].value.toString().includes("5") || message.data.options[1].value.toString().includes("6") || message.data.options[1].value.toString().includes("7") || message.data.options[1].value.toString().includes("8") || message.data.options[1].value.toString().includes("9")) {
                                 return response.send({
-                                    content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
+                                    content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                                         method: "POST",
                                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                                         body: JSON.stringify({
                                             content: "❌ The binary number isn't valid",
                                             flags: InteractionResponseFlags.EPHEMERAL
                                         })
-                                    })
+                                    }))
                                 })
                             }
                             number = parseInt(message.data.options[1].value, 2)
@@ -632,7 +632,7 @@ module.exports = async (request, response) => {
                         }
                     }
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
+                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                             method: "POST",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -641,7 +641,7 @@ module.exports = async (request, response) => {
                                     flags: InteractionResponseFlags.EPHEMERAL
                                 }
                             })
-                        })
+                        }))
                     })
                 }
             }
@@ -649,7 +649,7 @@ module.exports = async (request, response) => {
         else if (message.type === InteractionType.MESSAGE_COMPONENT) {
             switch (message.data.custom_id) {
                 case "next1": {
-                    await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -658,13 +658,13 @@ module.exports = async (request, response) => {
                                 flags: InteractionResponseFlags.EPHEMERAL
                             }
                         })
-                    })
+                    }))
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
                     }
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
+                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
                             method: "PATCH",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -696,11 +696,11 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        })
+                        }))
                     })
                 }
                 case "next2": {
-                    await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -709,13 +709,13 @@ module.exports = async (request, response) => {
                                 flags: InteractionResponseFlags.EPHEMERAL
                             }
                         })
-                    })
+                    }))
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
                     }
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
+                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
                             method: "PATCH",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -747,11 +747,11 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        })
+                        }))
                     })
                 }
                 case "next3": {
-                    await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -760,13 +760,13 @@ module.exports = async (request, response) => {
                                 flags: InteractionResponseFlags.EPHEMERAL
                             }
                         })
-                    })
+                    }))
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
                     }
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
+                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
                             method: "PATCH",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -799,11 +799,11 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        })
+                        }))
                     })
                 }
                 case "previous2": {
-                    await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -812,13 +812,13 @@ module.exports = async (request, response) => {
                                 flags: InteractionResponseFlags.EPHEMERAL
                             }
                         })
-                    })
+                    }))
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
                     }
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
+                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
                             method: "PATCH",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -851,11 +851,11 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        })
+                        }))
                     })
                 }
                 case "previous3": {
-                    await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -864,13 +864,13 @@ module.exports = async (request, response) => {
                                 flags: InteractionResponseFlags.EPHEMERAL
                             }
                         })
-                    })
+                    }))
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
                     }
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
+                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
                             method: "PATCH",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -902,11 +902,11 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        })
+                        }))
                     })
                 }
                 case "previous4": {
-                    await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -915,13 +915,13 @@ module.exports = async (request, response) => {
                                 flags: InteractionResponseFlags.EPHEMERAL
                             }
                         })
-                    })
+                    }))
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
                     }
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
+                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
                             method: "PATCH",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -953,14 +953,14 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        })
+                        }))
                     })
                 }
             }
             if (message.data.custom_id.split(" - ")[0] === "edit") {
                 if ((message.member?.user.id || message.user.id) != message.data.custom_id.split(" - ")[1]) {
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                        content: console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                             method: "POST",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -970,11 +970,11 @@ module.exports = async (request, response) => {
                                     flags: InteractionResponseFlags.EPHEMERAL
                                 }
                             })
-                        })
+                        }))
                     })
                 }
                 return response.send({
-                    content: await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                    content: console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -1039,13 +1039,13 @@ module.exports = async (request, response) => {
                                 ]
                             }
                         })
-                    })
+                    }))
                 })
             }
             else if (message.data.custom_id.split(" - ")[0] === "delete") {
                 if ((message.member?.user.id || message.user.id) != message.data.custom_id.split(" - ")[1]) {
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                        content: console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                             method: "POST",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -1055,34 +1055,34 @@ module.exports = async (request, response) => {
                                     flags: InteractionResponseFlags.EPHEMERAL
                                 }
                             })
-                        })
+                        }))
                     })
                 }
-                await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                     method: "POST",
                     headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                     body: JSON.stringify({
                         type: InteractionResponseType.DEFERRED_UPDATE_MESSAGE
                     })
-                })
+                }))
                 return response.send({
-                    content: await fetch(`https://discord.com/api/v10/channels/${message.channel_id}/messages/${message.message.id}`, {
+                    content: console.log(await fetch(`https://discord.com/api/v10/channels/${message.channel_id}/messages/${message.message.id}`, {
                         method: "DELETE",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
-                    })
+                    }))
                 })
             }
         }
         else if (message.type === InteractionType.MODAL_SUBMIT) {
             switch (message.data.custom_id) {
                 case "run": {
-                    await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify({
                             type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE
                         })
-                    })
+                    }))
                     let language = message.data.components[0].components[0].value.toLowerCase()
                     let code = message.data.components[1].components[0].value
                     let input = "" || message.data.components[2].components[0].value
@@ -1107,14 +1107,14 @@ module.exports = async (request, response) => {
                     }
                     if (version == undefined) {
                         return response.send({
-                            content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
+                            content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                                 method: "POST",
                                 headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                                 body: JSON.stringify({
                                     content: "Unknown Language!",
                                     flags: InteractionResponseFlags.EPHEMERAL
                                 })
-                            })
+                            }))
                         })
                     }
                     if (runtimes[index].language == "python") {
@@ -1219,11 +1219,11 @@ module.exports = async (request, response) => {
                         }
                     }
                     if (result.run.output.length > 925) {
-                        let url = await fetch("https://dpaste.com/api/v2/", {
+                        let url = console.log(await fetch("https://dpaste.com/api/v2/", {
                             method: "POST",
                             headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "EvalBot" },
                             body: `title=Evaluation%20Result&content=${result.run.output}&expiry_days=365`
-                        })
+                        }))
                         url = await url.text()
                         runembed = {
                             color: 0x607387,
@@ -1241,11 +1241,11 @@ module.exports = async (request, response) => {
                         }
                     }
                     if (code.length > 925 && result.run.output.length > 925) {
-                        let url = await fetch("https://dpaste.com/api/v2/", {
+                        let url = console.log(await fetch("https://dpaste.com/api/v2/", {
                             method: "POST",
                             headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "EvalBot" },
                             body: `title=Evaluation%20Result&content=${result.run.output}&expiry_days=365`
-                        })
+                        }))
                         url = await url.text()
                         runembed = {
                             color: 0x607387,
@@ -1293,7 +1293,7 @@ module.exports = async (request, response) => {
                         }
                     }
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
+                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                             method: "POST",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -1318,17 +1318,17 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        })
+                        }))
                     })
                 }
                 case "runedit": {
-                    await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
+                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify({
                             type: InteractionResponseType.DEFERRED_UPDATE_MESSAGE
                         })
-                    })
+                    }))
                     let language = message.data.components[0].components[0].value.toLowerCase()
                     let code = message.data.components[1].components[0].value
                     let input = "" || message.data.components[2].components[0].value
@@ -1353,14 +1353,14 @@ module.exports = async (request, response) => {
                     }
                     if (version == undefined) {
                         return response.send({
-                            content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
+                            content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                                 method: "POST",
                                 headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                                 body: JSON.stringify({
                                     content: "Unknown Language!",
                                     flags: InteractionResponseFlags.EPHEMERAL
                                 })
-                            })
+                            }))
                         })
                     }
                     if (runtimes[index].language == "python") {
@@ -1465,11 +1465,11 @@ module.exports = async (request, response) => {
                         }
                     }
                     if (result.run.output.length > 925) {
-                        let url = await fetch("https://dpaste.com/api/v2/", {
+                        let url = console.log(await fetch("https://dpaste.com/api/v2/", {
                             method: "POST",
                             headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "EvalBot" },
                             body: `title=Evaluation%20Result&content=${result.run.output}&expiry_days=365`
-                        })
+                        }))
                         url = await url.text()
                         runembed = {
                             color: 0x607387,
@@ -1487,11 +1487,11 @@ module.exports = async (request, response) => {
                         }
                     }
                     if (code.length > 925 && result.run.output.length > 925) {
-                        let url = await fetch("https://dpaste.com/api/v2/", {
+                        let url = console.log(await fetch("https://dpaste.com/api/v2/", {
                             method: "POST",
                             headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "EvalBot" },
                             body: `title=Evaluation%20Result&content=${result.run.output}&expiry_days=365`
-                        })
+                        }))
                         url = await url.text()
                         runembed = {
                             color: 0x607387,
@@ -1539,7 +1539,7 @@ module.exports = async (request, response) => {
                         }
                     }
                     return response.send({
-                        content: await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
+                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
                             method: "PATCH",
                             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -1564,7 +1564,7 @@ module.exports = async (request, response) => {
                                     }
                                 ]
                             })
-                        })
+                        }))
                     })
                 }
             }
