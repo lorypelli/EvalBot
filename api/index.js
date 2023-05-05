@@ -245,6 +245,10 @@ module.exports = async (request, response) => {
                             }
                         })
                     }))
+                    let guilds = await fetch("https://discord.com/api/v10/users/@me/guilds", {
+                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
+                    })
+                    guilds = await guilds.json()
                     console.log(await fetch(`https://top.gg/api/bots/${process.env.ID}/stats`, {
                         method: "POST",
                         headers: { "Authorization": process.env.TOPGG, "Content-Type": "application/json" },
