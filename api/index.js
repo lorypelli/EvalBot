@@ -157,29 +157,6 @@ module.exports = async (request, response) => {
             headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
         })
         user = await user.json()
-        let guilds = await fetch("https://discord.com/api/v10/users/@me/guilds", {
-            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
-        })
-        guilds = await guilds.json()
-        console.log(await fetch(`https://top.gg/api/bots/${process.env.ID}/stats`, {
-            method: "POST",
-            headers: { "Authorization": process.env.TOPGG, "Content-Type": "application/json" },
-            body: JSON.stringify({
-                server_count: guilds.length
-            })
-        }).then(res => res.json()))
-        console.log(await fetch(`https://discordbotlist.com/api/v1/bots/${process.env.ID}/stats`, {
-            method: "POST",
-            headers: { "Authorization": process.env.DBL, "Content-Type": "application/json" },
-            body: JSON.stringify({
-                guilds: guilds.length
-            })
-        }).then(res => res.json()))
-        console.log(await fetch(`https://discordbotlist.com/api/v1/bots/${process.env.ID}/commands`, {
-            method: "POST",
-            headers: { "Authorization": `Bot ${process.env.DBL}`, "Content-Type": "application/json" },
-            body: JSON.stringify([RUN_CMD, LANGS_CMD, INVITE_CMD, VOTE_CMD, SIZE_CMD, EVAL_CMD, REGISTER_CMD, INFO_CMD, CONVERT_CMD])
-        }).then(res => res.json()))
         let runtimes = await fetch("https://emkc.org/api/v2/piston/runtimes")
         runtimes = await runtimes.json()
         let signature = request.headers["x-signature-ed25519"]
@@ -230,6 +207,10 @@ module.exports = async (request, response) => {
                             }
                         })
                     }))
+                    let guilds = await fetch("https://discord.com/api/v10/users/@me/guilds", {
+                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
+                    })
+                    guilds = await guilds.json()
                     return response.send({
                         content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                             method: "POST",
@@ -264,6 +245,25 @@ module.exports = async (request, response) => {
                             }
                         })
                     }))
+                    console.log(await fetch(`https://top.gg/api/bots/${process.env.ID}/stats`, {
+                        method: "POST",
+                        headers: { "Authorization": process.env.TOPGG, "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            server_count: guilds.length
+                        })
+                    }).then(res => res.json()))
+                    console.log(await fetch(`https://discordbotlist.com/api/v1/bots/${process.env.ID}/stats`, {
+                        method: "POST",
+                        headers: { "Authorization": process.env.DBL, "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            guilds: guilds.length
+                        })
+                    }).then(res => res.json()))
+                    console.log(await fetch(`https://discordbotlist.com/api/v1/bots/${process.env.ID}/commands`, {
+                        method: "POST",
+                        headers: { "Authorization": `Bot ${process.env.DBL}`, "Content-Type": "application/json" },
+                        body: JSON.stringify([RUN_CMD, LANGS_CMD, INVITE_CMD, VOTE_CMD, SIZE_CMD, EVAL_CMD, REGISTER_CMD, INFO_CMD, CONVERT_CMD])
+                    }).then(res => res.json()))
                     return response.send({
                         content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
                             method: "POST",
