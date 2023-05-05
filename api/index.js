@@ -1200,12 +1200,6 @@ module.exports = async (request, response) => {
                             text: `The code took ${parseFloat(end - start).toFixed(0)}ms to be executed`
                         }
                     }
-                    if (input) {
-                        runembed.fields.push({ name: "Input from user", value: "```" + "\n" + input + "\n" + "```", inline: false })
-                    }
-                    if (packages && runtimes[index].language == "python") {
-                        runembed.fields.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
-                    }
                     if (code.length > 925) {
                         runembed = {
                             color: 0x607387,
@@ -1295,6 +1289,12 @@ module.exports = async (request, response) => {
                                 text: `The code took ${parseFloat(end - start).toFixed(0)}ms to be executed`
                             }
                         }
+                    }
+                    if (input) {
+                        runembed.fields.push({ name: "Input from user", value: "```" + "\n" + input + "\n" + "```", inline: false })
+                    }
+                    if (packages && runtimes[index].language == "python") {
+                        runembed.fields.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
                     }
                     return response.send({
                         content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
@@ -1446,12 +1446,6 @@ module.exports = async (request, response) => {
                             text: `The code took ${parseFloat(end - start).toFixed(0)}ms to be executed`
                         }
                     }
-                    if (input) {
-                        runembed.fields.push({ name: "Input from user", value: "```" + "\n" + input + "\n" + "```", inline: false })
-                    }
-                    if (packages && runtimes[index].language == "python") {
-                        runembed.fields.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
-                    }
                     if (code.length > 925) {
                         runembed = {
                             color: 0x607387,
@@ -1541,6 +1535,12 @@ module.exports = async (request, response) => {
                                 text: `The code took ${parseFloat(end - start).toFixed(0)}ms to be executed`
                             }
                         }
+                    }
+                    if (input) {
+                        runembed.fields.push({ name: "Input from user", value: "```" + "\n" + input + "\n" + "```", inline: false })
+                    }
+                    if (packages && runtimes[index].language == "python") {
+                        runembed.fields.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
                     }
                     return response.send({
                         content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
