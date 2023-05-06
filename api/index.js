@@ -1,4 +1,4 @@
-const { InteractionResponseFlags, InteractionResponseType, InteractionType, verifyKey, ButtonStyleTypes, TextStyleTypes } = require("discord-interactions")
+const { InteractionResponseFlags, InteractionResponseType, InteractionType, verifyKey, MessageComponentTypes, ButtonStyleTypes, TextStyleTypes } = require("discord-interactions")
 const fetch = require("node-fetch-native")
 const getRawBody = require("raw-body")
 const { version } = require("os")
@@ -139,7 +139,7 @@ const CONVERT_CMD = {
                 it: "Il numero da convertire",
                 pl: "Liczba do przekonwertowania"
             }),
-            type: 10,
+            type: MessageComponentTypes.ACTION_ROW0,
             required: true
         }
     ]
@@ -219,10 +219,10 @@ module.exports = async (request, response) => {
                                 content: `The bot is currently on **${guilds.length} servers**. Click the button below to invite the bot!`,
                                 components: [
                                     {
-                                        type: 1,
+                                        type: MessageComponentTypes.ACTION_ROW,
                                         components: [
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "Invite",
                                                 style: ButtonStyleTypes.LINK,
                                                 url: "https://discord.com/api/oauth2/authorize?client_id=1076200668810985634&permissions=274877975552&scope=bot%20applications.commands"
@@ -275,10 +275,10 @@ module.exports = async (request, response) => {
                             body: JSON.stringify({
                                 components: [
                                     {
-                                        type: 1,
+                                        type: MessageComponentTypes.ACTION_ROW,
                                         components: [
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "Vote",
                                                 style: ButtonStyleTypes.LINK,
                                                 url: "https://top.gg/bot/1076200668810985634/vote"
@@ -320,10 +320,10 @@ module.exports = async (request, response) => {
                                 ],
                                 components: [
                                     {
-                                        type: 1,
+                                        type: MessageComponentTypes.ACTION_ROW,
                                         components: [
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: "previous1",
@@ -331,7 +331,7 @@ module.exports = async (request, response) => {
                                                 emoji: { name: "Arrow_Left", id: "1104480446076690493" }
                                             },
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: "next1",
@@ -356,10 +356,10 @@ module.exports = async (request, response) => {
                                     custom_id: "run",
                                     components: [
                                         {
-                                            type: 1,
+                                            type: MessageComponentTypes.ACTION_ROW,
                                             components: [
                                                 {
-                                                    type: 4,
+                                                    type: MessageComponentTypes.INPUT_TEXT,
                                                     label: "Language",
                                                     style: TextStyleTypes.SHORT,
                                                     custom_id: "language",
@@ -370,10 +370,10 @@ module.exports = async (request, response) => {
                                             ]
                                         },
                                         {
-                                            type: 1,
+                                            type: MessageComponentTypes.ACTION_ROW,
                                             components: [
                                                 {
-                                                    type: 4,
+                                                    type: MessageComponentTypes.INPUT_TEXT,
                                                     label: "Code",
                                                     style: TextStyleTypes.PARAGRAPH,
                                                     custom_id: "code",
@@ -383,10 +383,10 @@ module.exports = async (request, response) => {
                                             ]
                                         },
                                         {
-                                            type: 1,
+                                            type: MessageComponentTypes.ACTION_ROW,
                                             components: [
                                                 {
-                                                    type: 4,
+                                                    type: MessageComponentTypes.INPUT_TEXT,
                                                     label: "Input",
                                                     style: TextStyleTypes.PARAGRAPH,
                                                     custom_id: "input",
@@ -396,10 +396,10 @@ module.exports = async (request, response) => {
                                             ]
                                         },
                                         {
-                                            type: 1,
+                                            type: MessageComponentTypes.ACTION_ROW,
                                             components: [
                                                 {
-                                                    type: 4,
+                                                    type: MessageComponentTypes.INPUT_TEXT,
                                                     label: "Packages (python only)",
                                                     style: TextStyleTypes.PARAGRAPH,
                                                     custom_id: "packages",
@@ -684,17 +684,17 @@ module.exports = async (request, response) => {
                                 ],
                                 components: [
                                     {
-                                        type: 1,
+                                        type: MessageComponentTypes.ACTION_ROW,
                                         components: [
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: "previous2",
                                                 emoji: { name: "Arrow_Left", id: "1104480446076690493" }
                                             },
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: "next2",
@@ -737,17 +737,17 @@ module.exports = async (request, response) => {
                                 ],
                                 components: [
                                     {
-                                        type: 1,
+                                        type: MessageComponentTypes.ACTION_ROW,
                                         components: [
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: "previous3",
                                                 emoji: { name: "Arrow_Left", id: "1104480446076690493" }
                                             },
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: "next3",
@@ -790,17 +790,17 @@ module.exports = async (request, response) => {
                                 ],
                                 components: [
                                     {
-                                        type: 1,
+                                        type: MessageComponentTypes.ACTION_ROW,
                                         components: [
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: "previous4",
                                                 emoji: { name: "Arrow_Left", id: "1104480446076690493" }
                                             },
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: "next4",
@@ -844,10 +844,10 @@ module.exports = async (request, response) => {
                                 ],
                                 components: [
                                     {
-                                        type: 1,
+                                        type: MessageComponentTypes.ACTION_ROW,
                                         components: [
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: "previous1",
@@ -855,7 +855,7 @@ module.exports = async (request, response) => {
                                                 emoji: { name: "Arrow_Left", id: "1104480446076690493" }
                                             },
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: "next1",
@@ -898,17 +898,17 @@ module.exports = async (request, response) => {
                                 ],
                                 components: [
                                     {
-                                        type: 1,
+                                        type: MessageComponentTypes.ACTION_ROW,
                                         components: [
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: "previous2",
                                                 emoji: { name: "Arrow_Left", id: "1104480446076690493" }
                                             },
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: "next2",
@@ -951,17 +951,17 @@ module.exports = async (request, response) => {
                                 ],
                                 components: [
                                     {
-                                        type: 1,
+                                        type: MessageComponentTypes.ACTION_ROW,
                                         components: [
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: "previous3",
                                                 emoji: { name: "Arrow_Left", id: "1104480446076690493" }
                                             },
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: "next3",
@@ -1002,10 +1002,10 @@ module.exports = async (request, response) => {
                                 custom_id: "runedit",
                                 components: [
                                     {
-                                        type: 1,
+                                        type: MessageComponentTypes.ACTION_ROW,
                                         components: [
                                             {
-                                                type: 4,
+                                                type: MessageComponentTypes.INPUT_TEXT,
                                                 label: "Language",
                                                 style: TextStyleTypes.SHORT,
                                                 custom_id: "language",
@@ -1016,10 +1016,10 @@ module.exports = async (request, response) => {
                                         ]
                                     },
                                     {
-                                        type: 1,
+                                        type: MessageComponentTypes.ACTION_ROW,
                                         components: [
                                             {
-                                                type: 4,
+                                                type: MessageComponentTypes.INPUT_TEXT,
                                                 label: "Code",
                                                 style: TextStyleTypes.PARAGRAPH,
                                                 custom_id: "code",
@@ -1029,10 +1029,10 @@ module.exports = async (request, response) => {
                                         ]
                                     },
                                     {
-                                        type: 1,
+                                        type: MessageComponentTypes.ACTION_ROW,
                                         components: [
                                             {
-                                                type: 4,
+                                                type: MessageComponentTypes.INPUT_TEXT,
                                                 label: "Input",
                                                 style: TextStyleTypes.PARAGRAPH,
                                                 custom_id: "input",
@@ -1042,10 +1042,10 @@ module.exports = async (request, response) => {
                                         ]
                                     },
                                     {
-                                        type: 1,
+                                        type: MessageComponentTypes.ACTION_ROW,
                                         components: [
                                             {
-                                                type: 4,
+                                                type: MessageComponentTypes.INPUT_TEXT,
                                                 label: "Packages (python only)",
                                                 style: TextStyleTypes.PARAGRAPH,
                                                 custom_id: "packages",
@@ -1318,17 +1318,17 @@ module.exports = async (request, response) => {
                                 embeds: [runembed],
                                 components: [
                                     {
-                                        type: 1,
+                                        type: MessageComponentTypes.ACTION_ROW,
                                         components: [
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: `edit - ${message.member?.user.id || message.user.id}`,
                                                 emoji: { name: "Edit", id: "1104464874744074370" }
                                             },
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "",
                                                 style: ButtonStyleTypes.DANGER,
                                                 custom_id: `delete - ${message.member?.user.id || message.user.id}`,
@@ -1566,17 +1566,17 @@ module.exports = async (request, response) => {
                                 embeds: [runembed],
                                 components: [
                                     {
-                                        type: 1,
+                                        type: MessageComponentTypes.ACTION_ROW,
                                         components: [
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: `edit - ${message.member?.user.id || message.user.id}`,
                                                 emoji: { name: "Edit", id: "1104464874744074370" }
                                             },
                                             {
-                                                type: 2,
+                                                type: MessageComponentTypes.BUTTON,
                                                 label: "",
                                                 style: ButtonStyleTypes.DANGER,
                                                 custom_id: `delete - ${message.member?.user.id || message.user.id}`,
