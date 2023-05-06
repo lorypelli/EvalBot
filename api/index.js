@@ -139,7 +139,7 @@ const CONVERT_CMD = {
                 it: "Il numero da convertire",
                 pl: "Liczba do przekonwertowania"
             }),
-            type: MessageComponentTypes.ACTION_ROW0,
+            type: 10,
             required: true
         }
     ]
