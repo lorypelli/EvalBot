@@ -12,7 +12,8 @@ const RUN_CMD = {
     description_localizations: ({
         it: "Esegui un codice (Piston API)",
         pl: "Uruchom kod (Piston API)"
-    })
+    }),
+    type: 1
 }
 const LANGS_CMD = {
     name: "languages",
@@ -25,6 +26,7 @@ const LANGS_CMD = {
         it: "Mostra i linguaggi di programmazione supportati",
         pl: "Pokaż obsługiwane języki programowania"
     }),
+    type: 1
 }
 const INVITE_CMD = {
     name: "invite",
@@ -37,6 +39,7 @@ const INVITE_CMD = {
         it: "Ottieni il link d'invito del bot",
         pl: "Uzyskaj link z zaproszeniem bota"
     }),
+    type: 1
 }
 const VOTE_CMD = {
     name: "vote",
@@ -48,7 +51,8 @@ const VOTE_CMD = {
     description_localizations: ({
         it: "Vota per il bot su topgg",
         pl: "Głosuj na bota na topgg"
-    })
+    }),
+    type: 1
 }
 const SIZE_CMD = {
     name: "size",
@@ -61,6 +65,7 @@ const SIZE_CMD = {
         it: "Ottieni la dimensione di un pacchetto npm",
         pl: "Uzyskaj rozmiar pakietu npm"
     }),
+    type: 1,
     options: [
         {
             name: "name",
@@ -81,6 +86,7 @@ const SIZE_CMD = {
 const EVAL_CMD = {
     name: "eval",
     description: "Eval code (only developer)",
+    type: 1,
     options: [
         {
             name: "code",
@@ -92,11 +98,13 @@ const EVAL_CMD = {
 }
 const REGISTER_CMD = {
     name: "register",
-    description: "Register slash commands (only developer)"
+    description: "Register slash commands (only developer)",
+    type: 1
 }
 const INFO_CMD = {
     name: "info",
-    description: "Get bot info (only developer)"
+    description: "Get bot info (only developer)",
+    type: 1
 }
 const CONVERT_CMD = {
     name: "convert",
@@ -109,6 +117,7 @@ const CONVERT_CMD = {
         it: "Converti un numero decimale in binario o viceversa",
         pl: "Konwertuj liczbę dziesiętną na jedną lub odwrotnie"
     }),
+    type: 1,
     options: [
         {
             name: "system",
