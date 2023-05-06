@@ -266,7 +266,7 @@ module.exports = async (request, response) => {
                     console.log(await fetch(`https://discordbotlist.com/api/v1/bots/${process.env.ID}/commands`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.DBL}`, "Content-Type": "application/json" },
-                        body: JSON.stringify([RUN_CMD, LANGS_CMD, INVITE_CMD, VOTE_CMD, SIZE_CMD, EVAL_CMD, REGISTER_CMD, INFO_CMD, CONVERT_CMD])
+                        body: JSON.stringify([RUN_CMD, LANGS_CMD, INVITE_CMD, VOTE_CMD, SIZE_CMD, CONVERT_CMD])
                     }).then(res => res.json()))
                     return response.send({
                         content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
