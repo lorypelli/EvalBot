@@ -324,16 +324,18 @@ module.exports = async (request, response) => {
                                         components: [
                                             {
                                                 type: 2,
-                                                label: "Previous",
+                                                label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: "previous1",
-                                                disabled: true
+                                                disabled: true,
+                                                emoji: { name: "Arrow_Left", id: "1104480446076690493" }
                                             },
                                             {
                                                 type: 2,
-                                                label: "Next",
+                                                label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "next1"
+                                                custom_id: "next1",
+                                                emoji: { name: "Arrow_Right", id: "1104480448232570881" }
                                             }
                                         ]
                                     }
@@ -686,15 +688,17 @@ module.exports = async (request, response) => {
                                         components: [
                                             {
                                                 type: 2,
-                                                label: "Previous",
+                                                label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "previous2"
+                                                custom_id: "previous2",
+                                                emoji: { name: "Arrow_Left", id: "1104480446076690493" }
                                             },
                                             {
                                                 type: 2,
-                                                label: "Next",
+                                                label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "next2"
+                                                custom_id: "next2",
+                                                emoji: { name: "Arrow_Right", id: "1104480448232570881" }
                                             }
                                         ]
                                     }
@@ -737,15 +741,17 @@ module.exports = async (request, response) => {
                                         components: [
                                             {
                                                 type: 2,
-                                                label: "Previous",
+                                                label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "previous3"
+                                                custom_id: "previous3",
+                                                emoji: { name: "Arrow_Left", id: "1104480446076690493" }
                                             },
                                             {
                                                 type: 2,
-                                                label: "Next",
+                                                label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "next3"
+                                                custom_id: "next3",
+                                                emoji: { name: "Arrow_Right", id: "1104480448232570881" }
                                             }
                                         ]
                                     }
@@ -788,16 +794,18 @@ module.exports = async (request, response) => {
                                         components: [
                                             {
                                                 type: 2,
-                                                label: "Previous",
+                                                label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "previous4"
+                                                custom_id: "previous4",
+                                                emoji: { name: "Arrow_Left", id: "1104480446076690493" }
                                             },
                                             {
                                                 type: 2,
-                                                label: "Next",
+                                                label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: "next4",
-                                                disabled: true
+                                                disabled: true,
+                                                emoji: { name: "Arrow_Right", id: "1104480448232570881" }
                                             }
                                         ]
                                     }
@@ -840,16 +848,18 @@ module.exports = async (request, response) => {
                                         components: [
                                             {
                                                 type: 2,
-                                                label: "Previous",
+                                                label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
                                                 custom_id: "previous1",
-                                                disabled: true
+                                                disabled: true,
+                                                emoji: { name: "Arrow_Left", id: "1104480446076690493" }
                                             },
                                             {
                                                 type: 2,
-                                                label: "Next",
+                                                label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "next1"
+                                                custom_id: "next1",
+                                                emoji: { name: "Arrow_Right", id: "1104480448232570881" }
                                             }
                                         ]
                                     }
@@ -892,15 +902,17 @@ module.exports = async (request, response) => {
                                         components: [
                                             {
                                                 type: 2,
-                                                label: "Previous",
+                                                label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "previous2"
+                                                custom_id: "previous2",
+                                                emoji: { name: "Arrow_Left", id: "1104480446076690493" }
                                             },
                                             {
                                                 type: 2,
-                                                label: "Next",
+                                                label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "next2"
+                                                custom_id: "next2",
+                                                emoji: { name: "Arrow_Right", id: "1104480448232570881" }
                                             }
                                         ]
                                     }
@@ -943,15 +955,17 @@ module.exports = async (request, response) => {
                                         components: [
                                             {
                                                 type: 2,
-                                                label: "Previous",
+                                                label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "previous3"
+                                                custom_id: "previous3",
+                                                emoji: { name: "Arrow_Left", id: "1104480446076690493" }
                                             },
                                             {
                                                 type: 2,
-                                                label: "Next",
+                                                label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "next3"
+                                                custom_id: "next3",
+                                                emoji: { name: "Arrow_Right", id: "1104480448232570881" }
                                             }
                                         ]
                                     }
@@ -1308,15 +1322,17 @@ module.exports = async (request, response) => {
                                         components: [
                                             {
                                                 type: 2,
-                                                label: "Edit",
+                                                label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: `edit - ${message.member?.user.id || message.user.id}`
+                                                custom_id: `edit - ${message.member?.user.id || message.user.id}`,
+                                                emoji: { name: "Edit", id: "1104464874744074370" }
                                             },
                                             {
                                                 type: 2,
-                                                label: "Delete",
+                                                label: "",
                                                 style: ButtonStyleTypes.DANGER,
-                                                custom_id: `delete - ${message.member?.user.id || message.user.id}`
+                                                custom_id: `delete - ${message.member?.user.id || message.user.id}`,
+                                                emoji: { name: "Delete", id: "1104477832308068352" }
                                             }
                                         ]
                                     }
@@ -1554,15 +1570,17 @@ module.exports = async (request, response) => {
                                         components: [
                                             {
                                                 type: 2,
-                                                label: "Edit",
+                                                label: "",
                                                 style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: `edit - ${message.member?.user.id || message.user.id}`
+                                                custom_id: `edit - ${message.member?.user.id || message.user.id}`,
+                                                emoji: { name: "Edit", id: "1104464874744074370" }
                                             },
                                             {
                                                 type: 2,
-                                                label: "Delete",
+                                                label: "",
                                                 style: ButtonStyleTypes.DANGER,
-                                                custom_id: `delete - ${message.member?.user.id || message.user.id}`
+                                                custom_id: `delete - ${message.member?.user.id || message.user.id}`,
+                                                emoji: { name: "Delete", id: "1104477832308068352" }
                                             }
                                         ]
                                     }
