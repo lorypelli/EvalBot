@@ -13,6 +13,6 @@
     "node-fetch-native": "^1.1.0",
     "os": "^0.1.2",
     "raw-body": "^2.5.2",
-    "serverless_bots_addons": "^1.0.0-20230507"
+    "serverless_bots_addons": "^1.0.1-20230507"
   }
 }
