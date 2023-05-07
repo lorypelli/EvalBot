@@ -949,7 +949,7 @@ module.exports = async (request, response) => {
                 return response.send({
                     content: await showModal(message, {
                         title: "Run Code",
-                        custom_id: "run",
+                        custom_id: "runedit",
                         components: [
                             {
                                 type: MessageComponentTypes.ACTION_ROW,
@@ -1278,7 +1278,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case "runedit": {
-                    await updateDefer(message, false)
+                    await updateDefer(message, true)
                     let language = message.data.components[0].components[0].value.toLowerCase()
                     let code = message.data.components[1].components[0].value
                     let input = "" || message.data.components[2].components[0].value
