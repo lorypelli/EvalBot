@@ -207,7 +207,7 @@ module.exports = async (request, response) => {
         else if (message.type === InteractionType.APPLICATION_COMMAND) {
             switch (message.data.name) {
                 case INVITE_CMD.name: {
-                    await deferReply(message)
+                    await deferReply(message, true)
                     let guilds = await fetch("https://discord.com/api/v10/users/@me/guilds", {
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
                     })
@@ -236,7 +236,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case VOTE_CMD.name: {
-                    await deferReply(message)
+                    await deferReply(message, true)
                     let guilds = await fetch("https://discord.com/api/v10/users/@me/guilds", {
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
                     })
@@ -283,7 +283,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case LANGS_CMD.name: {
-                    await deferReply(message)
+                    await deferReply(message, true)
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -398,13 +398,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case SIZE_CMD.name: {
-                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                        method: "POST",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE
-                        })
-                    }))
+                    await deferReply(message, false)
                     let result = await fetch(`https://packagephobia.com/v2/api.json?p=${message.data.options[0].value}`)
                     if (result.status != 200) {
                         return response.send({
@@ -446,13 +440,27 @@ module.exports = async (request, response) => {
                                             }
                                         ]
                                     }
+                                ],
+                                components: [
+                                    {
+                                        type: MessageComponentTypes.ACTION_ROW,
+                                        components: [
+                                            {
+                                                type: MessageComponentTypes.BUTTON,
+                                                label: "",
+                                                style: ButtonStyleTypes.PRIMARY,
+                                                custom_id: `reload - ${message.data.options[0].value}`,
+                                                emoji: { name: "Reload", id: "1104736112049659995" }
+                                            }
+                                        ]
+                                    }
                                 ]
                             })
                         }).then(res => res.json()))
                     })
                 }
                 case EVAL_CMD.name: {
-                    await deferReply(message)
+                    await deferReply(message, true)
                     if ((message.member?.user.id || message.user.id) != "604339998312890379") {
                         return response.send({
                             content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
@@ -490,7 +498,7 @@ module.exports = async (request, response) => {
                     }
                 }
                 case REGISTER_CMD.name: {
-                    await deferReply(message)
+                    await deferReply(message, true)
                     if ((message.member?.user.id || message.user.id) != "604339998312890379") {
                         return response.send({
                             content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
@@ -524,7 +532,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case INFO_CMD.name: {
-                    await deferReply(message)
+                    await deferReply(message, true)
                     if ((message.member?.user.id || message.user.id) != "604339998312890379") {
                         return response.send({
                             content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
@@ -560,7 +568,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case CONVERT_CMD.name: {
-                    await deferReply(message)
+                    await deferReply(message, true)
                     let number = message.data.options[1].value
                     switch (message.data.options[0].value) {
                         case "Decimal to Binary": {
@@ -602,16 +610,7 @@ module.exports = async (request, response) => {
         else if (message.type === InteractionType.MESSAGE_COMPONENT) {
             switch (message.data.custom_id) {
                 case "next1": {
-                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                        method: "POST",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            type: InteractionResponseType.DEFERRED_UPDATE_MESSAGE,
-                            data: {
-                                flags: InteractionResponseFlags.EPHEMERAL
-                            }
-                        })
-                    }))
+                    await updateDefer(message, true)
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -655,16 +654,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case "next2": {
-                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                        method: "POST",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            type: InteractionResponseType.DEFERRED_UPDATE_MESSAGE,
-                            data: {
-                                flags: InteractionResponseFlags.EPHEMERAL
-                            }
-                        })
-                    }))
+                    await updateDefer(message, true)
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -708,16 +698,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case "next3": {
-                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                        method: "POST",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            type: InteractionResponseType.DEFERRED_UPDATE_MESSAGE,
-                            data: {
-                                flags: InteractionResponseFlags.EPHEMERAL
-                            }
-                        })
-                    }))
+                    await updateDefer(message, true)
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -762,16 +743,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case "previous2": {
-                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                        method: "POST",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            type: InteractionResponseType.DEFERRED_UPDATE_MESSAGE,
-                            data: {
-                                flags: InteractionResponseFlags.EPHEMERAL
-                            }
-                        })
-                    }))
+                    await updateDefer(message, true)
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -816,16 +788,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case "previous3": {
-                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                        method: "POST",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            type: InteractionResponseType.DEFERRED_UPDATE_MESSAGE,
-                            data: {
-                                flags: InteractionResponseFlags.EPHEMERAL
-                            }
-                        })
-                    }))
+                    await updateDefer(message, true)
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -869,16 +832,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case "previous4": {
-                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                        method: "POST",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            type: InteractionResponseType.DEFERRED_UPDATE_MESSAGE,
-                            data: {
-                                flags: InteractionResponseFlags.EPHEMERAL
-                            }
-                        })
-                    }))
+                    await updateDefer(message, true)
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -921,6 +875,68 @@ module.exports = async (request, response) => {
                         }).then(res => res.json()))
                     })
                 }
+            }
+            if (message.data.custom_id.split(" - ")[0] === "reload") {
+                await updateDefer(message, true)
+                let result = await fetch(`https://packagephobia.com/v2/api.json?p=${message.data.custom_id.split(" - ")[1]}`)
+                if (result.status != 200) {
+                    return response.send({
+                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
+                            method: "POST",
+                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                content: "There was an error, try again!",
+                                flags: InteractionResponseFlags.EPHEMERAL
+                            })
+                        }).then(res => res.json()))
+                    })
+                }
+                result = await result.json()
+                return response.send({
+                    content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
+                        method: "PATCH",
+                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            embeds: [
+                                {
+                                    color: 0x607387,
+                                    title: `Info of __**${result.name}**__`,
+                                    fields: [
+                                        {
+                                            name: "Version:",
+                                            value: "```" + result.version + "```",
+                                            inline: false
+                                        },
+                                        {
+                                            name: "Publish Size:",
+                                            value: "```" + result.publish.pretty + "```",
+                                            inline: false
+                                        },
+                                        {
+                                            name: "Install Size:",
+                                            value: "```" + result.install.pretty + "```",
+                                            inline: false
+                                        }
+                                    ]
+                                }
+                            ],
+                            components: [
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
+                                    components: [
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.PRIMARY,
+                                            custom_id: `reload - ${message.data.custom_id.split(" - ")[1]}`,
+                                            emoji: { name: "Reload", id: "1104736112049659995" }
+                                        }
+                                    ]
+                                }
+                            ]
+                        })
+                    }).then(res => res.json()))
+                })
             }
             if (message.data.custom_id.split(" - ")[0] === "edit") {
                 if ((message.member?.user.id || message.user.id) != message.data.custom_id.split(" - ")[1]) {
@@ -1023,13 +1039,7 @@ module.exports = async (request, response) => {
                         }).then(res => res.json()))
                     })
                 }
-                console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                    method: "POST",
-                    headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        type: InteractionResponseType.DEFERRED_UPDATE_MESSAGE
-                    })
-                }))
+                await updateDefer(message, true)
                 return response.send({
                     content: console.log(await fetch(`https://discord.com/api/v10/channels/${message.channel_id}/messages/${message.message.id}`, {
                         method: "DELETE",
@@ -1041,13 +1051,7 @@ module.exports = async (request, response) => {
         else if (message.type === InteractionType.MODAL_SUBMIT) {
             switch (message.data.custom_id) {
                 case "run": {
-                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                        method: "POST",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE
-                        })
-                    }))
+                    await deferReply(message, false)
                     let language = message.data.components[0].components[0].value.toLowerCase()
                     let code = message.data.components[1].components[0].value
                     let input = "" || message.data.components[2].components[0].value
@@ -1289,7 +1293,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case "runedit": {
-                    await updateDefer(message)
+                    await updateDefer(message, false)
                     let language = message.data.components[0].components[0].value.toLowerCase()
                     let code = message.data.components[1].components[0].value
                     let input = "" || message.data.components[2].components[0].value
