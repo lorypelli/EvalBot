@@ -1,7 +1,7 @@
 const { InteractionResponseFlags, InteractionResponseType, InteractionType, verifyKey, MessageComponentTypes, ButtonStyleTypes, TextStyleTypes } = require("discord-interactions")
 const getRawBody = require("raw-body")
 const { version } = require("os")
-const { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer } = require("serverless_bots_addons")
+const { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal } = require("serverless_bots_addons")
 const RUN_CMD = {
     name: "run",
     name_localizations: ({
@@ -328,72 +328,65 @@ module.exports = async (request, response) => {
                 }
                 case RUN_CMD.name: {
                     return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                            method: "POST",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                type: InteractionResponseType.MODAL,
-                                data: {
-                                    title: "Run Code",
-                                    custom_id: "run",
+                        content: await showModal(message, {
+                            title: "Run Code",
+                            custom_id: "run",
+                            components: [
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
                                     components: [
                                         {
-                                            type: MessageComponentTypes.ACTION_ROW,
-                                            components: [
-                                                {
-                                                    type: MessageComponentTypes.INPUT_TEXT,
-                                                    label: "Language",
-                                                    style: TextStyleTypes.SHORT,
-                                                    custom_id: "language",
-                                                    required: true,
-                                                    min_length: 1,
-                                                    max_length: 10
-                                                }
-                                            ]
-                                        },
+                                            type: MessageComponentTypes.INPUT_TEXT,
+                                            label: "Language",
+                                            style: TextStyleTypes.SHORT,
+                                            custom_id: "language",
+                                            required: true,
+                                            min_length: 1,
+                                            max_length: 10
+                                        }
+                                    ]
+                                },
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
+                                    components: [
                                         {
-                                            type: MessageComponentTypes.ACTION_ROW,
-                                            components: [
-                                                {
-                                                    type: MessageComponentTypes.INPUT_TEXT,
-                                                    label: "Code",
-                                                    style: TextStyleTypes.PARAGRAPH,
-                                                    custom_id: "code",
-                                                    required: true,
-                                                    min_length: 5
-                                                }
-                                            ]
-                                        },
+                                            type: MessageComponentTypes.INPUT_TEXT,
+                                            label: "Code",
+                                            style: TextStyleTypes.PARAGRAPH,
+                                            custom_id: "code",
+                                            required: true,
+                                            min_length: 5
+                                        }
+                                    ]
+                                },
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
+                                    components: [
                                         {
-                                            type: MessageComponentTypes.ACTION_ROW,
-                                            components: [
-                                                {
-                                                    type: MessageComponentTypes.INPUT_TEXT,
-                                                    label: "Input",
-                                                    style: TextStyleTypes.PARAGRAPH,
-                                                    custom_id: "input",
-                                                    required: false,
-                                                    placeholder: "(separate with a new line)"
-                                                }
-                                            ]
-                                        },
+                                            type: MessageComponentTypes.INPUT_TEXT,
+                                            label: "Input",
+                                            style: TextStyleTypes.PARAGRAPH,
+                                            custom_id: "input",
+                                            required: false,
+                                            placeholder: "(separate with a new line)"
+                                        }
+                                    ]
+                                },
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
+                                    components: [
                                         {
-                                            type: MessageComponentTypes.ACTION_ROW,
-                                            components: [
-                                                {
-                                                    type: MessageComponentTypes.INPUT_TEXT,
-                                                    label: "Packages (python only)",
-                                                    style: TextStyleTypes.PARAGRAPH,
-                                                    custom_id: "packages",
-                                                    required: false,
-                                                    placeholder: "(separate with a new line)"
-                                                }
-                                            ]
+                                            type: MessageComponentTypes.INPUT_TEXT,
+                                            label: "Packages (python only)",
+                                            style: TextStyleTypes.PARAGRAPH,
+                                            custom_id: "packages",
+                                            required: false,
+                                            placeholder: "(separate with a new line)"
                                         }
                                     ]
                                 }
-                            })
-                        }).then(res => res.json()))
+                            ]
+                        })
                     })
                 }
                 case SIZE_CMD.name: {
@@ -954,72 +947,65 @@ module.exports = async (request, response) => {
                     })
                 }
                 return response.send({
-                    content: console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                        method: "POST",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            type: InteractionResponseType.MODAL,
-                            data: {
-                                title: "Run Code",
-                                custom_id: "runedit",
+                    content: await showModal(message, {
+                        title: "Run Code",
+                        custom_id: "run",
+                        components: [
+                            {
+                                type: MessageComponentTypes.ACTION_ROW,
                                 components: [
                                     {
-                                        type: MessageComponentTypes.ACTION_ROW,
-                                        components: [
-                                            {
-                                                type: MessageComponentTypes.INPUT_TEXT,
-                                                label: "Language",
-                                                style: TextStyleTypes.SHORT,
-                                                custom_id: "language",
-                                                required: true,
-                                                min_length: 1,
-                                                max_length: 10
-                                            }
-                                        ]
-                                    },
+                                        type: MessageComponentTypes.INPUT_TEXT,
+                                        label: "Language",
+                                        style: TextStyleTypes.SHORT,
+                                        custom_id: "language",
+                                        required: true,
+                                        min_length: 1,
+                                        max_length: 10
+                                    }
+                                ]
+                            },
+                            {
+                                type: MessageComponentTypes.ACTION_ROW,
+                                components: [
                                     {
-                                        type: MessageComponentTypes.ACTION_ROW,
-                                        components: [
-                                            {
-                                                type: MessageComponentTypes.INPUT_TEXT,
-                                                label: "Code",
-                                                style: TextStyleTypes.PARAGRAPH,
-                                                custom_id: "code",
-                                                required: true,
-                                                min_length: 5
-                                            }
-                                        ]
-                                    },
+                                        type: MessageComponentTypes.INPUT_TEXT,
+                                        label: "Code",
+                                        style: TextStyleTypes.PARAGRAPH,
+                                        custom_id: "code",
+                                        required: true,
+                                        min_length: 5
+                                    }
+                                ]
+                            },
+                            {
+                                type: MessageComponentTypes.ACTION_ROW,
+                                components: [
                                     {
-                                        type: MessageComponentTypes.ACTION_ROW,
-                                        components: [
-                                            {
-                                                type: MessageComponentTypes.INPUT_TEXT,
-                                                label: "Input",
-                                                style: TextStyleTypes.PARAGRAPH,
-                                                custom_id: "input",
-                                                required: false,
-                                                placeholder: "(separate with a new line)"
-                                            }
-                                        ]
-                                    },
+                                        type: MessageComponentTypes.INPUT_TEXT,
+                                        label: "Input",
+                                        style: TextStyleTypes.PARAGRAPH,
+                                        custom_id: "input",
+                                        required: false,
+                                        placeholder: "(separate with a new line)"
+                                    }
+                                ]
+                            },
+                            {
+                                type: MessageComponentTypes.ACTION_ROW,
+                                components: [
                                     {
-                                        type: MessageComponentTypes.ACTION_ROW,
-                                        components: [
-                                            {
-                                                type: MessageComponentTypes.INPUT_TEXT,
-                                                label: "Packages (python only)",
-                                                style: TextStyleTypes.PARAGRAPH,
-                                                custom_id: "packages",
-                                                required: false,
-                                                placeholder: "(separate with a new line)"
-                                            }
-                                        ]
+                                        type: MessageComponentTypes.INPUT_TEXT,
+                                        label: "Packages (python only)",
+                                        style: TextStyleTypes.PARAGRAPH,
+                                        custom_id: "packages",
+                                        required: false,
+                                        placeholder: "(separate with a new line)"
                                     }
                                 ]
                             }
-                        })
-                    }).then(res => res.json()))
+                        ]
+                    })
                 })
             }
             else if (message.data.custom_id.split(" - ")[0] === "delete") {
