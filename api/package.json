@@ -10,7 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "discord-interactions": "^3.3.0",
-    "node-fetch-native": "^1.1.0",
     "os": "^0.1.2",
     "raw-body": "^2.5.2",
     "serverless_bots_addons": "^1.1.0-20230507"

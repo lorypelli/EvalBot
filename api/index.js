@@ -1,5 +1,4 @@
 const { InteractionResponseFlags, InteractionResponseType, InteractionType, verifyKey, MessageComponentTypes, ButtonStyleTypes, TextStyleTypes } = require("discord-interactions")
-const fetch = require("node-fetch-native")
 const getRawBody = require("raw-body")
 const { version } = require("os")
 const { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer } = require("serverless_bots_addons")
