@@ -2,6 +2,7 @@ const { InteractionResponseFlags, InteractionResponseType, InteractionType, veri
 const fetch = require("node-fetch-native")
 const getRawBody = require("raw-body")
 const { version } = require("os")
+const { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer } = require("serverless_bots_addons")
 const RUN_CMD = {
     name: "run",
     name_localizations: ({
@@ -13,7 +14,7 @@ const RUN_CMD = {
         it: "Esegui un codice (Piston API)",
         pl: "Uruchom kod (Piston API)"
     }),
-    type: 1
+    type: ApplicationCommandTypes.CHAT_INPUT
 }
 const LANGS_CMD = {
     name: "languages",
@@ -26,7 +27,7 @@ const LANGS_CMD = {
         it: "Mostra i linguaggi di programmazione supportati",
         pl: "Pokaż obsługiwane języki programowania"
     }),
-    type: 1
+    type: ApplicationCommandTypes.CHAT_INPUT
 }
 const INVITE_CMD = {
     name: "invite",
@@ -39,7 +40,7 @@ const INVITE_CMD = {
         it: "Ottieni il link d'invito del bot",
         pl: "Uzyskaj link z zaproszeniem bota"
     }),
-    type: 1
+    type: ApplicationCommandTypes.CHAT_INPUT
 }
 const VOTE_CMD = {
     name: "vote",
@@ -52,7 +53,7 @@ const VOTE_CMD = {
         it: "Vota per il bot su topgg",
         pl: "Głosuj na bota na topgg"
     }),
-    type: 1
+    type: ApplicationCommandTypes.CHAT_INPUT
 }
 const SIZE_CMD = {
     name: "size",
@@ -65,7 +66,7 @@ const SIZE_CMD = {
         it: "Ottieni la dimensione di un pacchetto npm",
         pl: "Uzyskaj rozmiar pakietu npm"
     }),
-    type: 1,
+    type: ApplicationCommandTypes.CHAT_INPUT,
     options: [
         {
             name: "name",
@@ -78,7 +79,7 @@ const SIZE_CMD = {
                 it: "Nome del pacchetto npm",
                 pl: "Nazwa pakietu npm"
             }),
-            type: 3,
+            type: ApplicationCommandOptionTypes.STRING,
             required: true
         }
     ]
@@ -86,12 +87,12 @@ const SIZE_CMD = {
 const EVAL_CMD = {
     name: "eval",
     description: "Eval code (only developer)",
-    type: 1,
+    type: ApplicationCommandTypes.CHAT_INPUT,
     options: [
         {
             name: "code",
             description: "The code to evaluate",
-            type: 3,
+            type: ApplicationCommandOptionTypes.STRING,
             required: true
         }
     ]
@@ -99,12 +100,12 @@ const EVAL_CMD = {
 const REGISTER_CMD = {
     name: "register",
     description: "Register slash commands (only developer)",
-    type: 1
+    type: ApplicationCommandTypes.CHAT_INPUT
 }
 const INFO_CMD = {
     name: "info",
     description: "Get bot info (only developer)",
-    type: 1
+    type: ApplicationCommandTypes.CHAT_INPUT
 }
 const CONVERT_CMD = {
     name: "convert",
@@ -117,7 +118,7 @@ const CONVERT_CMD = {
         it: "Converti un numero decimale in binario o viceversa",
         pl: "Konwertuj liczbę dziesiętną na jedną lub odwrotnie"
     }),
-    type: 1,
+    type: ApplicationCommandTypes.CHAT_INPUT,
     options: [
         {
             name: "system",
@@ -130,7 +131,7 @@ const CONVERT_CMD = {
                 it: "Converti in binario o decimale?",
                 pl: "Konwertować na binarny czy dziesiętny?"
             }),
-            type: 3,
+            type: ApplicationCommandOptionTypes.STRING,
             required: true,
             choices: [
                 { name: "Decimal to Binary", name_localizations: ({ it: "Decimale a Binario", pl: "Ułamek dziesiętny do ułamka binarnego" }), value: "Decimal to Binary" },
@@ -148,7 +149,7 @@ const CONVERT_CMD = {
                 it: "Il numero da convertire",
                 pl: "Liczba do przekonwertowania"
             }),
-            type: 10,
+            type: ApplicationCommandOptionTypes.NUMBER,
             required: true
         }
     ]
@@ -206,16 +207,7 @@ module.exports = async (request, response) => {
         else if (message.type === InteractionType.APPLICATION_COMMAND) {
             switch (message.data.name) {
                 case INVITE_CMD.name: {
-                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                        method: "POST",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-                            data: {
-                                flags: InteractionResponseFlags.EPHEMERAL
-                            }
-                        })
-                    }))
+                    await deferReply(message)
                     let guilds = await fetch("https://discord.com/api/v10/users/@me/guilds", {
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
                     })
@@ -244,16 +236,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case VOTE_CMD.name: {
-                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                        method: "POST",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-                            data: {
-                                flags: InteractionResponseFlags.EPHEMERAL
-                            }
-                        })
-                    }))
+                    await deferReply(message)
                     let guilds = await fetch("https://discord.com/api/v10/users/@me/guilds", {
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
                     })
@@ -300,16 +283,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case LANGS_CMD.name: {
-                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                        method: "POST",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-                            data: {
-                                flags: InteractionResponseFlags.EPHEMERAL
-                            }
-                        })
-                    }))
+                    await deferReply(message)
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -478,16 +452,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case EVAL_CMD.name: {
-                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                        method: "POST",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-                            data: {
-                                flags: InteractionResponseFlags.EPHEMERAL
-                            }
-                        })
-                    }))
+                    await deferReply(message)
                     if ((message.member?.user.id || message.user.id) != "604339998312890379") {
                         return response.send({
                             content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
@@ -525,16 +490,7 @@ module.exports = async (request, response) => {
                     }
                 }
                 case REGISTER_CMD.name: {
-                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                        method: "POST",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-                            data: {
-                                flags: InteractionResponseFlags.EPHEMERAL
-                            }
-                        })
-                    }))
+                    await deferReply(message)
                     if ((message.member?.user.id || message.user.id) != "604339998312890379") {
                         return response.send({
                             content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
@@ -568,16 +524,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case INFO_CMD.name: {
-                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                        method: "POST",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-                            data: {
-                                flags: InteractionResponseFlags.EPHEMERAL
-                            }
-                        })
-                    }))
+                    await deferReply(message)
                     if ((message.member?.user.id || message.user.id) != "604339998312890379") {
                         return response.send({
                             content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
@@ -613,16 +560,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case CONVERT_CMD.name: {
-                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                        method: "POST",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-                            data: {
-                                flags: InteractionResponseFlags.EPHEMERAL
-                            }
-                        })
-                    }))
+                    await deferReply(message)
                     let number = message.data.options[1].value
                     switch (message.data.options[0].value) {
                         case "Decimal to Binary": {
@@ -1351,13 +1289,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case "runedit": {
-                    console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                        method: "POST",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            type: InteractionResponseType.DEFERRED_UPDATE_MESSAGE
-                        })
-                    }))
+                    await updateDefer(message)
                     let language = message.data.components[0].components[0].value.toLowerCase()
                     let code = message.data.components[1].components[0].value
                     let input = "" || message.data.components[2].components[0].value
