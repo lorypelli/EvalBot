@@ -1,7 +1,7 @@
 const { InteractionResponseFlags, InteractionResponseType, InteractionType, verifyKey, MessageComponentTypes, ButtonStyleTypes, TextStyleTypes } = require("discord-interactions")
 const getRawBody = require("raw-body")
 const { version } = require("os")
-const { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal } = require("serverless_bots_addons")
+const { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followup, editFollowup } = require("serverless_bots_addons")
 const RUN_CMD = {
     name: "run",
     name_localizations: ({
@@ -182,18 +182,11 @@ module.exports = async (request, response) => {
         }
         let message = request.body
         if (user.username == "EvalBot Beta" && (message.member?.user.id || message.user.id) != "604339998312890379") {
+            await deferReply(message, { ephemeral: true })
             return response.send({
-                content: console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                    method: "POST",
-                    headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-                        data: {
-                            content: "❌ You can't use <@1077228141531123852>, use <@1076200668810985634> instead",
-                            flags: InteractionResponseFlags.EPHEMERAL
-                        }
-                    })
-                }).then(res => res.json()))
+                content: await followup(message, {
+                    content: "❌ You can't use <@1077228141531123852>, use <@1076200668810985634> instead"
+                })
             })
         }
         if (message.type === InteractionType.PING) {
@@ -212,26 +205,22 @@ module.exports = async (request, response) => {
                     })
                     guilds = await guilds.json()
                     return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                            method: "POST",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                content: `The bot is currently on **${guilds.length} servers**. Click the button below to invite the bot!`,
-                                components: [
-                                    {
-                                        type: MessageComponentTypes.ACTION_ROW,
-                                        components: [
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "Invite",
-                                                style: ButtonStyleTypes.LINK,
-                                                url: "https://discord.com/api/oauth2/authorize?client_id=1076200668810985634&permissions=274877975552&scope=bot%20applications.commands"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            })
-                        }).then(res => res.json()))
+                        content: await followup(message, {
+                            content: `The bot is currently on **${guilds.length} servers**. Click the button below to invite the bot!`,
+                            components: [
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
+                                    components: [
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "Invite",
+                                            style: ButtonStyleTypes.LINK,
+                                            url: "https://discord.com/api/oauth2/authorize?client_id=1076200668810985634&permissions=274877975552&scope=bot%20applications.commands"
+                                        }
+                                    ]
+                                }
+                            ]
+                        })
                     })
                 }
                 case VOTE_CMD.name: {
@@ -240,45 +229,41 @@ module.exports = async (request, response) => {
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
                     })
                     guilds = await guilds.json()
-                    console.log(await fetch(`https://top.gg/api/bots/${process.env.ID}/stats`, {
+                    await fetch(`https://top.gg/api/bots/${process.env.ID}/stats`, {
                         method: "POST",
                         headers: { "Authorization": process.env.TOPGG, "Content-Type": "application/json" },
                         body: JSON.stringify({
                             server_count: guilds.length
                         })
-                    }).then(res => res.json()))
-                    console.log(await fetch(`https://discordbotlist.com/api/v1/bots/${process.env.ID}/stats`, {
+                    })
+                    await fetch(`https://discordbotlist.com/api/v1/bots/${process.env.ID}/stats`, {
                         method: "POST",
                         headers: { "Authorization": process.env.DBL, "Content-Type": "application/json" },
                         body: JSON.stringify({
                             guilds: guilds.length
                         })
-                    }).then(res => res.json()))
-                    console.log(await fetch(`https://discordbotlist.com/api/v1/bots/${process.env.ID}/commands`, {
+                    })
+                    await fetch(`https://discordbotlist.com/api/v1/bots/${process.env.ID}/commands`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.DBL}`, "Content-Type": "application/json" },
                         body: JSON.stringify([RUN_CMD, LANGS_CMD, INVITE_CMD, VOTE_CMD, SIZE_CMD, CONVERT_CMD])
-                    }).then(res => res.json()))
+                    })
                     return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                            method: "POST",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                components: [
-                                    {
-                                        type: MessageComponentTypes.ACTION_ROW,
-                                        components: [
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "Vote",
-                                                style: ButtonStyleTypes.LINK,
-                                                url: "https://top.gg/bot/1076200668810985634/vote"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            })
-                        }).then(res => res.json()))
+                        content: await followup(message, {
+                            components: [
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
+                                    components: [
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "Vote",
+                                            style: ButtonStyleTypes.LINK,
+                                            url: "https://top.gg/bot/1076200668810985634/vote"
+                                        }
+                                    ]
+                                }
+                            ]
+                        })
                     })
                 }
                 case LANGS_CMD.name: {
@@ -288,42 +273,38 @@ module.exports = async (request, response) => {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
                     }
                     return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                            method: "POST",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                embeds: [
-                                    {
-                                        color: 0x607387,
-                                        title: "Supported Languages",
-                                        description: `Total languages: ${runtimes.length}`,
-                                        fields: languages.slice(0, 25)
-                                    }
-                                ],
-                                components: [
-                                    {
-                                        type: MessageComponentTypes.ACTION_ROW,
-                                        components: [
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "previous1",
-                                                disabled: true,
-                                                emoji: { name: "Arrow_Left", id: "1104480446076690493" }
-                                            },
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "next1",
-                                                emoji: { name: "Arrow_Right", id: "1104480448232570881" }
-                                            }
-                                        ]
-                                    }
-                                ]
-                            })
-                        }).then(res => res.json()))
+                        content: await followup(message, {
+                            embeds: [
+                                {
+                                    color: 0x607387,
+                                    title: "Supported Languages",
+                                    description: `Total languages: ${runtimes.length}`,
+                                    fields: languages.slice(0, 25)
+                                }
+                            ],
+                            components: [
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
+                                    components: [
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.PRIMARY,
+                                            custom_id: "previous1",
+                                            disabled: true,
+                                            emoji: { name: "Arrow_Left", id: "1104480446076690493" }
+                                        },
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.PRIMARY,
+                                            custom_id: "next1",
+                                            emoji: { name: "Arrow_Right", id: "1104480448232570881" }
+                                        }
+                                    ]
+                                }
+                            ]
+                        })
                     })
                 }
                 case RUN_CMD.name: {
@@ -394,501 +375,14 @@ module.exports = async (request, response) => {
                     let result = await fetch(`https://packagephobia.com/v2/api.json?p=${message.data.options[0].value}`)
                     if (result.status != 200) {
                         return response.send({
-                            content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                                method: "POST",
-                                headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                    content: "There was an error, try again!",
-                                    flags: InteractionResponseFlags.EPHEMERAL
-                                })
-                            }).then(res => res.json()))
+                            content: await followup(message, {
+                                content: "There was an error, try again!",
+                            })
                         })
                     }
                     result = await result.json()
                     return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                            method: "POST",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                embeds: [
-                                    {
-                                        color: 0x607387,
-                                        title: `Info of __**${result.name}**__`,
-                                        fields: [
-                                            {
-                                                name: "Version:",
-                                                value: "```" + result.version + "```",
-                                                inline: false
-                                            },
-                                            {
-                                                name: "Publish Size:",
-                                                value: "```" + result.publish.pretty + "```",
-                                                inline: false
-                                            },
-                                            {
-                                                name: "Install Size:",
-                                                value: "```" + result.install.pretty + "```",
-                                                inline: false
-                                            }
-                                        ]
-                                    }
-                                ],
-                                components: [
-                                    {
-                                        type: MessageComponentTypes.ACTION_ROW,
-                                        components: [
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: `reload - ${message.data.options[0].value}`,
-                                                emoji: { name: "Reload", id: "1104736112049659995" }
-                                            }
-                                        ]
-                                    }
-                                ]
-                            })
-                        }).then(res => res.json()))
-                    })
-                }
-                case EVAL_CMD.name: {
-                    await deferReply(message, { ephemeral: true })
-                    if ((message.member?.user.id || message.user.id) != "604339998312890379") {
-                        return response.send({
-                            content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                                method: "POST",
-                                headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                    content: "❌ You can't do this",
-                                    flags: InteractionResponseFlags.EPHEMERAL
-                                })
-                            }).then(res => res.json()))
-                        })
-                    }
-                    try {
-                        let code = eval(message.data.options[0].value.slice(0, 950))
-                        return response.send({
-                            content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                                method: "POST",
-                                headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                    content: "```js" + "\n" + JSON.stringify(code, null, 2) + "\n" + "```"
-                                })
-                            }).then(res => res.json()))
-                        })
-                    }
-                    catch (e) {
-                        return response.send({
-                            content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                                method: "POST",
-                                headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                    content: "```js" + "\n" + e + "\n" + "```"
-                                })
-                            }).then(res => res.json()))
-                        })
-                    }
-                }
-                case REGISTER_CMD.name: {
-                    await deferReply(message, { ephemeral: true })
-                    if ((message.member?.user.id || message.user.id) != "604339998312890379") {
-                        return response.send({
-                            content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                                method: "POST",
-                                headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                    content: "❌ You can't do this",
-                                    flags: InteractionResponseFlags.EPHEMERAL
-                                })
-                            }).then(res => res.json()))
-                        })
-                    }
-                    console.log(await fetch(`https://discord.com/api/v10/applications/${process.env.ID}/commands`, {
-                        method: "PUT",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify([RUN_CMD, LANGS_CMD, INVITE_CMD, VOTE_CMD, SIZE_CMD, CONVERT_CMD])
-                    }).then(res => res.json()))
-                    console.log(await fetch(`https://discord.com/api/v10/applications/${process.env.ID}/guilds/818058268978315286/commands`, {
-                        method: "PUT",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify([EVAL_CMD, REGISTER_CMD, INFO_CMD])
-                    }).then(res => res.json()))
-                    return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                            method: "POST",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                content: "Done!"
-                            })
-                        }).then(res => res.json()))
-                    })
-                }
-                case INFO_CMD.name: {
-                    await deferReply(message, { ephemeral: true })
-                    if ((message.member?.user.id || message.user.id) != "604339998312890379") {
-                        return response.send({
-                            content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                                method: "POST",
-                                headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                    content: "❌ You can't do this",
-                                    flags: InteractionResponseFlags.EPHEMERAL
-                                })
-                            }).then(res => res.json()))
-                        })
-                    }
-                    return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                            method: "POST",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                embeds: [
-                                    {
-                                        color: 0x607387,
-                                        title: "Bot info",
-                                        fields: [
-                                            { name: "Total RAM:", value: "```" + (process.memoryUsage().heapTotal / (1024 * 1024)).toFixed(3) + " MB" + "```", inline: false },
-                                            { name: "Used RAM:", value: "```" + (process.memoryUsage().heapUsed / (1024 * 1024)).toFixed(3) + " MB" + "```", inline: false },
-                                            { name: "Used RAM Percentage:", value: "```" + ((process.memoryUsage().heapUsed / (1024 * 1024)).toFixed(3) * 100 / (process.memoryUsage().heapTotal / (1024 * 1024)).toFixed(3)).toFixed(2) + " %" + "```", inline: false },
-                                            { name: "I am running on:", value: "```" + process.platform + " – " + version() + " – " + process.cwd() + "```", inline: false },
-                                            { name: "Versions", value: "```" + JSON.stringify(process.versions, null, 2) + "```", inline: false }
-                                        ]
-                                    }
-                                ]
-                            })
-                        }).then(res => res.json()))
-                    })
-                }
-                case CONVERT_CMD.name: {
-                    await deferReply(message, { ephemeral: true })
-                    let number = message.data.options[1].value
-                    switch (message.data.options[0].value) {
-                        case "Decimal to Binary": {
-                            number = message.data.options[1].value.toString(2)
-                            break
-                        }
-                        case "Binary to Decimal": {
-                            if (message.data.options[1].value.toString().includes("2") || message.data.options[1].value.toString().includes("3") || message.data.options[1].value.toString().includes("4") || message.data.options[1].value.toString().includes("5") || message.data.options[1].value.toString().includes("6") || message.data.options[1].value.toString().includes("7") || message.data.options[1].value.toString().includes("8") || message.data.options[1].value.toString().includes("9")) {
-                                return response.send({
-                                    content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                                        method: "POST",
-                                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                                        body: JSON.stringify({
-                                            content: "❌ The binary number isn't valid",
-                                            flags: InteractionResponseFlags.EPHEMERAL
-                                        })
-                                    }).then(res => res.json()))
-                                })
-                            }
-                            number = parseInt(message.data.options[1].value, 2)
-                            break
-                        }
-                    }
-                    return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                            method: "POST",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                content: `The number \`${message.data.options[1].value}\` converted using the \`${message.data.options[0].value}\` system is \`${number}\``,
-                                data: {
-                                    flags: InteractionResponseFlags.EPHEMERAL
-                                }
-                            })
-                        }).then(res => res.json()))
-                    })
-                }
-            }
-        }
-        else if (message.type === InteractionType.MESSAGE_COMPONENT) {
-            switch (message.data.custom_id) {
-                case "next1": {
-                    await updateDefer(message, { ephemeral: true })
-                    let languages = []
-                    for (let c = 0; c < runtimes.length; c++) {
-                        languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
-                    }
-                    return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
-                            method: "PATCH",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                embeds: [
-                                    {
-                                        color: 0x607387,
-                                        title: "Supported Languages",
-                                        description: `Total languages: ${runtimes.length}`,
-                                        fields: languages.slice(25, 50)
-                                    }
-                                ],
-                                components: [
-                                    {
-                                        type: MessageComponentTypes.ACTION_ROW,
-                                        components: [
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "previous2",
-                                                emoji: { name: "Arrow_Left", id: "1104480446076690493" }
-                                            },
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "next2",
-                                                emoji: { name: "Arrow_Right", id: "1104480448232570881" }
-                                            }
-                                        ]
-                                    }
-                                ]
-                            })
-                        }).then(res => res.json()))
-                    })
-                }
-                case "next2": {
-                    await updateDefer(message, { ephemeral: true })
-                    let languages = []
-                    for (let c = 0; c < runtimes.length; c++) {
-                        languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
-                    }
-                    return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
-                            method: "PATCH",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                embeds: [
-                                    {
-                                        color: 0x607387,
-                                        title: "Supported Languages",
-                                        description: `Total languages: ${runtimes.length}`,
-                                        fields: languages.slice(50, 75)
-                                    }
-                                ],
-                                components: [
-                                    {
-                                        type: MessageComponentTypes.ACTION_ROW,
-                                        components: [
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "previous3",
-                                                emoji: { name: "Arrow_Left", id: "1104480446076690493" }
-                                            },
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "next3",
-                                                emoji: { name: "Arrow_Right", id: "1104480448232570881" }
-                                            }
-                                        ]
-                                    }
-                                ]
-                            })
-                        }).then(res => res.json()))
-                    })
-                }
-                case "next3": {
-                    await updateDefer(message, { ephemeral: true })
-                    let languages = []
-                    for (let c = 0; c < runtimes.length; c++) {
-                        languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
-                    }
-                    return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
-                            method: "PATCH",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                embeds: [
-                                    {
-                                        color: 0x607387,
-                                        title: "Supported Languages",
-                                        description: `Total languages: ${runtimes.length}`,
-                                        fields: languages.slice(75)
-                                    }
-                                ],
-                                components: [
-                                    {
-                                        type: MessageComponentTypes.ACTION_ROW,
-                                        components: [
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "previous4",
-                                                emoji: { name: "Arrow_Left", id: "1104480446076690493" }
-                                            },
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "next4",
-                                                disabled: true,
-                                                emoji: { name: "Arrow_Right", id: "1104480448232570881" }
-                                            }
-                                        ]
-                                    }
-                                ]
-                            })
-                        }).then(res => res.json()))
-                    })
-                }
-                case "previous2": {
-                    await updateDefer(message, { ephemeral: true })
-                    let languages = []
-                    for (let c = 0; c < runtimes.length; c++) {
-                        languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
-                    }
-                    return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
-                            method: "PATCH",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                embeds: [
-                                    {
-                                        color: 0x607387,
-                                        title: "Supported Languages",
-                                        description: `Total languages: ${runtimes.length}`,
-                                        fields: languages.slice(0, 25)
-                                    }
-                                ],
-                                components: [
-                                    {
-                                        type: MessageComponentTypes.ACTION_ROW,
-                                        components: [
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "previous1",
-                                                disabled: true,
-                                                emoji: { name: "Arrow_Left", id: "1104480446076690493" }
-                                            },
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "next1",
-                                                emoji: { name: "Arrow_Right", id: "1104480448232570881" }
-                                            }
-                                        ]
-                                    }
-                                ]
-                            })
-                        }).then(res => res.json()))
-                    })
-                }
-                case "previous3": {
-                    await updateDefer(message, { ephemeral: true })
-                    let languages = []
-                    for (let c = 0; c < runtimes.length; c++) {
-                        languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
-                    }
-                    return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
-                            method: "PATCH",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                embeds: [
-                                    {
-                                        color: 0x607387,
-                                        title: "Supported Languages",
-                                        description: `Total languages: ${runtimes.length}`,
-                                        fields: languages.slice(25, 50)
-                                    }
-                                ],
-                                components: [
-                                    {
-                                        type: MessageComponentTypes.ACTION_ROW,
-                                        components: [
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "previous2",
-                                                emoji: { name: "Arrow_Left", id: "1104480446076690493" }
-                                            },
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "next2",
-                                                emoji: { name: "Arrow_Right", id: "1104480448232570881" }
-                                            }
-                                        ]
-                                    }
-                                ]
-                            })
-                        }).then(res => res.json()))
-                    })
-                }
-                case "previous4": {
-                    await updateDefer(message, { ephemeral: true })
-                    let languages = []
-                    for (let c = 0; c < runtimes.length; c++) {
-                        languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
-                    }
-                    return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
-                            method: "PATCH",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                embeds: [
-                                    {
-                                        color: 0x607387,
-                                        title: "Supported Languages",
-                                        description: `Total languages: ${runtimes.length}`,
-                                        fields: languages.slice(50, 75)
-                                    }
-                                ],
-                                components: [
-                                    {
-                                        type: MessageComponentTypes.ACTION_ROW,
-                                        components: [
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "previous3",
-                                                emoji: { name: "Arrow_Left", id: "1104480446076690493" }
-                                            },
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: "next3",
-                                                emoji: { name: "Arrow_Right", id: "1104480448232570881" }
-                                            }
-                                        ]
-                                    }
-                                ]
-                            })
-                        }).then(res => res.json()))
-                    })
-                }
-            }
-            if (message.data.custom_id.split(" - ")[0] === "reload") {
-                await updateDefer(message, { ephemeral: true })
-                let result = await fetch(`https://packagephobia.com/v2/api.json?p=${message.data.custom_id.split(" - ")[1]}`)
-                if (result.status != 200) {
-                    return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                            method: "POST",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                content: "There was an error, try again!",
-                                flags: InteractionResponseFlags.EPHEMERAL
-                            })
-                        }).then(res => res.json()))
-                    })
-                }
-                result = await result.json()
-                return response.send({
-                    content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
-                        method: "PATCH",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
+                        content: await followup(message, {
                             embeds: [
                                 {
                                     color: 0x607387,
@@ -920,30 +414,425 @@ module.exports = async (request, response) => {
                                             type: MessageComponentTypes.BUTTON,
                                             label: "",
                                             style: ButtonStyleTypes.PRIMARY,
-                                            custom_id: `reload - ${message.data.custom_id.split(" - ")[1]}`,
+                                            custom_id: `reload - ${message.data.options[0].value}`,
                                             emoji: { name: "Reload", id: "1104736112049659995" }
                                         }
                                     ]
                                 }
                             ]
                         })
-                    }).then(res => res.json()))
+                    })
+                }
+                case EVAL_CMD.name: {
+                    await deferReply(message, { ephemeral: true })
+                    if ((message.member?.user.id || message.user.id) != "604339998312890379") {
+                        return response.send({
+                            content: await followup(message, {
+                                content: "❌ You can't do this",
+                            })
+                        })
+                    }
+                    try {
+                        let code = eval(message.data.options[0].value.slice(0, 950))
+                        return response.send({
+                            content: await followup(message, {
+                                content: "```js" + "\n" + JSON.stringify(code, null, 2) + "\n" + "```"
+                            })
+                        })
+                    }
+                    catch (e) {
+                        return response.send({
+                            content: await followup(message, {
+                                content: "```js" + "\n" + e + "\n" + "```"
+                            })
+                        })
+                    }
+                }
+                case REGISTER_CMD.name: {
+                    await deferReply(message, { ephemeral: true })
+                    if ((message.member?.user.id || message.user.id) != "604339998312890379") {
+                        return response.send({
+                            content: await followup(message, {
+                                content: "❌ You can't do this",
+                            })
+                        })
+                    }
+                    await fetch(`https://discord.com/api/v10/applications/${process.env.ID}/commands`, {
+                        method: "PUT",
+                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
+                        body: JSON.stringify([RUN_CMD, LANGS_CMD, INVITE_CMD, VOTE_CMD, SIZE_CMD, CONVERT_CMD])
+                    })
+                    await fetch(`https://discord.com/api/v10/applications/${process.env.ID}/guilds/818058268978315286/commands`, {
+                        method: "PUT",
+                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
+                        body: JSON.stringify([EVAL_CMD, REGISTER_CMD, INFO_CMD])
+                    })
+                    return response.send({
+                        content: await followup(message, {
+                            content: "Done!"
+                        })
+                    })
+                }
+                case INFO_CMD.name: {
+                    await deferReply(message, { ephemeral: true })
+                    if ((message.member?.user.id || message.user.id) != "604339998312890379") {
+                        return response.send({
+                            content: await followup(message, {
+                                content: "❌ You can't do this",
+                            })
+                        })
+                    }
+                    return response.send({
+                        content: await followup(message, {
+                            embeds: [
+                                {
+                                    color: 0x607387,
+                                    title: "Bot info",
+                                    fields: [
+                                        { name: "Total RAM:", value: "```" + (process.memoryUsage().heapTotal / (1024 * 1024)).toFixed(3) + " MB" + "```", inline: false },
+                                        { name: "Used RAM:", value: "```" + (process.memoryUsage().heapUsed / (1024 * 1024)).toFixed(3) + " MB" + "```", inline: false },
+                                        { name: "Used RAM Percentage:", value: "```" + ((process.memoryUsage().heapUsed / (1024 * 1024)).toFixed(3) * 100 / (process.memoryUsage().heapTotal / (1024 * 1024)).toFixed(3)).toFixed(2) + " %" + "```", inline: false },
+                                        { name: "I am running on:", value: "```" + process.platform + " – " + version() + " – " + process.cwd() + "```", inline: false },
+                                        { name: "Versions", value: "```" + JSON.stringify(process.versions, null, 2) + "```", inline: false }
+                                    ]
+                                }
+                            ]
+                        })
+                    })
+                }
+                case CONVERT_CMD.name: {
+                    await deferReply(message, { ephemeral: true })
+                    let number = message.data.options[1].value
+                    switch (message.data.options[0].value) {
+                        case "Decimal to Binary": {
+                            number = message.data.options[1].value.toString(2)
+                            break
+                        }
+                        case "Binary to Decimal": {
+                            if (message.data.options[1].value.toString().includes("2") || message.data.options[1].value.toString().includes("3") || message.data.options[1].value.toString().includes("4") || message.data.options[1].value.toString().includes("5") || message.data.options[1].value.toString().includes("6") || message.data.options[1].value.toString().includes("7") || message.data.options[1].value.toString().includes("8") || message.data.options[1].value.toString().includes("9")) {
+                                return response.send({
+                                    content: await followup(message, {
+                                        content: "❌ The binary number isn't valid",
+                                    })
+                                })
+                            }
+                            number = parseInt(message.data.options[1].value, 2)
+                            break
+                        }
+                    }
+                    return response.send({
+                        content: await followup(message, {
+                            content: `The number \`${message.data.options[1].value}\` converted using the \`${message.data.options[0].value}\` system is \`${number}\``,
+                        })
+                    })
+                }
+            }
+        }
+        else if (message.type === InteractionType.MESSAGE_COMPONENT) {
+            switch (message.data.custom_id) {
+                case "next1": {
+                    await updateDefer(message, { ephemeral: true })
+                    let languages = []
+                    for (let c = 0; c < runtimes.length; c++) {
+                        languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
+                    }
+                    return response.send({
+                        content: await editFollowup(message, {
+                            embeds: [
+                                {
+                                    color: 0x607387,
+                                    title: "Supported Languages",
+                                    description: `Total languages: ${runtimes.length}`,
+                                    fields: languages.slice(25, 50)
+                                }
+                            ],
+                            components: [
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
+                                    components: [
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.PRIMARY,
+                                            custom_id: "previous2",
+                                            emoji: { name: "Arrow_Left", id: "1104480446076690493" }
+                                        },
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.PRIMARY,
+                                            custom_id: "next2",
+                                            emoji: { name: "Arrow_Right", id: "1104480448232570881" }
+                                        }
+                                    ]
+                                }
+                            ]
+                        })
+                    })
+                }
+                case "next2": {
+                    await updateDefer(message, { ephemeral: true })
+                    let languages = []
+                    for (let c = 0; c < runtimes.length; c++) {
+                        languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
+                    }
+                    return response.send({
+                        content: await editFollowup(message, {
+                            embeds: [
+                                {
+                                    color: 0x607387,
+                                    title: "Supported Languages",
+                                    description: `Total languages: ${runtimes.length}`,
+                                    fields: languages.slice(50, 75)
+                                }
+                            ],
+                            components: [
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
+                                    components: [
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.PRIMARY,
+                                            custom_id: "previous3",
+                                            emoji: { name: "Arrow_Left", id: "1104480446076690493" }
+                                        },
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.PRIMARY,
+                                            custom_id: "next3",
+                                            emoji: { name: "Arrow_Right", id: "1104480448232570881" }
+                                        }
+                                    ]
+                                }
+                            ]
+                        })
+                    })
+                }
+                case "next3": {
+                    await updateDefer(message, { ephemeral: true })
+                    let languages = []
+                    for (let c = 0; c < runtimes.length; c++) {
+                        languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
+                    }
+                    return response.send({
+                        content: await editFollowup(message, {
+                            embeds: [
+                                {
+                                    color: 0x607387,
+                                    title: "Supported Languages",
+                                    description: `Total languages: ${runtimes.length}`,
+                                    fields: languages.slice(75)
+                                }
+                            ],
+                            components: [
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
+                                    components: [
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.PRIMARY,
+                                            custom_id: "previous4",
+                                            emoji: { name: "Arrow_Left", id: "1104480446076690493" }
+                                        },
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.PRIMARY,
+                                            custom_id: "next4",
+                                            disabled: true,
+                                            emoji: { name: "Arrow_Right", id: "1104480448232570881" }
+                                        }
+                                    ]
+                                }
+                            ]
+                        })
+                    })
+                }
+                case "previous2": {
+                    await updateDefer(message, { ephemeral: true })
+                    let languages = []
+                    for (let c = 0; c < runtimes.length; c++) {
+                        languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
+                    }
+                    return response.send({
+                        content: await editFollowup(message, {
+                            embeds: [
+                                {
+                                    color: 0x607387,
+                                    title: "Supported Languages",
+                                    description: `Total languages: ${runtimes.length}`,
+                                    fields: languages.slice(0, 25)
+                                }
+                            ],
+                            components: [
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
+                                    components: [
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.PRIMARY,
+                                            custom_id: "previous1",
+                                            disabled: true,
+                                            emoji: { name: "Arrow_Left", id: "1104480446076690493" }
+                                        },
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.PRIMARY,
+                                            custom_id: "next1",
+                                            emoji: { name: "Arrow_Right", id: "1104480448232570881" }
+                                        }
+                                    ]
+                                }
+                            ]
+                        })
+                    })
+                }
+                case "previous3": {
+                    await updateDefer(message, { ephemeral: true })
+                    let languages = []
+                    for (let c = 0; c < runtimes.length; c++) {
+                        languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
+                    }
+                    return response.send({
+                        content: await editFollowup(message, {
+                            embeds: [
+                                {
+                                    color: 0x607387,
+                                    title: "Supported Languages",
+                                    description: `Total languages: ${runtimes.length}`,
+                                    fields: languages.slice(25, 50)
+                                }
+                            ],
+                            components: [
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
+                                    components: [
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.PRIMARY,
+                                            custom_id: "previous2",
+                                            emoji: { name: "Arrow_Left", id: "1104480446076690493" }
+                                        },
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.PRIMARY,
+                                            custom_id: "next2",
+                                            emoji: { name: "Arrow_Right", id: "1104480448232570881" }
+                                        }
+                                    ]
+                                }
+                            ]
+                        })
+                    })
+                }
+                case "previous4": {
+                    await updateDefer(message, { ephemeral: true })
+                    let languages = []
+                    for (let c = 0; c < runtimes.length; c++) {
+                        languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
+                    }
+                    return response.send({
+                        content: await editFollowup(message, {
+                            embeds: [
+                                {
+                                    color: 0x607387,
+                                    title: "Supported Languages",
+                                    description: `Total languages: ${runtimes.length}`,
+                                    fields: languages.slice(50, 75)
+                                }
+                            ],
+                            components: [
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
+                                    components: [
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.PRIMARY,
+                                            custom_id: "previous3",
+                                            emoji: { name: "Arrow_Left", id: "1104480446076690493" }
+                                        },
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.PRIMARY,
+                                            custom_id: "next3",
+                                            emoji: { name: "Arrow_Right", id: "1104480448232570881" }
+                                        }
+                                    ]
+                                }
+                            ]
+                        })
+                    })
+                }
+            }
+            if (message.data.custom_id.split(" - ")[0] === "reload") {
+                await updateDefer(message, { ephemeral: true })
+                let result = await fetch(`https://packagephobia.com/v2/api.json?p=${message.data.custom_id.split(" - ")[1]}`)
+                if (result.status != 200) {
+                    return response.send({
+                        content: await followup(message, {
+                            content: "There was an error, try again!",
+                        })
+                    })
+                }
+                result = await result.json()
+                return response.send({
+                    content: await editFollowup(message, {
+                        embeds: [
+                            {
+                                color: 0x607387,
+                                title: `Info of __**${result.name}**__`,
+                                fields: [
+                                    {
+                                        name: "Version:",
+                                        value: "```" + result.version + "```",
+                                        inline: false
+                                    },
+                                    {
+                                        name: "Publish Size:",
+                                        value: "```" + result.publish.pretty + "```",
+                                        inline: false
+                                    },
+                                    {
+                                        name: "Install Size:",
+                                        value: "```" + result.install.pretty + "```",
+                                        inline: false
+                                    }
+                                ]
+                            }
+                        ],
+                        components: [
+                            {
+                                type: MessageComponentTypes.ACTION_ROW,
+                                components: [
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        label: "",
+                                        style: ButtonStyleTypes.PRIMARY,
+                                        custom_id: `reload - ${message.data.custom_id.split(" - ")[1]}`,
+                                        emoji: { name: "Reload", id: "1104736112049659995" }
+                                    }
+                                ]
+                            }
+                        ]
+                    })
                 })
             }
             if (message.data.custom_id.split(" - ")[0] === "edit") {
                 if ((message.member?.user.id || message.user.id) != message.data.custom_id.split(" - ")[1]) {
+                    await deferReply(message, { ephemeral: true })
                     return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                            method: "POST",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-                                data: {
-                                    content: "❌ You can't do this",
-                                    flags: InteractionResponseFlags.EPHEMERAL
-                                }
-                            })
-                        }).then(res => res.json()))
+                        content: await followup(message, {
+                            content: "❌ You can't do this",
+                        })
                     })
                 }
                 return response.send({
@@ -1010,26 +899,19 @@ module.exports = async (request, response) => {
             }
             else if (message.data.custom_id.split(" - ")[0] === "delete") {
                 if ((message.member?.user.id || message.user.id) != message.data.custom_id.split(" - ")[1]) {
+                    await deferReply(message, { ephemeral: true })
                     return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/interactions/${message.id}/${message.token}/callback`, {
-                            method: "POST",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-                                data: {
-                                    content: "❌ You can't do this",
-                                    flags: InteractionResponseFlags.EPHEMERAL
-                                }
-                            })
-                        }).then(res => res.json()))
+                        content: await followup(message, {
+                            content: "❌ You can't do this",
+                        })
                     })
                 }
                 await updateDefer(message, { ephemeral: true })
                 return response.send({
-                    content: console.log(await fetch(`https://discord.com/api/v10/channels/${message.channel_id}/messages/${message.message.id}`, {
+                    content: await fetch(`https://discord.com/api/v10/channels/${message.channel_id}/messages/${message.message.id}`, {
                         method: "DELETE",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
-                    }).then(res => res.json()))
+                    })
                 })
             }
         }
@@ -1061,14 +943,9 @@ module.exports = async (request, response) => {
                     }
                     if (version == undefined) {
                         return response.send({
-                            content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                                method: "POST",
-                                headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                    content: "Unknown Language!",
-                                    flags: InteractionResponseFlags.EPHEMERAL
-                                })
-                            }).then(res => res.json()))
+                            content: await followup(message, {
+                                content: "Unknown Language!",
+                            })
                         })
                     }
                     if (runtimes[index].language == "python") {
@@ -1247,34 +1124,30 @@ module.exports = async (request, response) => {
                         runembed.fields.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
                     }
                     return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                            method: "POST",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                embeds: [runembed],
-                                components: [
-                                    {
-                                        type: MessageComponentTypes.ACTION_ROW,
-                                        components: [
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: `edit - ${message.member?.user.id || message.user.id}`,
-                                                emoji: { name: "Edit", id: "1104464874744074370" }
-                                            },
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.DANGER,
-                                                custom_id: `delete - ${message.member?.user.id || message.user.id}`,
-                                                emoji: { name: "Delete", id: "1104477832308068352" }
-                                            }
-                                        ]
-                                    }
-                                ]
-                            })
-                        }).then(res => res.json()))
+                        content: await followup(message, {
+                            embeds: [runembed],
+                            components: [
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
+                                    components: [
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.PRIMARY,
+                                            custom_id: `edit - ${message.member?.user.id || message.user.id}`,
+                                            emoji: { name: "Edit", id: "1104464874744074370" }
+                                        },
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.DANGER,
+                                            custom_id: `delete - ${message.member?.user.id || message.user.id}`,
+                                            emoji: { name: "Delete", id: "1104477832308068352" }
+                                        }
+                                    ]
+                                }
+                            ]
+                        })
                     })
                 }
                 case "runedit": {
@@ -1303,14 +1176,9 @@ module.exports = async (request, response) => {
                     }
                     if (version == undefined) {
                         return response.send({
-                            content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
-                                method: "POST",
-                                headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                    content: "Unknown Language!",
-                                    flags: InteractionResponseFlags.EPHEMERAL
-                                })
-                            }).then(res => res.json()))
+                            content: await followup(message, {
+                                content: "Unknown Language!",
+                            })
                         })
                     }
                     if (runtimes[index].language == "python") {
@@ -1489,34 +1357,30 @@ module.exports = async (request, response) => {
                         runembed.fields.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
                     }
                     return response.send({
-                        content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}/messages/${message.message.id}`, {
-                            method: "PATCH",
-                            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                embeds: [runembed],
-                                components: [
-                                    {
-                                        type: MessageComponentTypes.ACTION_ROW,
-                                        components: [
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.PRIMARY,
-                                                custom_id: `edit - ${message.member?.user.id || message.user.id}`,
-                                                emoji: { name: "Edit", id: "1104464874744074370" }
-                                            },
-                                            {
-                                                type: MessageComponentTypes.BUTTON,
-                                                label: "",
-                                                style: ButtonStyleTypes.DANGER,
-                                                custom_id: `delete - ${message.member?.user.id || message.user.id}`,
-                                                emoji: { name: "Delete", id: "1104477832308068352" }
-                                            }
-                                        ]
-                                    }
-                                ]
-                            })
-                        }).then(res => res.json()))
+                        content: await editFollowup(message, {
+                            embeds: [runembed],
+                            components: [
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
+                                    components: [
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.PRIMARY,
+                                            custom_id: `edit - ${message.member?.user.id || message.user.id}`,
+                                            emoji: { name: "Edit", id: "1104464874744074370" }
+                                        },
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.DANGER,
+                                            custom_id: `delete - ${message.member?.user.id || message.user.id}`,
+                                            emoji: { name: "Delete", id: "1104477832308068352" }
+                                        }
+                                    ]
+                                }
+                            ]
+                        })
                     })
                 }
             }
