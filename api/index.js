@@ -206,7 +206,7 @@ module.exports = async (request, response) => {
         else if (message.type === InteractionType.APPLICATION_COMMAND) {
             switch (message.data.name) {
                 case INVITE_CMD.name: {
-                    await deferReply(message, true)
+                    await deferReply(message, { ephemeral: true })
                     let guilds = await fetch("https://discord.com/api/v10/users/@me/guilds", {
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
                     })
@@ -235,7 +235,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case VOTE_CMD.name: {
-                    await deferReply(message, true)
+                    await deferReply(message, { ephemeral: true })
                     let guilds = await fetch("https://discord.com/api/v10/users/@me/guilds", {
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
                     })
@@ -282,7 +282,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case LANGS_CMD.name: {
-                    await deferReply(message, true)
+                    await deferReply(message, { ephemeral: true })
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -390,7 +390,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case SIZE_CMD.name: {
-                    await deferReply(message, false)
+                    await deferReply(message, { ephemeral: false })
                     let result = await fetch(`https://packagephobia.com/v2/api.json?p=${message.data.options[0].value}`)
                     if (result.status != 200) {
                         return response.send({
@@ -452,7 +452,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case EVAL_CMD.name: {
-                    await deferReply(message, true)
+                    await deferReply(message, { ephemeral: true })
                     if ((message.member?.user.id || message.user.id) != "604339998312890379") {
                         return response.send({
                             content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
@@ -490,7 +490,7 @@ module.exports = async (request, response) => {
                     }
                 }
                 case REGISTER_CMD.name: {
-                    await deferReply(message, true)
+                    await deferReply(message, { ephemeral: true })
                     if ((message.member?.user.id || message.user.id) != "604339998312890379") {
                         return response.send({
                             content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
@@ -524,7 +524,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case INFO_CMD.name: {
-                    await deferReply(message, true)
+                    await deferReply(message, { ephemeral: true })
                     if ((message.member?.user.id || message.user.id) != "604339998312890379") {
                         return response.send({
                             content: console.log(await fetch(`https://discord.com/api/v10/webhooks/${process.env.ID}/${message.token}`, {
@@ -560,7 +560,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case CONVERT_CMD.name: {
-                    await deferReply(message, true)
+                    await deferReply(message, { ephemeral: true })
                     let number = message.data.options[1].value
                     switch (message.data.options[0].value) {
                         case "Decimal to Binary": {
@@ -602,7 +602,7 @@ module.exports = async (request, response) => {
         else if (message.type === InteractionType.MESSAGE_COMPONENT) {
             switch (message.data.custom_id) {
                 case "next1": {
-                    await updateDefer(message, true)
+                    await updateDefer(message, { ephemeral: true })
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -646,7 +646,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case "next2": {
-                    await updateDefer(message, true)
+                    await updateDefer(message, { ephemeral: true })
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -690,7 +690,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case "next3": {
-                    await updateDefer(message, true)
+                    await updateDefer(message, { ephemeral: true })
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -735,7 +735,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case "previous2": {
-                    await updateDefer(message, true)
+                    await updateDefer(message, { ephemeral: true })
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -780,7 +780,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case "previous3": {
-                    await updateDefer(message, true)
+                    await updateDefer(message, { ephemeral: true })
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -824,7 +824,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case "previous4": {
-                    await updateDefer(message, true)
+                    await updateDefer(message, { ephemeral: true })
                     let languages = []
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -869,7 +869,7 @@ module.exports = async (request, response) => {
                 }
             }
             if (message.data.custom_id.split(" - ")[0] === "reload") {
-                await updateDefer(message, true)
+                await updateDefer(message, { ephemeral: true })
                 let result = await fetch(`https://packagephobia.com/v2/api.json?p=${message.data.custom_id.split(" - ")[1]}`)
                 if (result.status != 200) {
                     return response.send({
@@ -1024,7 +1024,7 @@ module.exports = async (request, response) => {
                         }).then(res => res.json()))
                     })
                 }
-                await updateDefer(message, true)
+                await updateDefer(message, { ephemeral: true })
                 return response.send({
                     content: console.log(await fetch(`https://discord.com/api/v10/channels/${message.channel_id}/messages/${message.message.id}`, {
                         method: "DELETE",
@@ -1036,7 +1036,7 @@ module.exports = async (request, response) => {
         else if (message.type === InteractionType.MODAL_SUBMIT) {
             switch (message.data.custom_id) {
                 case "run": {
-                    await deferReply(message, false)
+                    await deferReply(message, { ephemeral: false })
                     let language = message.data.components[0].components[0].value.toLowerCase()
                     let code = message.data.components[1].components[0].value
                     let input = "" || message.data.components[2].components[0].value
@@ -1278,7 +1278,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 case "runedit": {
-                    await updateDefer(message, true)
+                    await updateDefer(message, { ephemeral: true })
                     let language = message.data.components[0].components[0].value.toLowerCase()
                     let code = message.data.components[1].components[0].value
                     let input = "" || message.data.components[2].components[0].value
