@@ -159,22 +159,26 @@ const CONVERT_CMD = {
 const SNIPPETS_CMD = {
     name: "snippets",
     name_localizations: ({
-        it: "snippets"
+        it: "snippets",
+        pl: "snippets"
     }),
     description: "View your snippets or another user snippets",
     description_localizations: ({
-        it: "Visualizza i tuoi snippets o quelli di un altro utente"
+        it: "Visualizza i tuoi snippets o quelli di un altro utente",
+        pl: "Zobacz snippets lub snippets innego użytkownika"
     }),
     type: ApplicationCommandTypes.CHAT_INPUT,
     options: [
         {
             name: "user",
             name_localizations: ({
-                it: "utente"
+                it: "utente",
+                pl: "użytkownik"
             }),
             description: "The user of which you want to see snippets",
             description_localizations: ({
-                it: "L'utente di cui vuoi vedere gli snippets"
+                it: "L'utente di cui vuoi vedere gli snippets",
+                pl: "Użytkownik, którego chcesz zobaczyć snippets"
             }),
             type: ApplicationCommandOptionTypes.USER,
             required: false
