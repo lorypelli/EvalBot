@@ -1187,7 +1187,7 @@ module.exports = async (request, response) => {
                         await snippets.create({ userId: message.member?.user.id || message.user.id, language: runtimes[index].language, code: code })
                     }
                     else {
-                        await snippets.updateOne({ userId: message.member?.user.id || message.user.id }, { $set: { language: runtimes[index].language, code: code } })
+                        await snippets.updateOne({ userId: message.member?.user.id || message.user.id }, { $set: { language: runtimes[index].language, code: code }})
                     }
                     return response.send({
                         content: await followup(message, {
@@ -1423,7 +1423,7 @@ module.exports = async (request, response) => {
                         runembed.fields.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
                     }
                     await mongoose.connect(url)
-                    await snippets.updateOne({ userId: message.member?.user.id || message.user.id }, { $set: { language: runtimes[index].language, code: code } })
+                    await snippets.updateOne({ userId: message.member?.user.id || message.user.id }, { $set: { language: runtimes[index].language, code: code }})
                     return response.send({
                         content: await editFollowup(message, {
                             embeds: [runembed],
