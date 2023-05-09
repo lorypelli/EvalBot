@@ -2,6 +2,9 @@ const { InteractionResponseType, InteractionType, verifyKey, MessageComponentTyp
 const getRawBody = require("raw-body")
 const { version } = require("os")
 const { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followup, editFollowup } = require("serverless_bots_addons")
+const mongoose = require("mongoose")
+const snippets = require("./schemas/Snippet")
+let url = `mongodb+srv://EvalBot:${process.env.PASSWORD}@evalbot.crs0qn4.mongodb.net/EvalBot?retryWrites=true&w=majority`
 const RUN_CMD = {
     name: "run",
     name_localizations: ({
@@ -153,6 +156,31 @@ const CONVERT_CMD = {
         }
     ]
 }
+const SNIPPETS_CMD = {
+    name: "snippets",
+    name_localizations: ({
+        it: "snippets"
+    }),
+    description: "View your snippets or another user snippets",
+    description_localizations: ({
+        it: "Visualizza i tuoi snippets o quelli di un altro utente"
+    }),
+    type: ApplicationCommandTypes.CHAT_INPUT,
+    options: [
+        {
+            name: "user",
+            name_localizations: ({
+                it: "utente"
+            }),
+            description: "The user of which you want to see snippets",
+            description_localizations: ({
+                it: "L'utente di cui vuoi vedere gli snippets"
+            }),
+            type: ApplicationCommandOptionTypes.USER,
+            required: false
+        },
+    ]
+}
 /**
  * @param { import("@vercel/node").VercelRequest } request
  * @param { import("@vercel/node").VercelResponse } response
@@ -246,7 +274,7 @@ module.exports = async (request, response) => {
                     await fetch(`https://discordbotlist.com/api/v1/bots/${process.env.ID}/commands`, {
                         method: "POST",
                         headers: { "Authorization": `Bot ${process.env.DBL}`, "Content-Type": "application/json" },
-                        body: JSON.stringify([RUN_CMD, LANGS_CMD, INVITE_CMD, VOTE_CMD, SIZE_CMD, CONVERT_CMD])
+                        body: JSON.stringify([RUN_CMD, LANGS_CMD, INVITE_CMD, VOTE_CMD, SIZE_CMD, CONVERT_CMD, SNIPPETS_CMD])
                     })
                     return response.send({
                         content: await followup(message, {
@@ -460,7 +488,7 @@ module.exports = async (request, response) => {
                     await fetch(`https://discord.com/api/v10/applications/${process.env.ID}/commands`, {
                         method: "PUT",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
-                        body: JSON.stringify([RUN_CMD, LANGS_CMD, INVITE_CMD, VOTE_CMD, SIZE_CMD, CONVERT_CMD])
+                        body: JSON.stringify([RUN_CMD, LANGS_CMD, INVITE_CMD, VOTE_CMD, SIZE_CMD, CONVERT_CMD, SNIPPETS_CMD])
                     })
                     await fetch(`https://discord.com/api/v10/applications/${process.env.ID}/guilds/818058268978315286/commands`, {
                         method: "PUT",
@@ -523,6 +551,26 @@ module.exports = async (request, response) => {
                     return response.send({
                         content: await followup(message, {
                             content: `The number \`${message.data.options[1].value}\` converted using the \`${message.data.options[0].value}\` system is \`${number}\``,
+                        })
+                    })
+                }
+                case SNIPPETS_CMD.name: {
+                    await deferReply(message, { ephemeral: false })
+                    let user = (message.member?.user.id || message.user.id) || message.data.options[0].value
+                    await mongoose.connect(url)
+                    let totalSnippets = await snippets.find({ userId: user })
+                    let snippetsembed = {
+                        color: 0x607387,
+                        title: "Snippets",
+                        description: `Total snippets: ${totalSnippets.length}`,
+                        fields: []
+                    }
+                    for (let i = 0; i < totalSnippets.length; i++) {
+                        snippetsembed.fields.push({ name: `Language: ${totalSnippets[i].language}`, value: "```" + totalSnippets[i].language  + "\n" +  totalSnippets[i].code + "\n" + "```", inline: false })
+                    }
+                    return response.send({
+                        content: await followup(message, {
+                            embeds: [snippetsembed]
                         })
                     })
                 }
@@ -835,6 +883,8 @@ module.exports = async (request, response) => {
                         })
                     })
                 }
+                await mongoose.connect(url)
+                let originalSnippet = await snippets.findOne({ userId: message.member?.user.id || message.user.id })
                 return response.send({
                     content: await showModal(message, {
                         title: "Run Code",
@@ -850,7 +900,8 @@ module.exports = async (request, response) => {
                                         custom_id: "language",
                                         required: true,
                                         min_length: 1,
-                                        max_length: 10
+                                        max_length: 10,
+                                        value: originalSnippet.language
                                     }
                                 ]
                             },
@@ -863,7 +914,8 @@ module.exports = async (request, response) => {
                                         style: TextStyleTypes.PARAGRAPH,
                                         custom_id: "code",
                                         required: true,
-                                        min_length: 5
+                                        min_length: 5,
+                                        value: originalSnippet.code
                                     }
                                 ]
                             },
@@ -1123,6 +1175,8 @@ module.exports = async (request, response) => {
                     if (packages && runtimes[index].language == "python") {
                         runembed.fields.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
                     }
+                    await mongoose.connect(url)
+                    await snippets.create({ userId: message.member?.user.id || message.user.id, language: runtimes[index].language, code: code })
                     return response.send({
                         content: await followup(message, {
                             embeds: [runembed],
@@ -1356,6 +1410,8 @@ module.exports = async (request, response) => {
                     if (packages && runtimes[index].language == "python") {
                         runembed.fields.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
                     }
+                    await mongoose.connect(url)
+                    await snippets.updateOne({ userId: message.member?.user.id || message.user.id }, { $set: { language: runtimes[index].language, code: code } })
                     return response.send({
                         content: await editFollowup(message, {
                             embeds: [runembed],
