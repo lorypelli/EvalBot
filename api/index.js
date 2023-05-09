@@ -908,7 +908,7 @@ module.exports = async (request, response) => {
                                         required: true,
                                         min_length: 1,
                                         max_length: 10,
-                                        value: originalSnippet?.language
+                                        value: "" || originalSnippet?.language
                                     }
                                 ]
                             },
@@ -922,7 +922,7 @@ module.exports = async (request, response) => {
                                         custom_id: "code",
                                         required: true,
                                         min_length: 5,
-                                        value: originalSnippet?.code
+                                        value: "" || originalSnippet?.code
                                     }
                                 ]
                             },
