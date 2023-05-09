@@ -1183,7 +1183,8 @@ module.exports = async (request, response) => {
                         runembed.fields.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
                     }
                     await mongoose.connect(url)
-                    if (snippets.find({ userId: message.member?.user.id || message.user.id }) == null) {
+                    let userSnippets = snippets.find({ userId: message.member?.user.id || message.user.id })
+                    if ((await userSnippets).length == 0) {
                         await snippets.create({ userId: message.member?.user.id || message.user.id, language: runtimes[index].language, code: code })
                     }
                     else {
