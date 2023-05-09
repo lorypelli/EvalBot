@@ -19,8 +19,8 @@
     "CONVERT_FIRST_OPTION_SECOND_CHOICE_NAME": "Binary to Decimal",
     "CONVERT_SECOND_OPTION_NAME": "number",
     "CONVERT_SECOND_OPTION_DESCRIPTION": "The number to convert",
-    "SNIPPETS_CMD_NAME": "snippets",
-    "SNIPPETS_CMD_DESCRIPTION": "View your snippets or another user snippets",
+    "SNIPPETS_CMD_NAME": "{{snippets}}",
+    "SNIPPETS_CMD_DESCRIPTION": "View your {{snippets}} or another user {{snippets}}",
     "SNIPPETS_OPTION_NAME": "user",
-    "SNIPPETS_OPTION_DESCRIPTION": "The user of which you want to see snippets"
+    "SNIPPETS_OPTION_DESCRIPTION": "The user of which you want to see {{snippets}}"
 }
