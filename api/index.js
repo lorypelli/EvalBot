@@ -567,7 +567,8 @@ module.exports = async (request, response) => {
                         color: 0x607387,
                         title: "Snippets",
                         description: `Total snippets: ${totalSnippets.length}`,
-                        fields: []
+                        fields: [],
+                        footer: "Only the latest snippet is showed because this command is still in beta"
                     }
                     for (let i = 0; i < totalSnippets.length; i++) {
                         snippetsembed.fields.push({ name: `Language: ${totalSnippets[i].language}`, value: "```" + totalSnippets[i].language  + "\n" +  totalSnippets[i].code.slice(0, 1024) + "\n" + "```", inline: false })
