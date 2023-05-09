@@ -568,10 +568,12 @@ module.exports = async (request, response) => {
                         title: "Snippets",
                         description: `Total snippets: ${totalSnippets.length}`,
                         fields: [],
-                        footer: "Only the latest snippet is showed because this command is still in beta"
+                        footer: {
+                            text: "Only the latest snippet is showed because this command is still in beta"
+                        }
                     }
                     for (let i = 0; i < totalSnippets.length; i++) {
-                        snippetsembed.fields.push({ name: `Language: ${totalSnippets[i].language}`, value: "```" + totalSnippets[i].language  + "\n" +  totalSnippets[i].code.slice(0, 1024) + "\n" + "```", inline: false })
+                        snippetsembed.fields.push({ name: `Language: ${totalSnippets[i].language}`, value: "```" + totalSnippets[i].language + "\n" + totalSnippets[i].code.slice(0, 1024) + "\n" + "```", inline: false })
                     }
                     return response.send({
                         content: await followup(message, {
@@ -1185,7 +1187,7 @@ module.exports = async (request, response) => {
                         await snippets.create({ userId: message.member?.user.id || message.user.id, language: runtimes[index].language, code: code })
                     }
                     else {
-                        await snippets.updateOne({ userId: message.member?.user.id || message.user.id }, { $set: { language: runtimes[index].language, code: code }})
+                        await snippets.updateOne({ userId: message.member?.user.id || message.user.id }, { $set: { language: runtimes[index].language, code: code } })
                     }
                     return response.send({
                         content: await followup(message, {
