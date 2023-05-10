@@ -231,6 +231,7 @@ module.exports = async (request, response) => {
         else if (message.type === InteractionType.APPLICATION_COMMAND) {
             switch (message.data.name) {
                 case INVITE_CMD.name: {
+                    console.log(message)
                     await deferReply(message, { ephemeral: true })
                     let guilds = await fetch("https://discord.com/api/v10/users/@me/guilds", {
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
@@ -560,7 +561,7 @@ module.exports = async (request, response) => {
                 }
                 case SNIPPETS_CMD.name: {
                     await deferReply(message, { ephemeral: false })
-                    let user = (message.member?.user.id || message.user.id) || message.data.options[0].value
+                    let user = message.data?.options[0]?.value || (message.member?.user.id || message.user.id)
                     await mongoose.connect(url)
                     let totalSnippets = await snippets.find({ userId: user })
                     let snippetsembed = {
