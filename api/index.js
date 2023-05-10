@@ -231,7 +231,6 @@ module.exports = async (request, response) => {
         else if (message.type === InteractionType.APPLICATION_COMMAND) {
             switch (message.data.name) {
                 case INVITE_CMD.name: {
-                    console.log(message)
                     await deferReply(message, { ephemeral: true })
                     let guilds = await fetch("https://discord.com/api/v10/users/@me/guilds", {
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
