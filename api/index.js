@@ -1,7 +1,7 @@
 const { InteractionResponseType, InteractionType, verifyKey, MessageComponentTypes, ButtonStyleTypes, TextStyleTypes } = require("discord-interactions")
 const getRawBody = require("raw-body")
 const { version } = require("os")
-const { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followup, editFollowup } = require("serverless_bots_addons")
+const { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followup, editFollowup, get } = require("serverless_bots_addons")
 const mongoose = require("mongoose")
 const snippets = require("./schemas/Snippet")
 let url = `mongodb+srv://EvalBot:${process.env.PASSWORD}@evalbot.crs0qn4.mongodb.net/EvalBot?retryWrites=true&w=majority`
@@ -404,7 +404,8 @@ module.exports = async (request, response) => {
                 }
                 case SIZE_CMD.name: {
                     await deferReply(message, { ephemeral: false })
-                    let result = await fetch(`https://packagephobia.com/v2/api.json?p=${message.data.options[0].value}`)
+                    let package = get(message, "name")
+                    let result = await fetch(`https://packagephobia.com/v2/api.json?p=${package}`)
                     if (result.status != 200) {
                         return response.send({
                             content: await followup(message, {
@@ -446,7 +447,7 @@ module.exports = async (request, response) => {
                                             type: MessageComponentTypes.BUTTON,
                                             label: "",
                                             style: ButtonStyleTypes.PRIMARY,
-                                            custom_id: `reload - ${message.data.options[0].value}`,
+                                            custom_id: `reload - ${package}`,
                                             emoji: { name: "Reload", id: "1104736112049659995" }
                                         }
                                     ]
@@ -465,7 +466,7 @@ module.exports = async (request, response) => {
                         })
                     }
                     try {
-                        let code = eval(message.data.options[0].value.slice(0, 950))
+                        let code = eval(get(message, "code").slice(0, 950))
                         return response.send({
                             content: await followup(message, {
                                 content: "```js" + "\n" + JSON.stringify(code, null, 2) + "\n" + "```"
@@ -534,33 +535,35 @@ module.exports = async (request, response) => {
                 }
                 case CONVERT_CMD.name: {
                     await deferReply(message, { ephemeral: true })
-                    let number = message.data.options[1].value
-                    switch (message.data.options[0].value) {
+                    let originalNumber = get(message, "number")
+                    let system = get(message, "system")
+                    let number
+                    switch (system) {
                         case "Decimal to Binary": {
-                            number = message.data.options[1].value.toString(2)
+                            number = originalNumber.toString(2)
                             break
                         }
                         case "Binary to Decimal": {
-                            if (message.data.options[1].value.toString().includes("2") || message.data.options[1].value.toString().includes("3") || message.data.options[1].value.toString().includes("4") || message.data.options[1].value.toString().includes("5") || message.data.options[1].value.toString().includes("6") || message.data.options[1].value.toString().includes("7") || message.data.options[1].value.toString().includes("8") || message.data.options[1].value.toString().includes("9")) {
+                            if (originalNumber.toString().includes("2") || originalNumber.toString().includes("3") || originalNumber.toString().includes("4") || originalNumber.toString().includes("5") || originalNumber.toString().includes("6") || originalNumber.toString().includes("7") || originalNumber.toString().includes("8") || originalNumber.toString().includes("9")) {
                                 return response.send({
                                     content: await followup(message, {
                                         content: "❌ The binary number isn't valid",
                                     })
                                 })
                             }
-                            number = parseInt(message.data.options[1].value, 2)
+                            number = parseInt(originalNumber, 2)
                             break
                         }
                     }
                     return response.send({
                         content: await followup(message, {
-                            content: `The number \`${message.data.options[1].value}\` converted using the \`${message.data.options[0].value}\` system is \`${number}\``,
+                            content: `The number \`${originalNumber}\` converted using the \`${system}\` system is \`${number}\``,
                         })
                     })
                 }
                 case SNIPPETS_CMD.name: {
                     await deferReply(message, { ephemeral: false })
-                    let user = message.data?.options[0]?.value || (message.member?.user.id || message.user.id)
+                    let user = get(message, "user") || (message.member?.user.id || message.user.id)
                     await mongoose.connect(url)
                     let totalSnippets = await snippets.find({ userId: user })
                     let snippetsembed = {
@@ -978,10 +981,10 @@ module.exports = async (request, response) => {
             switch (message.data.custom_id) {
                 case "run": {
                     await deferReply(message, { ephemeral: false })
-                    let language = message.data.components[0].components[0].value.toLowerCase()
-                    let code = message.data.components[1].components[0].value
-                    let input = "" || message.data.components[2].components[0].value
-                    let packages = "" || message.data.components[3].components[0].value
+                    let language = get(message, "language").toLowerCase()
+                    let code = get(message, "code")
+                    let input = "" || get(message, "input")
+                    let packages = "" || get(message, "packages")
                     let version
                     let index
                     for (let i = 0; i < runtimes.length; i++) {
@@ -1219,10 +1222,10 @@ module.exports = async (request, response) => {
                 }
                 case "runedit": {
                     await updateDefer(message, { ephemeral: true })
-                    let language = message.data.components[0].components[0].value.toLowerCase()
-                    let code = message.data.components[1].components[0].value
-                    let input = "" || message.data.components[2].components[0].value
-                    let packages = "" || message.data.components[3].components[0].value
+                    let language = get(message, "language").toLowerCase()
+                    let code = get(message, "code")
+                    let input = "" || get(message, "input")
+                    let packages = "" || get(message, "packages")
                     let version
                     let index
                     for (let i = 0; i < runtimes.length; i++) {
