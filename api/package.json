@@ -9,10 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "discord-interactions": "^3.3.0",
-    "mongoose": "^7.1.0",
+    "discord-interactions": "^3.4.0",
+    "mongoose": "^7.1.1",
     "os": "^0.1.2",
     "raw-body": "^2.5.2",
-    "serverless_bots_addons": "^3.2.2-20230510"
+    "serverless_bots_addons": "^3.3.8-20230511"
   }
 }
