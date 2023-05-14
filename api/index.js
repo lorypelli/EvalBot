@@ -194,10 +194,6 @@ module.exports = async (request, response) => {
         return response.status(405).send({ error: "Method not allowed" })
     }
     else if (request.method === "POST") {
-        let user = await fetch("https://discord.com/api/v10/users/@me", {
-            headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
-        })
-        user = await user.json()
         let runtimes = await fetch("https://emkc.org/api/v2/piston/runtimes")
         runtimes = await runtimes.json()
         let signature = request.headers["x-signature-ed25519"]
@@ -213,7 +209,9 @@ module.exports = async (request, response) => {
             return response.status(401).send({ error: "Unauthorized" })
         }
         let message = request.body
-        if (user.username == "EvalBot Beta" && (message.member?.user.id || message.user.id) != "604339998312890379") {
+        let id = (process.env.TOKEN)?.split(".")[0]
+        id = Buffer.from(id, "base64")
+        if (id == "1077228141531123852" && (message.member?.user.id || message.user.id) != "604339998312890379") {
             await deferReply(message, { ephemeral: true })
             return response.send({
                 content: await followup(message, {
@@ -1191,7 +1189,7 @@ module.exports = async (request, response) => {
                         await snippets.create({ userId: message.member?.user.id || message.user.id, language: runtimes[index].language, code: code })
                     }
                     else {
-                        await snippets.updateOne({ userId: message.member?.user.id || message.user.id }, { $set: { language: runtimes[index].language, code: code }})
+                        await snippets.updateOne({ userId: message.member?.user.id || message.user.id }, { $set: { language: runtimes[index].language, code: code } })
                     }
                     return response.send({
                         content: await followup(message, {
@@ -1427,7 +1425,7 @@ module.exports = async (request, response) => {
                         runembed.fields.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
                     }
                     await mongoose.connect(url)
-                    await snippets.updateOne({ userId: message.member?.user.id || message.user.id }, { $set: { language: runtimes[index].language, code: code }})
+                    await snippets.updateOne({ userId: message.member?.user.id || message.user.id }, { $set: { language: runtimes[index].language, code: code } })
                     return response.send({
                         content: await editFollowup(message, {
                             embeds: [runembed],
