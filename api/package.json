@@ -10,9 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "discord-interactions": "^3.4.0",
-    "mongoose": "^7.1.1",
+    "mongoose": "^7.2.0",
     "os": "^0.1.2",
     "raw-body": "^2.5.2",
-    "serverless_bots_addons": "^3.3.8-20230511"
+    "serverless_bots_addons": "^3.3.9-20230519"
   }
 }
