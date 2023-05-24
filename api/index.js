@@ -1008,7 +1008,7 @@ module.exports = async (request, response) => {
                             })
                         })
                     }
-                    if (runtimes[index].language == "python") {
+                    if (packages && runtimes[index].language == "python") {
                         packages = packages.split("\n")
                         let imports = []
                         for (let i = 0; i < packages.length; i++) {
