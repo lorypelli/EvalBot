@@ -979,10 +979,10 @@ module.exports = async (request, response) => {
             switch (message.data.custom_id) {
                 case "run": {
                     await deferReply(message, { ephemeral: false })
-                    let language = get(message, "language").toLowerCase()
-                    let code = get(message, "code")
-                    let input = "" || get(message, "input")
-                    let packages = "" || get(message, "packages")
+                    let language = get(message, "language").toLowerCase().trim()
+                    let code = get(message, "code").trim()
+                    let input = "" || get(message, "input").trim()
+                    let packages = "" || get(message, "packages").trim()
                     let version
                     let index
                     for (let i = 0; i < runtimes.length; i++) {
@@ -1220,10 +1220,10 @@ module.exports = async (request, response) => {
                 }
                 case "runedit": {
                     await updateDefer(message, { ephemeral: true })
-                    let language = get(message, "language").toLowerCase()
-                    let code = get(message, "code")
-                    let input = "" || get(message, "input")
-                    let packages = "" || get(message, "packages")
+                    let language = get(message, "language").toLowerCase().trim()
+                    let code = get(message, "code").trim()
+                    let input = "" || get(message, "input").trim()
+                    let packages = "" || get(message, "packages").trim()
                     let version
                     let index
                     for (let i = 0; i < runtimes.length; i++) {
@@ -1249,7 +1249,7 @@ module.exports = async (request, response) => {
                             })
                         })
                     }
-                    if (runtimes[index].language == "python") {
+                    if (packages && runtimes[index].language == "python") {
                         packages = packages.split("\n")
                         let imports = []
                         for (let i = 0; i < packages.length; i++) {
