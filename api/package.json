@@ -13,6 +13,6 @@
     "mongoose": "^7.2.0",
     "os": "^0.1.2",
     "raw-body": "^2.5.2",
-    "serverless_bots_addons": "^3.4.0-20230527"
+    "serverless_bots_addons": "^3.4.5-20230527"
   }
 }
