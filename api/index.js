@@ -1173,7 +1173,7 @@ module.exports = async (request, response) => {
                                 { name: "Output", value: "No output!", inline: false },
                             ],
                             footer: {
-                                text: `The code took ${parseFloat(end - start).toFixed(0)}ms to be executed`
+                                text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                             }
                         }
                     }
@@ -1188,7 +1188,7 @@ module.exports = async (request, response) => {
                                 { name: "Output", value: "No output!", inline: false },
                             ],
                             footer: {
-                                text: `The code took ${parseFloat(end - start).toFixed(0)}ms to be executed`
+                                text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                             }
                         }
                     }
@@ -1340,7 +1340,7 @@ module.exports = async (request, response) => {
                             { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                         ],
                         footer: {
-                            text: `The code took ${parseFloat(end - start).toFixed(0)}ms to be executed`
+                            text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                         }
                     }
                     if (code.length > 925) {
@@ -1355,7 +1355,7 @@ module.exports = async (request, response) => {
                                 { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                             ],
                             footer: {
-                                text: `The code took ${parseFloat(end - start).toFixed(0)}ms to be executed`
+                                text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                             }
                         }
                     }
