@@ -1,7 +1,7 @@
 const { InteractionResponseType, InteractionType, verifyKey, MessageComponentTypes, ButtonStyleTypes, TextStyleTypes } = require("discord-interactions")
 const getRawBody = require("raw-body")
 const { version } = require("os")
-const { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followup, editFollowup, get } = require("serverless_bots_addons")
+const { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followup, editFollowup, get, autocompleteResult } = require("serverless_bots_addons")
 const mongoose = require("mongoose")
 const snippets = require("./schemas/Snippet")
 let url = `mongodb+srv://EvalBot:${process.env.PASSWORD}@evalbot.crs0qn4.mongodb.net/EvalBot?retryWrites=true&w=majority`
@@ -82,7 +82,8 @@ const SIZE_CMD = {
                 pl: "Nazwa pakietu npm"
             }),
             type: ApplicationCommandOptionTypes.STRING,
-            required: true
+            required: true,
+            autocomplete: true
         }
     ]
 }
@@ -974,6 +975,20 @@ module.exports = async (request, response) => {
                     })
                 })
             }
+        }
+        else if (message.type === InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE) {
+            let package = get(message, "name")
+            let result = await fetch(`https://api.npms.io/v2/search/suggestions?q=${package}`)
+            result = await result.json()
+            let choices = []
+            for (let i = 0; i < 25; i++) {
+                choices.push({ name: result[i].package.name, value: result[i].package.name })
+            }
+            return response.send({
+                content: await autocompleteResult(message, {
+                    choices: choices,
+                })
+            })
         }
         else if (message.type === InteractionType.MODAL_SUBMIT) {
             switch (message.data.custom_id) {
