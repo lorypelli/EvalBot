@@ -137,8 +137,8 @@ const CONVERT_CMD = {
             type: ApplicationCommandOptionTypes.STRING,
             required: true,
             choices: [
-                { name: "Decimal to Binary", name_localizations: ({ it: "Decimale a Binario", pl: "Ułamek dziesiętny do ułamka binarnego" }), value: "Decimal to Binary" },
-                { name: "Binary to Decimal", name_localizations: ({ it: "Binario a Decimale", pl: "Ułamek binarny do ułamka dziesiętnego" }), value: "Binary to Decimal" }
+                { name: "Decimal to Binary", name_localizations: { it: "Decimale a Binario", pl: "Ułamek dziesiętny do ułamka binarnego" }, value: "Decimal to Binary" },
+                { name: "Binary to Decimal", name_localizations: { it: "Binario a Decimale", pl: "Ułamek binarny do ułamka dziesiętnego" }, value: "Binary to Decimal" }
             ]
         },
         {
