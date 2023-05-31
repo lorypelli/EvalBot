@@ -7,80 +7,80 @@ const snippets = require("./schemas/Snippet")
 let url = `mongodb+srv://EvalBot:${process.env.PASSWORD}@evalbot.crs0qn4.mongodb.net/EvalBot?retryWrites=true&w=majority`
 const RUN_CMD = {
     name: "run",
-    name_localizations: ({
+    name_localizations: {
         it: "esegui",
         pl: "uruchom"
-    }),
+    },
     description: "Run a code (Piston API)",
-    description_localizations: ({
+    description_localizations: {
         it: "Esegui un codice (Piston API)",
         pl: "Uruchom kod (Piston API)"
-    }),
+    },
     type: ApplicationCommandTypes.CHAT_INPUT
 }
 const LANGS_CMD = {
     name: "languages",
-    name_localizations: ({
+    name_localizations: {
         it: "linguaggi",
         pl: "języki"
-    }),
+    },
     description: "Show supported programming languages",
-    description_localizations: ({
+    description_localizations: {
         it: "Mostra i linguaggi di programmazione supportati",
         pl: "Pokaż obsługiwane języki programowania"
-    }),
+    },
     type: ApplicationCommandTypes.CHAT_INPUT
 }
 const INVITE_CMD = {
     name: "invite",
-    name_localizations: ({
+    name_localizations: {
         it: "invita",
         pl: "zaproś"
-    }),
+    },
     description: "Get the bot invite link",
-    description_localizations: ({
+    description_localizations: {
         it: "Ottieni il link d'invito del bot",
         pl: "Uzyskaj link z zaproszeniem bota"
-    }),
+    },
     type: ApplicationCommandTypes.CHAT_INPUT
 }
 const VOTE_CMD = {
     name: "vote",
-    name_localizations: ({
+    name_localizations: {
         it: "vota",
         pl: "głosuj"
-    }),
+    },
     description: "Vote for the bot on topgg",
-    description_localizations: ({
+    description_localizations: {
         it: "Vota per il bot su topgg",
         pl: "Głosuj na bota na topgg"
-    }),
+    },
     type: ApplicationCommandTypes.CHAT_INPUT
 }
 const SIZE_CMD = {
     name: "size",
-    name_localizations: ({
+    name_localizations: {
         it: "dimensione",
         pl: "rozmiar"
-    }),
+    },
     description: "Get the size of an npm package",
-    description_localizations: ({
+    description_localizations: {
         it: "Ottieni la dimensione di un pacchetto npm",
         pl: "Uzyskaj rozmiar pakietu npm"
-    }),
+    },
     type: ApplicationCommandTypes.CHAT_INPUT,
     options: [
         {
             name: "name",
-            name_localizations: ({
+            name_localizations: {
                 it: "nome",
                 pl: "nazwa"
-            }),
+            },
             description: "Name of the npm package",
-            description_localizations: ({
+            description_localizations: {
                 it: "Nome del pacchetto npm",
                 pl: "Nazwa pakietu npm"
-            }),
+            },
             type: ApplicationCommandOptionTypes.STRING,
             required: true,
             autocomplete: true
@@ -112,28 +112,28 @@ const INFO_CMD = {
 }
 const CONVERT_CMD = {
     name: "convert",
-    name_localizations: ({
+    name_localizations: {
         it: "converti",
         pl: "konwertuj"
-    }),
+    },
     description: "Convert a decimal number into binary one or vice versa",
-    description_localizations: ({
+    description_localizations: {
         it: "Converti un numero decimale in binario o viceversa",
         pl: "Konwertuj liczbę dziesiętną na jedną lub odwrotnie"
-    }),
+    },
     type: ApplicationCommandTypes.CHAT_INPUT,
     options: [
         {
             name: "system",
-            name_localizations: ({
+            name_localizations: {
                 it: "sistema",
                 pl: "system"
-            }),
+            },
             description: "Convert into binary or decimal?",
-            description_localizations: ({
+            description_localizations: {
                 it: "Converti in binario o decimale?",
                 pl: "Konwertować na binarny czy dziesiętny?"
-            }),
+            },
             type: ApplicationCommandOptionTypes.STRING,
             required: true,
             choices: [
@@ -143,15 +143,15 @@ const CONVERT_CMD = {
         },
         {
             name: "number",
-            name_localizations: ({
+            name_localizations: {
                 it: "numero",
                 pl: "liczba"
-            }),
+            },
             description: "The number to convert",
-            description_localizations: ({
+            description_localizations: {
                 it: "Il numero da convertire",
                 pl: "Liczba do przekonwertowania"
-            }),
+            },
             type: ApplicationCommandOptionTypes.NUMBER,
             required: true
         }
@@ -159,28 +159,28 @@ const CONVERT_CMD = {
 }
 const SNIPPETS_CMD = {
     name: "snippets",
-    name_localizations: ({
+    name_localizations: {
         it: "snippets",
         pl: "snippets"
-    }),
+    },
     description: "View your snippets or another user snippets",
-    description_localizations: ({
+    description_localizations: {
         it: "Visualizza i tuoi snippets o quelli di un altro utente",
         pl: "Zobacz snippets lub snippets innego użytkownika"
-    }),
+    },
     type: ApplicationCommandTypes.CHAT_INPUT,
     options: [
         {
             name: "user",
-            name_localizations: ({
+            name_localizations: {
                 it: "utente",
                 pl: "użytkownik"
-            }),
+            },
             description: "The user of which you want to see snippets",
-            description_localizations: ({
+            description_localizations: {
                 it: "L'utente di cui vuoi vedere gli snippets",
                 pl: "Użytkownik, którego chcesz zobaczyć snippets"
-            }),
+            },
             type: ApplicationCommandOptionTypes.USER,
             required: false
         },
