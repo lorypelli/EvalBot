@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@vercel/node": "^2.15.2",
     "discord-interactions": "^3.4.0",
     "mongoose": "^7.3.0",
     "os": "^0.1.2",
