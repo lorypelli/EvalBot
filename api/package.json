@@ -14,6 +14,6 @@
     "mongoose": "^7.3.1",
     "os": "^0.1.2",
     "raw-body": "^2.5.2",
-    "serverless_bots_addons": "^5.0.7-20230625"
+    "serverless_bots_addons": "^5.1.1-20230626"
   }
 }

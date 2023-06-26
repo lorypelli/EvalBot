@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "strictNullChecks": true,
+        "esModuleInterop": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
+    }
+}

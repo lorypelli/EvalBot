@@ -1,11 +1,12 @@
-const { InteractionResponseType, InteractionType, verifyKey, MessageComponentTypes, ButtonStyleTypes, TextStyleTypes } = require("discord-interactions")
-const getRawBody = require("raw-body")
-const { version } = require("os")
-const { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followup, editFollowup, get, autocompleteResult } = require("serverless_bots_addons")
-const mongoose = require("mongoose")
-const snippets = require("./schemas/Snippet")
+import { InteractionResponseType, InteractionType, verifyKey, MessageComponentTypes, ButtonStyleTypes, TextStyleTypes } from "discord-interactions"
+import getRawBody from "raw-body"
+import { version } from "os"
+import { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followup, editFollowup, get, autocompleteResult, Interaction, Embeds, AutocompleteOptions, SlashCommandsStructure } from "serverless_bots_addons"
+import mongoose from "mongoose"
+import snippets from "./schemas/Snippet"
+import { Runtimes, PackageSize, PackageName, Result } from "./addons"
 let url = `mongodb+srv://EvalBot:${process.env.PASSWORD}@evalbot.crs0qn4.mongodb.net/EvalBot?retryWrites=true&w=majority`
-const RUN_CMD = {
+const RUN_CMD: SlashCommandsStructure = {
     name: "run",
     name_localizations: {
         it: "esegui",
@@ -18,7 +19,7 @@ const RUN_CMD = {
     },
     type: ApplicationCommandTypes.CHAT_INPUT
 }
-const LANGS_CMD = {
+const LANGS_CMD: SlashCommandsStructure = {
     name: "languages",
     name_localizations: {
         it: "linguaggi",
@@ -31,7 +32,7 @@ const LANGS_CMD = {
     },
     type: ApplicationCommandTypes.CHAT_INPUT
 }
-const INVITE_CMD = {
+const INVITE_CMD: SlashCommandsStructure = {
     name: "invite",
     name_localizations: {
         it: "invita",
@@ -44,7 +45,7 @@ const INVITE_CMD = {
     },
     type: ApplicationCommandTypes.CHAT_INPUT
 }
-const VOTE_CMD = {
+const VOTE_CMD: SlashCommandsStructure = {
     name: "vote",
     name_localizations: {
         it: "vota",
@@ -57,7 +58,7 @@ const VOTE_CMD = {
     },
     type: ApplicationCommandTypes.CHAT_INPUT
 }
-const SIZE_CMD = {
+const SIZE_CMD: SlashCommandsStructure = {
     name: "size",
     name_localizations: {
         it: "dimensione",
@@ -87,7 +88,7 @@ const SIZE_CMD = {
         }
     ]
 }
-const EVAL_CMD = {
+const EVAL_CMD: SlashCommandsStructure = {
     name: "eval",
     description: "Eval code (only developer)",
     type: ApplicationCommandTypes.CHAT_INPUT,
@@ -100,17 +101,17 @@ const EVAL_CMD = {
         }
     ]
 }
-const REGISTER_CMD = {
+const REGISTER_CMD: SlashCommandsStructure = {
     name: "register",
     description: "Register slash commands (only developer)",
     type: ApplicationCommandTypes.CHAT_INPUT
 }
-const INFO_CMD = {
+const INFO_CMD: SlashCommandsStructure = {
     name: "info",
     description: "Get bot info (only developer)",
     type: ApplicationCommandTypes.CHAT_INPUT
 }
-const CONVERT_CMD = {
+const CONVERT_CMD: SlashCommandsStructure = {
     name: "convert",
     name_localizations: {
         it: "converti",
@@ -157,7 +158,7 @@ const CONVERT_CMD = {
         }
     ]
 }
-const SNIPPETS_CMD = {
+const SNIPPETS_CMD: SlashCommandsStructure = {
     name: "snippets",
     name_localizations: {
         it: "snippets",
@@ -186,33 +187,28 @@ const SNIPPETS_CMD = {
         },
     ]
 }
-/**
- * @param { import("@vercel/node").VercelRequest } request
- * @param { import("@vercel/node").VercelResponse } response
- */
-module.exports = async (request, response) => {
+export default async (request: import("@vercel/node").VercelRequest, response: import("@vercel/node").VercelResponse) => {
     if (request.method !== "POST") {
         return response.status(405).send({ error: "Method not allowed" })
     }
     else if (request.method === "POST") {
-        let runtimes = await fetch("https://emkc.org/api/v2/piston/runtimes")
-        runtimes = await runtimes.json()
-        let signature = request.headers["x-signature-ed25519"]
-        let timestamp = request.headers["x-signature-timestamp"]
-        let body = await getRawBody(request)
-        let isValidRequest = verifyKey(
+        let runtimes: Response | Runtimes[] = await fetch("https://emkc.org/api/v2/piston/runtimes")
+        runtimes = await runtimes.json() as Runtimes[]
+        let signature: string | string[] = request.headers["x-signature-ed25519"]!
+        let timestamp: string | string[] = request.headers["x-signature-timestamp"]!
+        let body: Buffer = await getRawBody(request)
+        let isValidRequest: boolean = verifyKey(
             body,
-            signature,
-            timestamp,
-            process.env.PUBLIC_KEY
+            signature as string,
+            timestamp as string,
+            process.env.PUBLIC_KEY!
         )
         if (!isValidRequest) {
             return response.status(401).send({ error: "Unauthorized" })
         }
-        let message = request.body
-        let id = (process.env.TOKEN)?.split(".")[0]
-        id = Buffer.from(id, "base64")
-        if (id == "1077228141531123852" && (message.member?.user.id || message.user.id) != "604339998312890379") {
+        let message: Interaction = request.body
+        let id: string | Buffer = (process.env.TOKEN)?.split(".")[0]!
+        if (id == "1077228141531123852" && (message.member?.user.id || message.user?.id) != "604339998312890379") {
             await deferReply(message, { ephemeral: true })
             return response.send({
                 content: await followup(message, {
@@ -220,21 +216,20 @@ module.exports = async (request, response) => {
                 })
             })
         }
+        id = Buffer.from(id, "base64")
         if (message.type === InteractionType.PING) {
             return response.send(JSON.stringify({
                 type: InteractionResponseType.PONG,
-            }), {
-                headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
-            })
+            }))
         }
         else if (message.type === InteractionType.APPLICATION_COMMAND) {
-            switch (message.data.name) {
+            switch (message.data!.name) {
                 case INVITE_CMD.name: {
                     await deferReply(message, { ephemeral: true })
-                    let guilds = await fetch("https://discord.com/api/v10/users/@me/guilds", {
+                    let guilds: Response | [] = await fetch("https://discord.com/api/v10/users/@me/guilds", {
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
                     })
-                    guilds = await guilds.json()
+                    guilds = await guilds.json() as []
                     return response.send({
                         content: await followup(message, {
                             content: `The bot is currently on **${guilds.length} servers**. Click the button below to invite the bot!`,
@@ -256,20 +251,20 @@ module.exports = async (request, response) => {
                 }
                 case VOTE_CMD.name: {
                     await deferReply(message, { ephemeral: true })
-                    let guilds = await fetch("https://discord.com/api/v10/users/@me/guilds", {
+                    let guilds: Response | Runtimes[] = await fetch("https://discord.com/api/v10/users/@me/guilds", {
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
                     })
-                    guilds = await guilds.json()
+                    guilds = await guilds.json() as Runtimes[]
                     await fetch(`https://top.gg/api/bots/${process.env.ID}/stats`, {
                         method: "POST",
-                        headers: { "Authorization": process.env.TOPGG, "Content-Type": "application/json" },
+                        headers: { "Authorization": process.env.TOPGG!, "Content-Type": "application/json" },
                         body: JSON.stringify({
                             server_count: guilds.length
                         })
                     })
                     await fetch(`https://discordbotlist.com/api/v1/bots/${process.env.ID}/stats`, {
                         method: "POST",
-                        headers: { "Authorization": process.env.DBL, "Content-Type": "application/json" },
+                        headers: { "Authorization": process.env.DBL!, "Content-Type": "application/json" },
                         body: JSON.stringify({
                             guilds: guilds.length
                         })
@@ -299,7 +294,7 @@ module.exports = async (request, response) => {
                 }
                 case LANGS_CMD.name: {
                     await deferReply(message, { ephemeral: true })
-                    let languages = []
+                    let languages: Embeds["fields"] = [{ name: "", value: "", inline: false }]
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
                     }
@@ -403,8 +398,8 @@ module.exports = async (request, response) => {
                 }
                 case SIZE_CMD.name: {
                     await deferReply(message, { ephemeral: false })
-                    let package = get(message, "name")
-                    let result = await fetch(`https://packagephobia.com/v2/api.json?p=${package}`)
+                    let pkg = get(message, "name")
+                    let result: Response | PackageSize = await fetch(`https://packagephobia.com/v2/api.json?p=${pkg}`)
                     if (result.status != 200) {
                         return response.send({
                             content: await followup(message, {
@@ -412,7 +407,7 @@ module.exports = async (request, response) => {
                             })
                         })
                     }
-                    result = await result.json()
+                    result = await result.json() as PackageSize
                     return response.send({
                         content: await followup(message, {
                             embeds: [
@@ -446,7 +441,7 @@ module.exports = async (request, response) => {
                                             type: MessageComponentTypes.BUTTON,
                                             label: "",
                                             style: ButtonStyleTypes.PRIMARY,
-                                            custom_id: `reload - ${package}`,
+                                            custom_id: `reload - ${pkg}`,
                                             emoji: { name: "Reload", id: "1104736112049659995" }
                                         }
                                     ]
@@ -457,7 +452,7 @@ module.exports = async (request, response) => {
                 }
                 case EVAL_CMD.name: {
                     await deferReply(message, { ephemeral: true })
-                    if ((message.member?.user.id || message.user.id) != "604339998312890379") {
+                    if ((message.member?.user.id || message.user?.id) != "604339998312890379") {
                         return response.send({
                             content: await followup(message, {
                                 content: "❌ You can't do this",
@@ -465,7 +460,7 @@ module.exports = async (request, response) => {
                         })
                     }
                     try {
-                        let code = eval(get(message, "code").slice(0, 950))
+                        let code = eval(get(message, "code")!.slice(0, 950))
                         return response.send({
                             content: await followup(message, {
                                 content: "```js" + "\n" + JSON.stringify(code, null, 2) + "\n" + "```"
@@ -482,7 +477,7 @@ module.exports = async (request, response) => {
                 }
                 case REGISTER_CMD.name: {
                     await deferReply(message, { ephemeral: true })
-                    if ((message.member?.user.id || message.user.id) != "604339998312890379") {
+                    if ((message.member?.user.id || message.user?.id) != "604339998312890379") {
                         return response.send({
                             content: await followup(message, {
                                 content: "❌ You can't do this",
@@ -507,13 +502,15 @@ module.exports = async (request, response) => {
                 }
                 case INFO_CMD.name: {
                     await deferReply(message, { ephemeral: true })
-                    if ((message.member?.user.id || message.user.id) != "604339998312890379") {
+                    if ((message.member?.user.id || message.user?.id) != "604339998312890379") {
                         return response.send({
                             content: await followup(message, {
                                 content: "❌ You can't do this",
                             })
                         })
                     }
+                    let totalRam: number = (process.memoryUsage().heapTotal / (1024 * 1024)).toFixed(3) as unknown as number
+                    let usedRam: number = (process.memoryUsage().heapUsed / (1024 * 1024)).toFixed(3) as unknown as number
                     return response.send({
                         content: await followup(message, {
                             embeds: [
@@ -521,9 +518,9 @@ module.exports = async (request, response) => {
                                     color: 0x607387,
                                     title: "Bot info",
                                     fields: [
-                                        { name: "Total RAM:", value: "```" + (process.memoryUsage().heapTotal / (1024 * 1024)).toFixed(3) + " MB" + "```", inline: false },
-                                        { name: "Used RAM:", value: "```" + (process.memoryUsage().heapUsed / (1024 * 1024)).toFixed(3) + " MB" + "```", inline: false },
-                                        { name: "Used RAM Percentage:", value: "```" + ((process.memoryUsage().heapUsed / (1024 * 1024)).toFixed(3) * 100 / (process.memoryUsage().heapTotal / (1024 * 1024)).toFixed(3)).toFixed(2) + " %" + "```", inline: false },
+                                        { name: "Total RAM:", value: "```" + totalRam + " MB" + "```", inline: false },
+                                        { name: "Used RAM:", value: "```" + usedRam + " MB" + "```", inline: false },
+                                        { name: "Used RAM Percentage:", value: "```" + ((usedRam * 100 / totalRam).toFixed(2)) + " %" + "```", inline: false },
                                         { name: "I am running on:", value: "```" + process.platform + " – " + version() + " – " + process.cwd() + "```", inline: false },
                                         { name: "Versions", value: "```" + JSON.stringify(process.versions, null, 2) + "```", inline: false }
                                     ]
@@ -534,9 +531,9 @@ module.exports = async (request, response) => {
                 }
                 case CONVERT_CMD.name: {
                     await deferReply(message, { ephemeral: true })
-                    let originalNumber = get(message, "number")
-                    let system = get(message, "system")
-                    let number
+                    let originalNumber: number = get(message, "number")! as unknown as number
+                    let system: string = get(message, "system")!
+                    let number: number | string = 0
                     switch (system) {
                         case "Decimal to Binary": {
                             number = originalNumber.toString(2)
@@ -550,7 +547,7 @@ module.exports = async (request, response) => {
                                     })
                                 })
                             }
-                            number = parseInt(originalNumber, 2)
+                            number = parseInt(originalNumber.toString(), 2)
                             break
                         }
                     }
@@ -562,20 +559,20 @@ module.exports = async (request, response) => {
                 }
                 case SNIPPETS_CMD.name: {
                     await deferReply(message, { ephemeral: false })
-                    let user = get(message, "user") || (message.member?.user.id || message.user.id)
+                    let user = get(message, "user") || (message.member?.user.id || message.user?.id)
                     await mongoose.connect(url)
                     let totalSnippets = await snippets.find({ userId: user })
-                    let snippetsembed = {
+                    let snippetsembed: Embeds = {
                         color: 0x607387,
                         title: "Snippets",
                         description: `Total snippets: ${totalSnippets.length}`,
-                        fields: [],
+                        fields: [{ name: "", value: "", inline: false }],
                         footer: {
                             text: "Only the latest snippet is showed because this command is still in beta"
                         }
                     }
                     for (let i = 0; i < totalSnippets.length; i++) {
-                        snippetsembed.fields.push({ name: `Language: ${totalSnippets[i].language}`, value: "```" + totalSnippets[i].language + "\n" + totalSnippets[i].code.slice(0, 1024) + "\n" + "```", inline: false })
+                        snippetsembed.fields!.push({ name: `Language: ${totalSnippets[i].language}`, value: "```" + totalSnippets[i].language + "\n" + totalSnippets[i].code.slice(0, 1024) + "\n" + "```", inline: false })
                     }
                     return response.send({
                         content: await followup(message, {
@@ -586,10 +583,10 @@ module.exports = async (request, response) => {
             }
         }
         else if (message.type === InteractionType.MESSAGE_COMPONENT) {
-            switch (message.data.custom_id) {
+            switch (message.data!.custom_id!) {
                 case "next1": {
                     await updateDefer(message, { ephemeral: true })
-                    let languages = []
+                    let languages: Embeds["fields"] = [{ name: "", value: "", inline: false }]
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
                     }
@@ -629,7 +626,7 @@ module.exports = async (request, response) => {
                 }
                 case "next2": {
                     await updateDefer(message, { ephemeral: true })
-                    let languages = []
+                    let languages: Embeds["fields"] = [{ name: "", value: "", inline: false }]
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
                     }
@@ -669,7 +666,7 @@ module.exports = async (request, response) => {
                 }
                 case "next3": {
                     await updateDefer(message, { ephemeral: true })
-                    let languages = []
+                    let languages: Embeds["fields"] = [{ name: "", value: "", inline: false }]
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
                     }
@@ -710,7 +707,7 @@ module.exports = async (request, response) => {
                 }
                 case "previous2": {
                     await updateDefer(message, { ephemeral: true })
-                    let languages = []
+                    let languages: Embeds["fields"] = [{ name: "", value: "", inline: false }]
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
                     }
@@ -751,7 +748,7 @@ module.exports = async (request, response) => {
                 }
                 case "previous3": {
                     await updateDefer(message, { ephemeral: true })
-                    let languages = []
+                    let languages: Embeds["fields"] = [{ name: "", value: "", inline: false }]
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
                     }
@@ -791,7 +788,7 @@ module.exports = async (request, response) => {
                 }
                 case "previous4": {
                     await updateDefer(message, { ephemeral: true })
-                    let languages = []
+                    let languages: Embeds["fields"] = [{ name: "", value: "", inline: false }]
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
                     }
@@ -830,9 +827,9 @@ module.exports = async (request, response) => {
                     })
                 }
             }
-            if (message.data.custom_id.split(" - ")[0] === "reload") {
+            if (message.data!.custom_id!.split(" - ")[0] === "reload") {
                 await updateDefer(message, { ephemeral: true })
-                let result = await fetch(`https://packagephobia.com/v2/api.json?p=${message.data.custom_id.split(" - ")[1]}`)
+                let result: Response | PackageSize = await fetch(`https://packagephobia.com/v2/api.json?p=${message.data!.custom_id!.split(" - ")[1]}`)
                 if (result.status != 200) {
                     return response.send({
                         content: await followup(message, {
@@ -840,7 +837,7 @@ module.exports = async (request, response) => {
                         })
                     })
                 }
-                result = await result.json()
+                result = await result.json() as PackageSize
                 return response.send({
                     content: await editFollowup(message, {
                         embeds: [
@@ -874,7 +871,7 @@ module.exports = async (request, response) => {
                                         type: MessageComponentTypes.BUTTON,
                                         label: "",
                                         style: ButtonStyleTypes.PRIMARY,
-                                        custom_id: `reload - ${message.data.custom_id.split(" - ")[1]}`,
+                                        custom_id: `reload - ${message.data!.custom_id!.split(" - ")[1]}`,
                                         emoji: { name: "Reload", id: "1104736112049659995" }
                                     }
                                 ]
@@ -883,8 +880,8 @@ module.exports = async (request, response) => {
                     })
                 })
             }
-            if (message.data.custom_id.split(" - ")[0] === "edit") {
-                if ((message.member?.user.id || message.user.id) != message.data.custom_id.split(" - ")[1]) {
+            if (message.data!.custom_id!.split(" - ")[0] === "edit") {
+                if ((message.member?.user.id || message.user?.id) != message.data!.custom_id!.split(" - ")[1]) {
                     await deferReply(message, { ephemeral: true })
                     return response.send({
                         content: await followup(message, {
@@ -893,7 +890,7 @@ module.exports = async (request, response) => {
                     })
                 }
                 await mongoose.connect(url)
-                let originalSnippet = await snippets.findOne({ userId: message.member?.user.id || message.user.id })
+                let originalSnippet = await snippets.findOne({ userId: message.member?.user.id || message.user?.id })
                 return response.send({
                     content: await showModal(message, {
                         title: "Run Code",
@@ -958,8 +955,8 @@ module.exports = async (request, response) => {
                     })
                 })
             }
-            else if (message.data.custom_id.split(" - ")[0] === "delete") {
-                if ((message.member?.user.id || message.user.id) != message.data.custom_id.split(" - ")[1]) {
+            else if (message.data!.custom_id!.split(" - ")[0] === "delete") {
+                if ((message.member?.user.id || message.user?.id) != message.data!.custom_id!.split(" - ")[1]) {
                     await deferReply(message, { ephemeral: true })
                     return response.send({
                         content: await followup(message, {
@@ -977,10 +974,10 @@ module.exports = async (request, response) => {
             }
         }
         else if (message.type === InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE) {
-            let package = get(message, "name")
-            let result = await fetch(`https://api.npms.io/v2/search/suggestions?q=${package}`)
-            result = await result.json()
-            let choices = []
+            let pkg: string = get(message, "name")!
+            let result: Response | PackageName[] = await fetch(`https://api.npms.io/v2/search/suggestions?q=${pkg}`)
+            result = await result.json() as PackageName[]
+            let choices: AutocompleteOptions["choices"] = []
             for (let i = 0; i < 25; i++) {
                 choices.push({ name: result[i].package.name, value: result[i].package.name })
             }
@@ -991,15 +988,15 @@ module.exports = async (request, response) => {
             })
         }
         else if (message.type === InteractionType.MODAL_SUBMIT) {
-            switch (message.data.custom_id) {
+            switch (message.data!.custom_id!) {
                 case "run": {
                     await deferReply(message, { ephemeral: false })
-                    let language = get(message, "language").toLowerCase().trim()
-                    let code = get(message, "code").trim()
-                    let input = "" || get(message, "input").trim()
-                    let packages = "" || get(message, "packages").trim()
-                    let version
-                    let index
+                    let language: string = get(message, "language")!.toLowerCase().trim()
+                    let code: string = get(message, "code")!.trim()
+                    let input: string = "" || get(message, "input")!.trim()
+                    let packages: string | string[] = "" || get(message, "packages")!.trim()
+                    let version: number = 0
+                    let index: number = 0
                     for (let i = 0; i < runtimes.length; i++) {
                         if (runtimes[i].aliases.length != 0) {
                             for (let c = 0; c < runtimes[i].aliases.length; c++) {
@@ -1016,7 +1013,7 @@ module.exports = async (request, response) => {
                             }
                         }
                     }
-                    if (version == undefined) {
+                    if (version == 0) {
                         return response.send({
                             content: await followup(message, {
                                 content: "Unknown Language!",
@@ -1025,7 +1022,7 @@ module.exports = async (request, response) => {
                     }
                     if (packages && runtimes[index].language == "python") {
                         packages = packages.split("\n")
-                        let imports = []
+                        let imports: String[] = []
                         for (let i = 0; i < packages.length; i++) {
                             imports.push(`import ${packages[i]}`)
                         }
@@ -1073,8 +1070,8 @@ module.exports = async (request, response) => {
                             code = "fun main() {" + "\n" + "  " + code.replace(/\n/g, "\n  ") + "\n" + "}"
                         }
                     }
-                    let start = Date.now()
-                    let result = await fetch("https://emkc.org/api/v2/piston/execute", {
+                    let start: number = Date.now()
+                    let result: Response | Result = await fetch("https://emkc.org/api/v2/piston/execute", {
                         method: "POST",
                         body: JSON.stringify({
                             "language": language,
@@ -1086,9 +1083,9 @@ module.exports = async (request, response) => {
                             "args": input.split("\n")
                         })
                     })
-                    result = await result.json()
-                    let end = Date.now()
-                    let runembed = {
+                    result = await result.json() as Result
+                    let end: number = Date.now()
+                    let runembed: Embeds = {
                         color: 0x607387,
                         title: "Evaluation Result",
                         fields: [
@@ -1099,7 +1096,7 @@ module.exports = async (request, response) => {
                             { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                         ],
                         footer: {
-                            text: `The code took ${parseFloat(end - start).toFixed(0)}ms to be executed`
+                            text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
                         }
                     }
                     if (code.length > 925) {
@@ -1114,17 +1111,17 @@ module.exports = async (request, response) => {
                                 { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                             ],
                             footer: {
-                                text: `The code took ${parseFloat(end - start).toFixed(0)}ms to be executed`
+                                text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
                             }
                         }
                     }
                     if (result.run.output.length > 925) {
-                        let url = await fetch("https://dpaste.com/api/v2/", {
+                        let url: Response | string = await fetch("https://dpaste.com/api/v2/", {
                             method: "POST",
                             headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "EvalBot" },
                             body: `title=Evaluation%20Result&content=${result.run.output}&expiry_days=365`
                         })
-                        url = await url.text()
+                        url = await url.text() as string
                         runembed = {
                             color: 0x607387,
                             title: "Evaluation Result",
@@ -1136,17 +1133,17 @@ module.exports = async (request, response) => {
                                 { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                             ],
                             footer: {
-                                text: `The code took ${parseFloat(end - start).toFixed(0)}ms to be executed`
+                                text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
                             }
                         }
                     }
                     if (code.length > 925 && result.run.output.length > 925) {
-                        let url = await fetch("https://dpaste.com/api/v2/", {
+                        let url: Response | string = await fetch("https://dpaste.com/api/v2/", {
                             method: "POST",
                             headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "EvalBot" },
                             body: `title=Evaluation%20Result&content=${result.run.output}&expiry_days=365`
                         })
-                        url = await url.text()
+                        url = await url.text() as string
                         runembed = {
                             color: 0x607387,
                             title: "Evaluation Result",
@@ -1158,7 +1155,7 @@ module.exports = async (request, response) => {
                                 { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                             ],
                             footer: {
-                                text: `The code took ${parseFloat(end - start).toFixed(0)}ms to be executed`
+                                text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
                             }
                         }
                     }
@@ -1193,18 +1190,18 @@ module.exports = async (request, response) => {
                         }
                     }
                     if (input) {
-                        runembed.fields.push({ name: "Input from user", value: "```" + "\n" + input + "\n" + "```", inline: false })
+                        runembed.fields!.push({ name: "Input from user", value: "```" + "\n" + input + "\n" + "```", inline: false })
                     }
                     if (packages && runtimes[index].language == "python") {
-                        runembed.fields.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
+                        runembed.fields!.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
                     }
                     await mongoose.connect(url)
-                    let userSnippets = snippets.find({ userId: message.member?.user.id || message.user.id })
+                    let userSnippets = snippets.find({ userId: message.member?.user.id || message.user?.id })
                     if ((await userSnippets).length == 0) {
-                        await snippets.create({ userId: message.member?.user.id || message.user.id, language: runtimes[index].language, code: code })
+                        await snippets.create({ userId: message.member?.user.id || message.user?.id, language: runtimes[index].language, code: code })
                     }
                     else {
-                        await snippets.updateOne({ userId: message.member?.user.id || message.user.id }, { $set: { language: runtimes[index].language, code: code } })
+                        await snippets.updateOne({ userId: message.member?.user.id || message.user?.id }, { $set: { language: runtimes[index].language, code: code } })
                     }
                     return response.send({
                         content: await followup(message, {
@@ -1217,14 +1214,14 @@ module.exports = async (request, response) => {
                                             type: MessageComponentTypes.BUTTON,
                                             label: "",
                                             style: ButtonStyleTypes.PRIMARY,
-                                            custom_id: `edit - ${message.member?.user.id || message.user.id}`,
+                                            custom_id: `edit - ${message.member?.user.id || message.user?.id}`,
                                             emoji: { name: "Edit", id: "1104464874744074370" }
                                         },
                                         {
                                             type: MessageComponentTypes.BUTTON,
                                             label: "",
                                             style: ButtonStyleTypes.DANGER,
-                                            custom_id: `delete - ${message.member?.user.id || message.user.id}`,
+                                            custom_id: `delete - ${message.member?.user.id || message.user?.id}`,
                                             emoji: { name: "Delete", id: "1104477832308068352" }
                                         }
                                     ]
@@ -1235,12 +1232,12 @@ module.exports = async (request, response) => {
                 }
                 case "runedit": {
                     await updateDefer(message, { ephemeral: true })
-                    let language = get(message, "language").toLowerCase().trim()
-                    let code = get(message, "code").trim()
-                    let input = "" || get(message, "input").trim()
-                    let packages = "" || get(message, "packages").trim()
-                    let version
-                    let index
+                    let language: string = get(message, "language")!.toLowerCase().trim()
+                    let code: string = get(message, "code")!.trim()
+                    let input: string = "" || get(message, "input")!.trim()
+                    let packages: string | string[] = "" || get(message, "packages")!.trim()
+                    let version: number = 0
+                    let index: number = 0
                     for (let i = 0; i < runtimes.length; i++) {
                         if (runtimes[i].aliases.length != 0) {
                             for (let c = 0; c < runtimes[i].aliases.length; c++) {
@@ -1257,7 +1254,7 @@ module.exports = async (request, response) => {
                             }
                         }
                     }
-                    if (version == undefined) {
+                    if (version == 0) {
                         return response.send({
                             content: await followup(message, {
                                 content: "Unknown Language!",
@@ -1266,7 +1263,7 @@ module.exports = async (request, response) => {
                     }
                     if (packages && runtimes[index].language == "python") {
                         packages = packages.split("\n")
-                        let imports = []
+                        let imports: String[] = []
                         for (let i = 0; i < packages.length; i++) {
                             imports.push(`import ${packages[i]}`)
                         }
@@ -1314,8 +1311,8 @@ module.exports = async (request, response) => {
                             code = "fun main() {" + "\n" + "  " + code.replace(/\n/g, "\n  ") + "\n" + "}"
                         }
                     }
-                    let start = Date.now()
-                    let result = await fetch("https://emkc.org/api/v2/piston/execute", {
+                    let start: number = Date.now()
+                    let result: Response | Result = await fetch("https://emkc.org/api/v2/piston/execute", {
                         method: "POST",
                         body: JSON.stringify({
                             "language": language,
@@ -1327,9 +1324,9 @@ module.exports = async (request, response) => {
                             "args": input.split("\n")
                         })
                     })
-                    result = await result.json()
-                    let end = Date.now()
-                    let runembed = {
+                    result = await result.json() as Result
+                    let end: number = Date.now()
+                    let runembed: Embeds = {
                         color: 0x607387,
                         title: "Evaluation Result",
                         fields: [
@@ -1360,12 +1357,12 @@ module.exports = async (request, response) => {
                         }
                     }
                     if (result.run.output.length > 925) {
-                        let url = await fetch("https://dpaste.com/api/v2/", {
+                        let url: Response | string = await fetch("https://dpaste.com/api/v2/", {
                             method: "POST",
                             headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "EvalBot" },
                             body: `title=Evaluation%20Result&content=${result.run.output}&expiry_days=365`
                         })
-                        url = await url.text()
+                        url = await url.text() as string
                         runembed = {
                             color: 0x607387,
                             title: "Evaluation Result",
@@ -1377,17 +1374,17 @@ module.exports = async (request, response) => {
                                 { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                             ],
                             footer: {
-                                text: `The code took ${parseFloat(end - start).toFixed(0)}ms to be executed`
+                                text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
                             }
                         }
                     }
                     if (code.length > 925 && result.run.output.length > 925) {
-                        let url = await fetch("https://dpaste.com/api/v2/", {
+                        let url: Response | string = await fetch("https://dpaste.com/api/v2/", {
                             method: "POST",
                             headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "EvalBot" },
                             body: `title=Evaluation%20Result&content=${result.run.output}&expiry_days=365`
                         })
-                        url = await url.text()
+                        url = await url.text() as string
                         runembed = {
                             color: 0x607387,
                             title: "Evaluation Result",
@@ -1399,7 +1396,7 @@ module.exports = async (request, response) => {
                                 { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                             ],
                             footer: {
-                                text: `The code took ${parseFloat(end - start).toFixed(0)}ms to be executed`
+                                text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
                             }
                         }
                     }
@@ -1414,7 +1411,7 @@ module.exports = async (request, response) => {
                                 { name: "Output", value: "No output!", inline: false },
                             ],
                             footer: {
-                                text: `The code took ${parseFloat(end - start).toFixed(0)}ms to be executed`
+                                text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
                             }
                         }
                     }
@@ -1429,18 +1426,18 @@ module.exports = async (request, response) => {
                                 { name: "Output", value: "No output!", inline: false },
                             ],
                             footer: {
-                                text: `The code took ${parseFloat(end - start).toFixed(0)}ms to be executed`
+                                text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
                             }
                         }
                     }
                     if (input) {
-                        runembed.fields.push({ name: "Input from user", value: "```" + "\n" + input + "\n" + "```", inline: false })
+                        runembed.fields!.push({ name: "Input from user", value: "```" + "\n" + input + "\n" + "```", inline: false })
                     }
                     if (packages && runtimes[index].language == "python") {
-                        runembed.fields.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
+                        runembed.fields!.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
                     }
                     await mongoose.connect(url)
-                    await snippets.updateOne({ userId: message.member?.user.id || message.user.id }, { $set: { language: runtimes[index].language, code: code } })
+                    await snippets.updateOne({ userId: message.member?.user.id || message.user?.id }, { $set: { language: runtimes[index].language, code: code } })
                     return response.send({
                         content: await editFollowup(message, {
                             embeds: [runembed],
@@ -1452,14 +1449,14 @@ module.exports = async (request, response) => {
                                             type: MessageComponentTypes.BUTTON,
                                             label: "",
                                             style: ButtonStyleTypes.PRIMARY,
-                                            custom_id: `edit - ${message.member?.user.id || message.user.id}`,
+                                            custom_id: `edit - ${message.member?.user.id || message.user?.id}`,
                                             emoji: { name: "Edit", id: "1104464874744074370" }
                                         },
                                         {
                                             type: MessageComponentTypes.BUTTON,
                                             label: "",
                                             style: ButtonStyleTypes.DANGER,
-                                            custom_id: `delete - ${message.member?.user.id || message.user.id}`,
+                                            custom_id: `delete - ${message.member?.user.id || message.user?.id}`,
                                             emoji: { name: "Delete", id: "1104477832308068352" }
                                         }
                                     ]
