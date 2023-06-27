@@ -207,7 +207,9 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
             return response.status(401).send({ error: "Unauthorized" })
         }
         let message: Interaction = request.body
-        let id: string | Buffer = (process.env.TOKEN)?.split(".")[0]!
+        let id: string = (process.env.TOKEN)?.split(".")[0]!
+        let buffer: Buffer = Buffer.from(id, "base64")
+        id = buffer.toString("utf8")
         if (id == "1077228141531123852" && (message.member?.user.id || message.user?.id) != "604339998312890379") {
             await deferReply(message, { ephemeral: true })
             return response.send({
@@ -216,7 +218,6 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 })
             })
         }
-        id = Buffer.from(id, "base64")
         if (message.type === InteractionType.PING) {
             return response.send(JSON.stringify({
                 type: InteractionResponseType.PONG,
