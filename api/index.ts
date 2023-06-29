@@ -91,15 +91,7 @@ const SIZE_CMD: SlashCommandsStructure = {
 const EVAL_CMD: SlashCommandsStructure = {
     name: "eval",
     description: "Eval code (only developer)",
-    type: ApplicationCommandTypes.CHAT_INPUT,
-    options: [
-        {
-            name: "code",
-            description: "The code to evaluate",
-            type: ApplicationCommandOptionTypes.STRING,
-            required: true
-        }
-    ]
+    type: ApplicationCommandTypes.CHAT_INPUT
 }
 const REGISTER_CMD: SlashCommandsStructure = {
     name: "register",
@@ -452,29 +444,27 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 }
                 case EVAL_CMD.name: {
-                    await deferReply(message, { ephemeral: true })
-                    if ((message.member?.user.id || message.user?.id) != "604339998312890379") {
-                        return response.send({
-                            content: await followup(message, {
-                                content: "❌ You can't do this",
-                            })
+                    return response.send({
+                        content: await showModal(message, {
+                            title: "Eval Code",
+                            custom_id: "eval",
+                            components: [
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
+                                    components: [
+                                        {
+                                            type: MessageComponentTypes.INPUT_TEXT,
+                                            label: "Code",
+                                            style: TextStyleTypes.PARAGRAPH,
+                                            custom_id: "code",
+                                            required: true,
+                                            min_length: 5
+                                        }
+                                    ]
+                                }
+                            ]
                         })
-                    }
-                    try {
-                        let code = eval(get(message, "code")!.slice(0, 950))
-                        return response.send({
-                            content: await followup(message, {
-                                content: "```js" + "\n" + JSON.stringify(code, null, 2) + "\n" + "```"
-                            })
-                        })
-                    }
-                    catch (e) {
-                        return response.send({
-                            content: await followup(message, {
-                                content: "```js" + "\n" + e + "\n" + "```"
-                            })
-                        })
-                    }
+                    })
                 }
                 case REGISTER_CMD.name: {
                     await deferReply(message, { ephemeral: true })
@@ -1465,6 +1455,31 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                             ]
                         })
                     })
+                }
+                case "eval": {
+                    await deferReply(message, { ephemeral: true })
+                    if ((message.member?.user.id || message.user?.id) != "604339998312890379") {
+                        return response.send({
+                            content: await followup(message, {
+                                content: "❌ You can't do this",
+                            })
+                        })
+                    }
+                    try {
+                        let code = eval(get(message, "code")!.slice(0, 950))
+                        return response.send({
+                            content: await followup(message, {
+                                content: "```js" + "\n" + JSON.stringify(code, null, 2) + "\n" + "```"
+                            })
+                        })
+                    }
+                    catch (e) {
+                        return response.send({
+                            content: await followup(message, {
+                                content: "```js" + "\n" + e + "\n" + "```"
+                            })
+                        })
+                    }
                 }
             }
         }
