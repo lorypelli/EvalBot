@@ -21,6 +21,8 @@
     "CONVERT_SECOND_OPTION_DESCRIPTION": "The number to convert",
     "SNIPPETS_CMD_NAME": "{{snippets}}",
     "SNIPPETS_CMD_DESCRIPTION": "View your {{snippets}} or another user {{snippets}}",
-    "SNIPPETS_OPTION_NAME": "user",
-    "SNIPPETS_OPTION_DESCRIPTION": "The user of which you want to see {{snippets}}"
+    "SNIPPETS_FIRST_OPTION_NAME": "id",
+    "SNIPPETS_FIRST_OPTION_DESCRIPTION": "The id of the {{snippet}} you want to see",
+    "SNIPPETS_SECOND_OPTION_NAME": "user",
+    "SNIPPETS_SECOND_OPTION_DESCRIPTION": "The user of which you want to see {{snippets}}"
 }
