@@ -1420,7 +1420,6 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     let currentEvaluatorId = await snippets.find()
                     let currentId: number = 0
                     for (let i = 1; i <= currentEvaluatorId.length; i++) {
-                        console.log(i)
                         currentId = i
                     }
                     await snippets.create({ userId: message.member?.user.id || message.user?.id, language: runtimes[index].language, code: code, evaluatorId: currentId + 1 })
