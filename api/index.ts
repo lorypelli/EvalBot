@@ -166,11 +166,13 @@ const SNIPPETS_CMD: SlashCommandsStructure = {
         {
             name: "id",
             name_localizations: {
-                it: "id"
+                it: "id",
+                pl: "id"
             },
             description: "The id of the snippet you want to see",
             description_localizations: {
-                it: "L'id dello snippet che vuoi vedere"
+                it: "L'id dello snippet che vuoi vedere",
+                pl: "Id snippet które chcesz zobaczyć"
             },
             type: ApplicationCommandOptionTypes.NUMBER,
             required: true
@@ -582,7 +584,21 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     }
                     return response.send({
                         content: await followup(message, {
-                            embeds: [snippetsembed]
+                            embeds: [snippetsembed],
+                            components: [
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
+                                    components: [
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.PRIMARY,
+                                            custom_id: `run_code - ${id}`,
+                                            emoji: { name: "Play", id: "1124682991692677120" }
+                                        }
+                                    ]
+                                }
+                            ]
                         })
                     })
                 }
@@ -886,7 +902,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 })
             }
-            if (message.data!.custom_id!.split(" - ")[0] === "edit") {
+            else if (message.data!.custom_id!.split(" - ")[0] === "edit") {
                 if ((message.member?.user.id || message.user?.id) != message.data!.custom_id!.split(" - ")[1]) {
                     await deferReply(message, { ephemeral: true })
                     return response.send({
@@ -978,9 +994,204 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 })
             }
+            else if (message.data!.custom_id!.startsWith("run_code")) {
+                await deferReply(message, { ephemeral: true })
+                let currentSnippet = await snippets.findOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: message.data!.custom_id!.split(" - ")[1] })
+                let language: string = currentSnippet!.language
+                let code: string = currentSnippet!.code
+                let version: number = 0
+                let index: number = 0
+                for (let i = 0; i < runtimes.length; i++) {
+                    if (runtimes[i].aliases.length != 0) {
+                        for (let c = 0; c < runtimes[i].aliases.length; c++) {
+                            if (language == runtimes[i].language || language == runtimes[i].aliases[c]) {
+                                version = runtimes[i].version
+                                index = i
+                            }
+                        }
+                    }
+                    else {
+                        if (language == runtimes[i].language) {
+                            version = runtimes[i].version
+                            index = i
+                        }
+                    }
+                }
+                if (version == 0) {
+                    return response.send({
+                        content: await followup(message, {
+                            content: "Unknown Language!",
+                        })
+                    })
+                }
+                else if (runtimes[index].language == "go") {
+                    if (code.includes("func main() {")) code = code
+                    else {
+                        code = "package main" + "\n" + "import \"fmt\"" + "\n" + "func main() {" + "\n" + "  " + code.replace(/\n/g, "\n  ") + "\n" + "}"
+                    }
+                }
+                else if (runtimes[index].language == "rust") {
+                    if (code.includes("fn main() {")) code = code
+                    else {
+                        code = "use std::io;" + "\n" + "fn main() {" + "\n" + "  " + code.replace(/\n/g, "\n  ") + "\n" + "}"
+                    }
+                }
+                else if (runtimes[index].language == "c") {
+                    if (code.includes("int main() {")) code = code
+                    else {
+                        code = "#include <stdio.h>" + "\n" + "int main() {" + "\n" + "  " + code.replace(/\n/g, "\n  ") + "\n" + "}"
+                    }
+                }
+                else if (runtimes[index].language == "c++") {
+                    if (code.includes("int main() {")) code = code
+                    else {
+                        code = "#include <iostream>" + "\n" + "using namespace std;" + "\n" + "int main() {" + "\n" + "  " + code.replace(/\n/g, "\n  ") + "\n" + "}"
+                    }
+                }
+                else if (runtimes[index].language == "csharp") {
+                    if (code.includes("static void Main(string[] args) {")) code = code
+                    else {
+                        code = "using System;" + "\n" + "class Program {" + "\n" + "  static void Main(string[] args) {" + "\n" + "    " + code.replace(/\n/g, "\n    ") + "\n" + "  }" + "\n" + "}"
+                    }
+                }
+                else if (runtimes[index].language == "java") {
+                    if (code.includes("public static void Main(string[] args) {")) code = code
+                    else {
+                        code = "public class Main {" + "\n" + "  public static void main(String[] args) {" + "\n" + "    " + code.replace(/\n/g, "\n    ") + "\n" + "  }" + "\n" + "}"
+                    }
+                }
+                else if (runtimes[index].language == "kotlin") {
+                    if (code.includes("fun main() {")) code = code
+                    else {
+                        code = "fun main() {" + "\n" + "  " + code.replace(/\n/g, "\n  ") + "\n" + "}"
+                    }
+                }
+                let start: number = Date.now()
+                let result: Response | Result = await fetch("https://emkc.org/api/v2/piston/execute", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        "language": language,
+                        "version": "*",
+                        "files": [{
+                            "content": code
+                        }]
+                    })
+                })
+                result = await result.json() as Result
+                let end: number = Date.now()
+                let runembed: Embeds = {
+                    color: 0x607387,
+                    title: "Evaluation Result",
+                    fields: [
+                        { name: "Language", value: "```" + "\n" + runtimes[index].language + "\n" + "```", inline: false },
+                        { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
+                        { name: "Input", value: "```" + runtimes[index].language + "\n" + code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
+                        { name: "Output", value: "```" + runtimes[index].language + "\n" + result.run.output.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
+                        { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
+                    ],
+                    footer: {
+                        text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
+                    }
+                }
+                if (code.length > 925) {
+                    runembed = {
+                        color: 0x607387,
+                        title: "Evaluation Result",
+                        fields: [
+                            { name: "Language", value: "```" + "\n" + runtimes[index].language + "\n" + "```", inline: false },
+                            { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
+                            { name: "Input", value: "```" + runtimes[index].language + "\n" + code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**", inline: false },
+                            { name: "Output", value: "```" + runtimes[index].language + "\n" + result.run.output.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
+                            { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
+                        ],
+                        footer: {
+                            text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
+                        }
+                    }
+                }
+                if (result.run.output.length > 925) {
+                    let url: Response | string = await fetch("https://dpaste.com/api/v2/", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "EvalBot" },
+                        body: `title=Evaluation%20Result&content=${result.run.output}&expiry_days=365`
+                    })
+                    url = await url.text() as string
+                    runembed = {
+                        color: 0x607387,
+                        title: "Evaluation Result",
+                        fields: [
+                            { name: "Language", value: "```" + "\n" + runtimes[index].language + "\n" + "```", inline: false },
+                            { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
+                            { name: "Input", value: "```" + runtimes[index].language + "\n" + code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
+                            { name: "Output", value: "```" + runtimes[index].language + "\n" + result.run.output.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**" + "\n" + `view the entire output [here](${url})`, inline: false },
+                            { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
+                        ],
+                        footer: {
+                            text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
+                        }
+                    }
+                }
+                if (code.length > 925 && result.run.output.length > 925) {
+                    let url: Response | string = await fetch("https://dpaste.com/api/v2/", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "EvalBot" },
+                        body: `title=Evaluation%20Result&content=${result.run.output}&expiry_days=365`
+                    })
+                    url = await url.text() as string
+                    runembed = {
+                        color: 0x607387,
+                        title: "Evaluation Result",
+                        fields: [
+                            { name: "Language", value: "```" + "\n" + runtimes[index].language + "\n" + "```", inline: false },
+                            { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
+                            { name: "Input", value: "```" + runtimes[index].language + "\n" + code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**", inline: false },
+                            { name: "Output", value: "```" + runtimes[index].language + "\n" + result.run.output.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**" + "\n" + `view the entire output [here](${url})`, inline: false },
+                            { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
+                        ],
+                        footer: {
+                            text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
+                        }
+                    }
+                }
+                if (result.run.output.length == 0 || result.run.output == "\n") {
+                    runembed = {
+                        color: 0x607387,
+                        title: "Evaluation Result",
+                        fields: [
+                            { name: "Language", value: "```" + "\n" + runtimes[index].language + "\n" + "```", inline: false },
+                            { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
+                            { name: "Input", value: "```" + runtimes[index].language + "\n" + code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
+                            { name: "Output", value: "No output!", inline: false },
+                        ],
+                        footer: {
+                            text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
+                        }
+                    }
+                }
+                if ((result.run.output.length == 0 || result.run.output == "\n") && code.length > 925) {
+                    runembed = {
+                        color: 0x607387,
+                        title: "Evaluation Result",
+                        fields: [
+                            { name: "Language", value: "```" + "\n" + language + "\n" + "```", inline: false },
+                            { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
+                            { name: "Input", value: "```" + language + "\n" + code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**", inline: false },
+                            { name: "Output", value: "No output!", inline: false },
+                        ],
+                        footer: {
+                            text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
+                        }
+                    }
+                }
+                return response.send({
+                    content: await followup(message, {
+                        embeds: [runembed]
+                    })
+                })
+            }
         }
         else if (message.type === InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE) {
-            switch(message.data!.name) {
+            switch (message.data!.name) {
                 case SIZE_CMD.name: {
                     let pkg: string = get(message, "name")!
                     let result: Response | PackageName[] = await fetch(`https://api.npms.io/v2/search/suggestions?q=${pkg}`)
