@@ -164,6 +164,18 @@ const SNIPPETS_CMD: SlashCommandsStructure = {
     type: ApplicationCommandTypes.CHAT_INPUT,
     options: [
         {
+            name: "id",
+            name_localizations: {
+                it: "id"
+            },
+            description: "The id of the snippet you want to see",
+            description_localizations: {
+                it: "L'id dello snippet che vuoi vedere"
+            },
+            type: ApplicationCommandOptionTypes.NUMBER,
+            required: true
+        },
+        {
             name: "user",
             name_localizations: {
                 it: "utente",
@@ -176,7 +188,7 @@ const SNIPPETS_CMD: SlashCommandsStructure = {
             },
             type: ApplicationCommandOptionTypes.USER,
             required: false
-        },
+        }
     ]
 }
 export default async (request: import("@vercel/node").VercelRequest, response: import("@vercel/node").VercelResponse) => {
@@ -550,20 +562,23 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 }
                 case SNIPPETS_CMD.name: {
                     await deferReply(message, { ephemeral: false })
-                    let user = get(message, "user") || (message.member?.user.id || message.user?.id)
+                    let user: string = get(message, "user")! || (message.member?.user.id || message.user?.id)!
+                    let id: number = get(message, "id") as unknown as number
                     await mongoose.connect(url)
                     let totalSnippets = await snippets.find({ userId: user })
+                    let currentSnippet = await snippets.findOne({ userId: user, evaluatorId: id })
+                    if (currentSnippet == undefined) {
+                        return response.send({
+                            content: await followup(message, {
+                                content: "The user doesn't have a snippet with that id"
+                            })
+                        })
+                    }
                     let snippetsembed: Embeds = {
                         color: 0x607387,
                         title: "Snippets",
                         description: `Total snippets: ${totalSnippets.length}`,
-                        fields: [{ name: "", value: "", inline: false }],
-                        footer: {
-                            text: "Only the latest snippet is showed because this command is still in beta"
-                        }
-                    }
-                    for (let i = 0; i < totalSnippets.length; i++) {
-                        snippetsembed.fields!.push({ name: `Language: ${totalSnippets[i].language}`, value: "```" + totalSnippets[i].language + "\n" + totalSnippets[i].code.slice(0, 1024) + "\n" + "```", inline: false })
+                        fields: [{ name: `Language: ${currentSnippet?.language}`, value: "```" + currentSnippet?.language + "\n" + currentSnippet?.code.slice(0, 1024) + "\n" + "```", inline: false }],
                     }
                     return response.send({
                         content: await followup(message, {
@@ -881,7 +896,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 }
                 await mongoose.connect(url)
-                let originalSnippet = await snippets.findOne({ userId: message.member?.user.id || message.user?.id })
+                let originalSnippet = await snippets.findOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: message.data!.custom_id!.split(" - ")[2] })
                 return response.send({
                     content: await showModal(message, {
                         title: "Run Code",
@@ -965,18 +980,22 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
             }
         }
         else if (message.type === InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE) {
-            let pkg: string = get(message, "name")!
-            let result: Response | PackageName[] = await fetch(`https://api.npms.io/v2/search/suggestions?q=${pkg}`)
-            result = await result.json() as PackageName[]
-            let choices: AutocompleteOptions["choices"] = []
-            for (let i = 0; i < 25; i++) {
-                choices.push({ name: result[i].package.name, value: result[i].package.name })
+            switch(message.data!.name) {
+                case SIZE_CMD.name: {
+                    let pkg: string = get(message, "name")!
+                    let result: Response | PackageName[] = await fetch(`https://api.npms.io/v2/search/suggestions?q=${pkg}`)
+                    result = await result.json() as PackageName[]
+                    let choices: AutocompleteOptions["choices"] = []
+                    for (let i = 0; i < 25; i++) {
+                        choices.push({ name: result[i].package.name, value: result[i].package.name })
+                    }
+                    return response.send({
+                        content: await autocompleteResult(message, {
+                            choices: choices,
+                        })
+                    })
+                }
             }
-            return response.send({
-                content: await autocompleteResult(message, {
-                    choices: choices,
-                })
-            })
         }
         else if (message.type === InteractionType.MODAL_SUBMIT) {
             switch (message.data!.custom_id!) {
@@ -1187,13 +1206,13 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         runembed.fields!.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
                     }
                     await mongoose.connect(url)
-                    let userSnippets = snippets.find({ userId: message.member?.user.id || message.user?.id })
-                    if ((await userSnippets).length == 0) {
-                        await snippets.create({ userId: message.member?.user.id || message.user?.id, language: runtimes[index].language, code: code })
+                    let currentEvaluatorId = await snippets.find()
+                    let currentId: number = 0
+                    for (let i = 1; i <= currentEvaluatorId.length; i++) {
+                        console.log(i)
+                        currentId = i
                     }
-                    else {
-                        await snippets.updateOne({ userId: message.member?.user.id || message.user?.id }, { $set: { language: runtimes[index].language, code: code } })
-                    }
+                    await snippets.create({ userId: message.member?.user.id || message.user?.id, language: runtimes[index].language, code: code, evaluatorId: currentId + 1 })
                     return response.send({
                         content: await followup(message, {
                             embeds: [runembed],
@@ -1205,7 +1224,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                             type: MessageComponentTypes.BUTTON,
                                             label: "",
                                             style: ButtonStyleTypes.PRIMARY,
-                                            custom_id: `edit - ${message.member?.user.id || message.user?.id}`,
+                                            custom_id: `edit - ${message.member?.user.id || message.user?.id} - ${currentId + 1}`,
                                             emoji: { name: "Edit", id: "1104464874744074370" }
                                         },
                                         {
