@@ -1660,10 +1660,6 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     let currentEvaluatorId = await snippets.find({ userId: message.member?.user.id || message.user?.id })
                     let currentId: number = 0
                     for (let i = 0; i < currentEvaluatorId.length; i++) {
-                        console.log("Database", currentEvaluatorId[i].language)
-                        console.log("Local", runtimes[index].language)
-                        console.log("Database", currentEvaluatorId[i].code)
-                        console.log("Local", code)
                         console.log(currentEvaluatorId[i].language == runtimes[index].language && currentEvaluatorId[i].code == code)
                         if (currentEvaluatorId[i].language == runtimes[index].language && currentEvaluatorId[i].code == code) {
                             currentId = currentEvaluatorId[i].evaluatorId
