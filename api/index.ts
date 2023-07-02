@@ -1660,12 +1660,11 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     let currentEvaluatorId = await snippets.find({ userId: message.member?.user.id || message.user?.id })
                     let currentId: number = 0
                     for (let i = 0; i < currentEvaluatorId.length; i++) {
-                        console.log(currentEvaluatorId[i].language == runtimes[index].language && currentEvaluatorId[i].code == code)
                         if (currentEvaluatorId[i].language == runtimes[index].language && currentEvaluatorId[i].code == code) {
                             currentId = currentEvaluatorId[i].evaluatorId
                         }
                     }
-                    await snippets.updateOne({ userId: message.member?.user.id || message.user?.id }, { $set: { language: runtimes[index].language, code: code } })
+                    await snippets.updateOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: currentId }, { $set: { language: runtimes[index].language, code: code } })
                     return response.send({
                         content: await editFollowup(message, {
                             embeds: [runembed],
