@@ -1664,7 +1664,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                             currentId = currentEvaluatorId[i].evaluatorId
                         }
                     }
-                    await snippets.updateOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: currentId }, { $set: { language: runtimes[index].language, code: code } })
+                    await snippets.updateOne({ userId: message.member?.user.id || message.user?.id }, { $set: { language: runtimes[index].language, code: code } })
                     return response.send({
                         content: await editFollowup(message, {
                             embeds: [runembed],
