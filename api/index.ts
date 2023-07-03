@@ -601,7 +601,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                             type: MessageComponentTypes.BUTTON,
                                             label: "",
                                             style: ButtonStyleTypes.PRIMARY,
-                                            custom_id: `run_code - ${id}`,
+                                            custom_id: `run_code - ${user} - ${id}`,
                                             emoji: { name: "Play", id: "1124682991692677120" }
                                         }
                                     ]
@@ -1035,9 +1035,10 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
             }
             else if (message.data!.custom_id!.startsWith("run_code")) {
                 await deferReply(message, { ephemeral: true })
-                let currentSnippet = await snippets.findOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: message.data!.custom_id!.split(" - ")[1] })
-                let language: string = currentSnippet!.language
-                let code: string = currentSnippet!.code
+                let currentSnippet = await snippets.findOne({ userId: message.data!.custom_id!.split(" - ")[1], evaluatorId: message.data!.custom_id!.split(" - ")[2] })
+                console.log(currentSnippet)
+                let language: string = currentSnippet?.language!
+                let code: string = currentSnippet?.code!
                 let version: number = 0
                 let index: number = 0
                 for (let i = 0; i < runtimes.length; i++) {
