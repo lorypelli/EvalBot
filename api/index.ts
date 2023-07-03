@@ -978,19 +978,36 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 })
             }
             else if (message.data!.custom_id!.split(" - ")[0] === "delete") {
+                await deferReply(message, { ephemeral: true })
                 if ((message.member?.user.id || message.user?.id) != message.data!.custom_id!.split(" - ")[1]) {
-                    await deferReply(message, { ephemeral: true })
                     return response.send({
                         content: await followup(message, {
                             content: "❌ You can't do this",
                         })
                     })
                 }
-                await updateDefer(message, { ephemeral: true })
                 return response.send({
-                    content: await fetch(`https://discord.com/api/v10/channels/${message.channel_id}/messages/${message.message.id}`, {
-                        method: "DELETE",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
+                    content: await followup(message, {
+                        content: "You are about to delete this evaluation from the chat. Do you want to delete it also from the database?",
+                        components: [
+                            {
+                                type: MessageComponentTypes.ACTION_ROW,
+                                components: [
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        label: "Yes",
+                                        style: ButtonStyleTypes.SUCCESS,
+                                        custom_id: `yes - ${message.message.id} - ${message.message.embeds[0].title!.split(" - ")[1].slice(5)}`
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        label: "No",
+                                        style: ButtonStyleTypes.DANGER,
+                                        custom_id: `no - ${message.message.id}`
+                                    },
+                                ]
+                            }
+                        ]
                     })
                 })
             }
@@ -1186,6 +1203,30 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 return response.send({
                     content: await followup(message, {
                         embeds: [runembed]
+                    })
+                })
+            }
+            else if (message.data!.custom_id!.startsWith("yes") || message.data!.custom_id!.startsWith("no")) {
+                await updateDefer(message, { ephemeral: true })
+                let messageId = message.data!.custom_id!.split(" - ")[1]
+                if (message.data!.custom_id!.startsWith("yes")) {
+                    let evaluatorId = message.data!.custom_id!.split(" - ")[2]
+                    await snippets.deleteOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: parseInt(evaluatorId) })
+                    await fetch(`https://discord.com/api/v10/channels/${message.channel_id}/messages/${messageId}`, {
+                        method: "DELETE",
+                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
+                    })
+                }
+                else {
+                    await fetch(`https://discord.com/api/v10/channels/${message.channel_id}/messages/${messageId}`, {
+                        method: "DELETE",
+                        headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
+                    })
+                }
+                return response.send({
+                    content: await editFollowup(message, {
+                        content: "Done",
+                        components: []
                     })
                 })
             }
