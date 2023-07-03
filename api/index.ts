@@ -563,9 +563,17 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 }
                 case SNIPPETS_CMD.name: {
-                    await deferReply(message, { ephemeral: false })
                     let user: string = get(message, "user")! || (message.member?.user.id || message.user?.id)!
                     let id: number = get(message, "id") as unknown as number
+                    if (id <= 0) {
+                        await deferReply(message, { ephemeral: true })
+                        return response.send({
+                            content: await followup(message, {
+                                content: "ID not valid",
+                            })
+                        })
+                    }
+                    await deferReply(message, { ephemeral: false })
                     await mongoose.connect(url)
                     let totalSnippets = await snippets.find({ userId: user })
                     let currentSnippet = await snippets.findOne({ userId: user, evaluatorId: id })
@@ -911,6 +919,13 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         })
                     })
                 }
+                if (message.message.embeds[0].title!.split(" - ")[1] == undefined) {
+                    return response.send({
+                        content: await followup(message, {
+                            content: "Unknown Evaluation",
+                        })
+                    })
+                }
                 await mongoose.connect(url)
                 let originalSnippet = await snippets.findOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: parseInt(message.message.embeds[0].title!.split(" - ")[1].slice(5)) })
                 return response.send({
@@ -983,6 +998,13 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     return response.send({
                         content: await followup(message, {
                             content: "❌ You can't do this",
+                        })
+                    })
+                }
+                if (message.message.embeds[0].title!.split(" - ")[1] == undefined) {
+                    return response.send({
+                        content: await followup(message, {
+                            content: "Unknown Evaluation",
                         })
                     })
                 }
