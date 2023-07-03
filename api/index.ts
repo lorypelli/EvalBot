@@ -912,7 +912,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 }
                 await mongoose.connect(url)
-                let originalSnippet = await snippets.findOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: message.data!.custom_id!.split(" - ")[2] })
+                let originalSnippet = await snippets.findOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: parseInt(message.message.embeds[0].title!.split(" - ")[1].slice(5)) })
                 return response.send({
                     content: await showModal(message, {
                         title: "Run Code",
@@ -1422,6 +1422,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     for (let i = 1; i <= currentEvaluatorId.length; i++) {
                         currentId = i
                     }
+                    runembed.title = `Evaluation Result - [ID: ${currentId + 1}]`
                     await snippets.create({ userId: message.member?.user.id || message.user?.id, language: runtimes[index].language, code: code, evaluatorId: currentId + 1 })
                     return response.send({
                         content: await followup(message, {
@@ -1657,14 +1658,9 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         runembed.fields!.push({ name: "Packages", value: "```" + "\n" + packages.toString().replace(/,/g, "\n") + "\n" + "```", inline: false })
                     }
                     await mongoose.connect(url)
-                    let currentEvaluatorId = await snippets.find({ userId: message.member?.user.id || message.user?.id })
-                    let currentId: number = 0
-                    for (let i = 0; i < currentEvaluatorId.length; i++) {
-                        if (currentEvaluatorId[i].language == runtimes[index].language && currentEvaluatorId[i].code == code) {
-                            currentId = currentEvaluatorId[i].evaluatorId
-                        }
-                    }
-                    await snippets.updateOne({ userId: message.member?.user.id || message.user?.id }, { $set: { language: runtimes[index].language, code: code } })
+                    let currentId = parseInt(message.message.embeds[0].title!.split(" - ")[1].slice(5))
+                    runembed.title = `Evaluation Result - [ID: ${currentId}]`
+                    await snippets.updateOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: currentId }, { $set: { language: runtimes[index].language, code: code } })
                     return response.send({
                         content: await editFollowup(message, {
                             embeds: [runembed],
