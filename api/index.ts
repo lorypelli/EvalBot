@@ -1,7 +1,7 @@
 import { InteractionResponseType, InteractionType, verifyKey, MessageComponentTypes, ButtonStyleTypes, TextStyleTypes } from "discord-interactions"
 import getRawBody from "raw-body"
 import { version } from "os"
-import { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followup, editFollowup, get, autocompleteResult, Interaction, Embeds, AutocompleteOptions, SlashCommandsStructure } from "serverless_bots_addons"
+import { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followup, editFollowup, get, autocompleteResult, Interaction, Embeds, AutocompleteOptions, SlashCommandsStructure, ButtonsComponent } from "serverless_bots_addons"
 import mongoose from "mongoose"
 import snippets from "./schemas/Snippet"
 import { Runtimes, PackageSize, PackageName, Result } from "./addons"
@@ -1166,7 +1166,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                             { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                         ],
                         footer: {
-                            text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
+                            text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                         }
                     }
                 }
@@ -1188,7 +1188,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                             { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                         ],
                         footer: {
-                            text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
+                            text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                         }
                     }
                 }
@@ -1203,7 +1203,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                             { name: "Output", value: "No output!", inline: false },
                         ],
                         footer: {
-                            text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
+                            text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                         }
                     }
                 }
@@ -1218,7 +1218,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                             { name: "Output", value: "No output!", inline: false },
                         ],
                         footer: {
-                            text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
+                            text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                         }
                     }
                 }
@@ -1249,6 +1249,98 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     content: await editFollowup(message, {
                         content: "Done",
                         components: []
+                    })
+                })
+            }
+            else if (message.data!.custom_id!.startsWith("undo")) {
+                await updateDefer(message, { ephemeral: true })
+                if ((message.member?.user.id || message.user?.id) != message.data!.custom_id!.split(" - ")[1]) {
+                    return response.send({
+                        content: await followup(message, {
+                            content: "❌ You can't do this",
+                        })
+                    })
+                }
+                let undoComponent: ButtonsComponent = {
+                    type: MessageComponentTypes.BUTTON,
+                    label: "",
+                    style: ButtonStyleTypes.SECONDARY,
+                    custom_id: `undo - ${message.member?.user.id || message.user?.id}`,
+                    emoji: { name: "Undo", id: "1125394556804931696" }
+                }
+                let oldSnippet = await snippets.findOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: parseInt(message.message.embeds[0].title!.split(" - ")[1].slice(5)) })
+                if (oldSnippet?.history.length! == 1) {
+                    undoComponent.disabled = true
+                }
+                let version: number = 0
+                for (let i = 0; i < runtimes.length; i++) {
+                    if (runtimes[i].aliases.length != 0) {
+                        for (let c = 0; c < runtimes[i].aliases.length; c++) {
+                            if (oldSnippet?.history[oldSnippet?.history.length! - 1].language == runtimes[i].language || oldSnippet?.history[oldSnippet?.history.length! - 1].language == runtimes[i].aliases[c]) {
+                                version = runtimes[i].version
+                            }
+                        }
+                    }
+                    else {
+                        if (oldSnippet?.history[oldSnippet?.history.length! - 1].language == runtimes[i].language) {
+                            version = runtimes[i].version
+                        }
+                    }
+                }
+                let currentId = oldSnippet?.evaluatorId!
+                let start: number = Date.now()
+                let result: Response | Result = await fetch("https://emkc.org/api/v2/piston/execute", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        "language": oldSnippet?.history[oldSnippet?.history.length! - 1].language,
+                        "version": "*",
+                        "files": [{
+                            "content": oldSnippet?.history[oldSnippet?.history.length! - 1].code
+                        }]
+                    })
+                })
+                result = await result.json() as Result
+                let end: number = Date.now()
+                let runembed: Embeds = {
+                    color: 0x607387,
+                    title: `Evaluation Result - [ID: ${currentId}]`,
+                    fields: [
+                        { name: "Language", value: "```" + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + "```", inline: false },
+                        { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
+                        { name: "Input", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
+                        { name: "Output", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + result.run.output.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
+                        { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
+                    ],
+                    footer: {
+                        text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
+                    }
+                }
+                await snippets.updateOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: currentId }, { $set: { language: oldSnippet?.history[oldSnippet?.history.length! - 1].language, code: oldSnippet?.history[oldSnippet?.history.length! - 1].code }, $pop: { history: 1 } })
+                return response.send({
+                    content: await editFollowup(message, {
+                        embeds: [runembed],
+                        components: [
+                            {
+                                type: MessageComponentTypes.ACTION_ROW,
+                                components: [
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        label: "",
+                                        style: ButtonStyleTypes.PRIMARY,
+                                        custom_id: `edit - ${message.member?.user.id || message.user?.id} - ${currentId + 1}`,
+                                        emoji: { name: "Edit", id: "1104464874744074370" }
+                                    },
+                                    undoComponent,
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        label: "",
+                                        style: ButtonStyleTypes.DANGER,
+                                        custom_id: `delete - ${message.member?.user.id || message.user?.id}`,
+                                        emoji: { name: "Delete", id: "1104477832308068352" }
+                                    }
+                                ]
+                            }
+                        ]
                     })
                 })
             }
@@ -1380,7 +1472,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                             { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                         ],
                         footer: {
-                            text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
+                            text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                         }
                     }
                     if (code.length > 925) {
@@ -1395,7 +1487,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                 { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                             ],
                             footer: {
-                                text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
+                                text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                             }
                         }
                     }
@@ -1417,7 +1509,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                 { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                             ],
                             footer: {
-                                text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
+                                text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                             }
                         }
                     }
@@ -1439,7 +1531,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                 { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                             ],
                             footer: {
-                                text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
+                                text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                             }
                         }
                     }
@@ -1500,6 +1592,14 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                             style: ButtonStyleTypes.PRIMARY,
                                             custom_id: `edit - ${message.member?.user.id || message.user?.id} - ${currentId + 1}`,
                                             emoji: { name: "Edit", id: "1104464874744074370" }
+                                        },
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.SECONDARY,
+                                            custom_id: `undo - ${message.member?.user.id || message.user?.id}`,
+                                            emoji: { name: "Undo", id: "1125394556804931696" },
+                                            disabled: true
                                         },
                                         {
                                             type: MessageComponentTypes.BUTTON,
@@ -1658,7 +1758,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                 { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                             ],
                             footer: {
-                                text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
+                                text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                             }
                         }
                     }
@@ -1680,7 +1780,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                 { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                             ],
                             footer: {
-                                text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
+                                text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                             }
                         }
                     }
@@ -1695,7 +1795,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                 { name: "Output", value: "No output!", inline: false },
                             ],
                             footer: {
-                                text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
+                                text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                             }
                         }
                     }
@@ -1710,7 +1810,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                 { name: "Output", value: "No output!", inline: false },
                             ],
                             footer: {
-                                text: `The code took ${parseFloat((end - start).toString()).toFixed(0)}ms to be executed`
+                                text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                             }
                         }
                     }
@@ -1723,7 +1823,8 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     await mongoose.connect(url)
                     let currentId = parseInt(message.message.embeds[0].title!.split(" - ")[1].slice(5))
                     runembed.title = `Evaluation Result - [ID: ${currentId}]`
-                    await snippets.updateOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: currentId }, { $set: { language: runtimes[index].language, code: code } })
+                    let oldSnippet = await snippets.findOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: currentId })
+                    await snippets.updateOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: currentId }, { $set: { language: runtimes[index].language, code: code }, $push: { history: { language: oldSnippet?.language, code: oldSnippet?.code } } })
                     return response.send({
                         content: await editFollowup(message, {
                             embeds: [runembed],
@@ -1737,6 +1838,13 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                             style: ButtonStyleTypes.PRIMARY,
                                             custom_id: `edit - ${message.member?.user.id || message.user?.id} - ${currentId}`,
                                             emoji: { name: "Edit", id: "1104464874744074370" }
+                                        },
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            label: "",
+                                            style: ButtonStyleTypes.SECONDARY,
+                                            custom_id: `undo - ${message.member?.user.id || message.user?.id}`,
+                                            emoji: { name: "Undo", id: "1125394556804931696" }
                                         },
                                         {
                                             type: MessageComponentTypes.BUTTON,
