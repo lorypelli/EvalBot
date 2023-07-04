@@ -1,7 +1,7 @@
 import { InteractionResponseType, InteractionType, verifyKey, MessageComponentTypes, ButtonStyleTypes, TextStyleTypes } from "discord-interactions"
 import getRawBody from "raw-body"
 import { version } from "os"
-import { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followup, editFollowup, get, autocompleteResult, Interaction, Embeds, AutocompleteOptions, SlashCommandsStructure, ButtonsComponent } from "serverless_bots_addons"
+import { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followUp, editFollowup, get, autocompleteResult, Interaction, Embeds, AutocompleteOptions, SlashCommandsStructure, ButtonsComponent } from "serverless_bots_addons"
 import mongoose from "mongoose"
 import snippets from "./schemas/Snippet"
 import { Runtimes, PackageSize, PackageName, Result } from "./addons"
@@ -219,7 +219,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
         if (id == "1077228141531123852" && (message.member!.user.id || message.user!.id) != "604339998312890379") {
             await deferReply(message, { ephemeral: true })
             return response.send({
-                content: await followup(message, {
+                content: await followUp(message, {
                     content: "❌ You can't use <@1077228141531123852>, use <@1076200668810985634> instead"
                 })
             })
@@ -238,7 +238,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                     guilds = await guilds.json() as []
                     return response.send({
-                        content: await followup(message, {
+                        content: await followUp(message, {
                             content: `The bot is currently on **${guilds.length} servers**. Click the button below to invite the bot!`,
                             components: [
                                 {
@@ -282,7 +282,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         body: JSON.stringify([RUN_CMD, LANGS_CMD, INVITE_CMD, VOTE_CMD, SIZE_CMD, CONVERT_CMD, SNIPPETS_CMD])
                     })
                     return response.send({
-                        content: await followup(message, {
+                        content: await followUp(message, {
                             components: [
                                 {
                                     type: MessageComponentTypes.ACTION_ROW,
@@ -306,7 +306,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
                     }
                     return response.send({
-                        content: await followup(message, {
+                        content: await followUp(message, {
                             embeds: [
                                 {
                                     color: 0x607387,
@@ -409,14 +409,14 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     let result: Response | PackageSize = await fetch(`https://packagephobia.com/v2/api.json?p=${pkg}`)
                     if (result.status != 200) {
                         return response.send({
-                            content: await followup(message, {
+                            content: await followUp(message, {
                                 content: "There was an error, try again!",
                             })
                         })
                     }
                     result = await result.json() as PackageSize
                     return response.send({
-                        content: await followup(message, {
+                        content: await followUp(message, {
                             embeds: [
                                 {
                                     color: 0x607387,
@@ -484,7 +484,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     await deferReply(message, { ephemeral: true })
                     if ((message.member!.user.id || message.user!.id) != "604339998312890379") {
                         return response.send({
-                            content: await followup(message, {
+                            content: await followUp(message, {
                                 content: "❌ You can't do this",
                             })
                         })
@@ -500,7 +500,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         body: JSON.stringify([EVAL_CMD, REGISTER_CMD, INFO_CMD])
                     })
                     return response.send({
-                        content: await followup(message, {
+                        content: await followUp(message, {
                             content: "Done!"
                         })
                     })
@@ -509,7 +509,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     await deferReply(message, { ephemeral: true })
                     if ((message.member!.user.id || message.user!.id) != "604339998312890379") {
                         return response.send({
-                            content: await followup(message, {
+                            content: await followUp(message, {
                                 content: "❌ You can't do this",
                             })
                         })
@@ -517,7 +517,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     let totalRam: number = (process.memoryUsage().heapTotal / (1024 * 1024)).toFixed(3) as unknown as number
                     let usedRam: number = (process.memoryUsage().heapUsed / (1024 * 1024)).toFixed(3) as unknown as number
                     return response.send({
-                        content: await followup(message, {
+                        content: await followUp(message, {
                             embeds: [
                                 {
                                     color: 0x607387,
@@ -547,7 +547,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         case "Binary to Decimal": {
                             if (originalNumber.toString().includes("2") || originalNumber.toString().includes("3") || originalNumber.toString().includes("4") || originalNumber.toString().includes("5") || originalNumber.toString().includes("6") || originalNumber.toString().includes("7") || originalNumber.toString().includes("8") || originalNumber.toString().includes("9")) {
                                 return response.send({
-                                    content: await followup(message, {
+                                    content: await followUp(message, {
                                         content: "❌ The binary number isn't valid",
                                     })
                                 })
@@ -557,7 +557,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         }
                     }
                     return response.send({
-                        content: await followup(message, {
+                        content: await followUp(message, {
                             content: `The number \`${originalNumber}\` converted using the \`${system}\` system is \`${number}\``,
                         })
                     })
@@ -568,7 +568,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     if (id <= 0) {
                         await deferReply(message, { ephemeral: true })
                         return response.send({
-                            content: await followup(message, {
+                            content: await followUp(message, {
                                 content: "ID not valid",
                             })
                         })
@@ -579,7 +579,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     let currentSnippet = await snippets.findOne({ userId: user, evaluatorId: id })
                     if (currentSnippet == undefined) {
                         return response.send({
-                            content: await followup(message, {
+                            content: await followUp(message, {
                                 content: "The user doesn't have a snippet with that id"
                             })
                         })
@@ -591,7 +591,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         fields: [{ name: `Language: ${currentSnippet!.language}`, value: "```" + currentSnippet!.language + "\n" + currentSnippet!.code.slice(0, 1024) + "\n" + "```", inline: false }],
                     }
                     return response.send({
-                        content: await followup(message, {
+                        content: await followUp(message, {
                             embeds: [snippetsembed],
                             components: [
                                 {
@@ -615,7 +615,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
         else if (message.type === InteractionType.MESSAGE_COMPONENT) {
             switch (message.data!.custom_id!) {
                 case "next1": {
-                    await updateDefer(message, { ephemeral: true })
+                    await updateDefer(message)
                     let languages: Embeds["fields"] = [{ name: "", value: "", inline: false }]
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -655,7 +655,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 }
                 case "next2": {
-                    await updateDefer(message, { ephemeral: true })
+                    await updateDefer(message)
                     let languages: Embeds["fields"] = [{ name: "", value: "", inline: false }]
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -695,7 +695,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 }
                 case "next3": {
-                    await updateDefer(message, { ephemeral: true })
+                    await updateDefer(message)
                     let languages: Embeds["fields"] = [{ name: "", value: "", inline: false }]
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -736,7 +736,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 }
                 case "previous2": {
-                    await updateDefer(message, { ephemeral: true })
+                    await updateDefer(message)
                     let languages: Embeds["fields"] = [{ name: "", value: "", inline: false }]
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -777,7 +777,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 }
                 case "previous3": {
-                    await updateDefer(message, { ephemeral: true })
+                    await updateDefer(message)
                     let languages: Embeds["fields"] = [{ name: "", value: "", inline: false }]
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -817,7 +817,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 }
                 case "previous4": {
-                    await updateDefer(message, { ephemeral: true })
+                    await updateDefer(message)
                     let languages: Embeds["fields"] = [{ name: "", value: "", inline: false }]
                     for (let c = 0; c < runtimes.length; c++) {
                         languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true })
@@ -858,11 +858,11 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 }
             }
             if (message.data!.custom_id!.split(" - ")[0] === "reload") {
-                await updateDefer(message, { ephemeral: true })
+                await updateDefer(message)
                 let result: Response | PackageSize = await fetch(`https://packagephobia.com/v2/api.json?p=${message.data!.custom_id!.split(" - ")[1]}`)
                 if (result.status != 200) {
                     return response.send({
-                        content: await followup(message, {
+                        content: await followUp(message, {
                             content: "There was an error, try again!",
                         })
                     })
@@ -914,14 +914,14 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 if ((message.member!.user.id || message.user!.id) != message.data!.custom_id!.split(" - ")[1]) {
                     await deferReply(message, { ephemeral: true })
                     return response.send({
-                        content: await followup(message, {
+                        content: await followUp(message, {
                             content: "❌ You can't do this",
                         })
                     })
                 }
                 if (message.message.embeds[0].title!.split(" - ")[1] == undefined) {
                     return response.send({
-                        content: await followup(message, {
+                        content: await followUp(message, {
                             content: "Unknown Evaluation",
                         })
                     })
@@ -996,20 +996,20 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 await deferReply(message, { ephemeral: true })
                 if ((message.member!.user.id || message.user!.id) != message.data!.custom_id!.split(" - ")[1]) {
                     return response.send({
-                        content: await followup(message, {
+                        content: await followUp(message, {
                             content: "❌ You can't do this",
                         })
                     })
                 }
                 if (message.message.embeds[0].title!.split(" - ")[1] == undefined) {
                     return response.send({
-                        content: await followup(message, {
+                        content: await followUp(message, {
                             content: "Unknown Evaluation",
                         })
                     })
                 }
                 return response.send({
-                    content: await followup(message, {
+                    content: await followUp(message, {
                         content: "You are about to delete this evaluation from the chat. Do you want to delete it also from the database?",
                         components: [
                             {
@@ -1059,7 +1059,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 }
                 if (version == 0) {
                     return response.send({
-                        content: await followup(message, {
+                        content: await followUp(message, {
                             content: "Unknown Language!",
                         })
                     })
@@ -1224,13 +1224,13 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     }
                 }
                 return response.send({
-                    content: await followup(message, {
+                    content: await followUp(message, {
                         embeds: [runembed]
                     })
                 })
             }
             else if (message.data!.custom_id!.startsWith("yes") || message.data!.custom_id!.startsWith("no")) {
-                await updateDefer(message, { ephemeral: true })
+                await updateDefer(message)
                 let messageId = message.data!.custom_id!.split(" - ")[1]
                 if (message.data!.custom_id!.startsWith("yes")) {
                     let evaluatorId = message.data!.custom_id!.split(" - ")[2]
@@ -1255,10 +1255,10 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 })
             }
             else if (message.data!.custom_id!.startsWith("undo")) {
-                await updateDefer(message, { ephemeral: true })
+                await updateDefer(message)
                 if ((message.member!.user.id || message.user!.id) != message.data!.custom_id!.split(" - ")[1]) {
                     return response.send({
-                        content: await followup(message, {
+                        content: await followUp(message, {
                             content: "❌ You can't do this",
                         })
                     })
@@ -1485,7 +1485,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     }
                     if (version == 0) {
                         return response.send({
-                            content: await followup(message, {
+                            content: await followUp(message, {
                                 content: "Unknown Language!",
                             })
                         })
@@ -1674,7 +1674,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     runembed.title = `Evaluation Result - [ID: ${currentId + 1}]`
                     await snippets.create({ userId: message.member!.user.id || message.user!.id, language: runtimes[index].language, code: code, evaluatorId: currentId + 1 })
                     return response.send({
-                        content: await followup(message, {
+                        content: await followUp(message, {
                             embeds: [runembed],
                             components: [
                                 {
@@ -1709,7 +1709,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 }
                 case "runedit": {
-                    await updateDefer(message, { ephemeral: true })
+                    await updateDefer(message)
                     let language: string = get(message, "language")!.toLowerCase().trim()
                     let code: string = get(message, "code")!.trim()
                     let input: string = "" || get(message, "input")!.trim()
@@ -1734,7 +1734,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     }
                     if (version == 0) {
                         return response.send({
-                            content: await followup(message, {
+                            content: await followUp(message, {
                                 content: "Unknown Language!",
                             })
                         })
@@ -1957,7 +1957,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     await deferReply(message, { ephemeral: true })
                     if ((message.member!.user.id || message.user!.id) != "604339998312890379") {
                         return response.send({
-                            content: await followup(message, {
+                            content: await followUp(message, {
                                 content: "❌ You can't do this",
                             })
                         })
@@ -1965,14 +1965,14 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     try {
                         let code = eval(get(message, "code")!.slice(0, 950))
                         return response.send({
-                            content: await followup(message, {
+                            content: await followUp(message, {
                                 content: "```js" + "\n" + JSON.stringify(code, null, 2) + "\n" + "```"
                             })
                         })
                     }
                     catch (e) {
                         return response.send({
-                            content: await followup(message, {
+                            content: await followUp(message, {
                                 content: "```js" + "\n" + e + "\n" + "```"
                             })
                         })
