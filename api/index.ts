@@ -1033,7 +1033,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 })
             }
-            else if (message.data!.custom_id!.startsWith("run_code")) {
+            else if (message.data!.custom_id!.split(" - ")[0] === "run_code") {
                 await deferReply(message, { ephemeral: true })
                 let currentSnippet = await snippets.findOne({ userId: message.data!.custom_id!.split(" - ")[1], evaluatorId: message.data!.custom_id!.split(" - ")[2] })
                 let language: string = currentSnippet?.language!
