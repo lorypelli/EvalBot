@@ -1035,6 +1035,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
             }
             else if (message.data!.custom_id!.split(" - ")[0] === "run_code") {
                 await deferReply(message, { ephemeral: true })
+                await mongoose.connect(url)
                 let currentSnippet = await snippets.findOne({ userId: message.data!.custom_id!.split(" - ")[1], evaluatorId: message.data!.custom_id!.split(" - ")[2] })
                 let language: string = currentSnippet?.language!
                 let code: string = currentSnippet?.code!
@@ -1233,6 +1234,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 let messageId = message.data!.custom_id!.split(" - ")[1]
                 if (message.data!.custom_id!.startsWith("yes")) {
                     let evaluatorId = message.data!.custom_id!.split(" - ")[2]
+                    await mongoose.connect(url)
                     await snippets.deleteOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: parseInt(evaluatorId) })
                     await fetch(`https://discord.com/api/v10/channels/${message.channel_id}/messages/${messageId}`, {
                         method: "DELETE",
@@ -1268,6 +1270,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     custom_id: `undo - ${message.member?.user.id || message.user?.id}`,
                     emoji: { name: "Undo", id: "1125394556804931696" }
                 }
+                await mongoose.connect(url)
                 let oldSnippet = await snippets.findOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: parseInt(message.message.embeds[0].title!.split(" - ")[1].slice(5)) })
                 if (oldSnippet?.history.length! == 1) {
                     undoComponent.disabled = true
