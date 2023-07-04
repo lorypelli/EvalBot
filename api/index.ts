@@ -1306,7 +1306,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 let end: number = Date.now()
                 let runembed: Embeds = {
                     color: 0x607387,
-                    title: `Evaluation Result - [ID: ${currentId}]`,
+                    title: "Evaluation Result",
                     fields: [
                         { name: "Language", value: "```" + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + "```", inline: false },
                         { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
@@ -1408,6 +1408,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         }
                     }
                 }
+                runembed.title = `Evaluation Result - [ID: ${currentId}]`
                 await snippets.updateOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: currentId }, { $set: { language: oldSnippet?.history[oldSnippet?.history.length! - 1].language, code: oldSnippet?.history[oldSnippet?.history.length! - 1].code }, $pop: { history: 1 } })
                 return response.send({
                     content: await editFollowup(message, {
