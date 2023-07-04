@@ -213,10 +213,10 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
             return response.status(401).send({ error: "Unauthorized" })
         }
         let message: Interaction = request.body
-        let id: string = (process.env.TOKEN)?.split(".")[0]!
+        let id: string = (process.env.TOKEN)!.split(".")[0]!
         let buffer: Buffer = Buffer.from(id, "base64")
         id = buffer.toString("utf8")
-        if (id == "1077228141531123852" && (message.member?.user.id || message.user?.id) != "604339998312890379") {
+        if (id == "1077228141531123852" && (message.member!.user.id || message.user!.id) != "604339998312890379") {
             await deferReply(message, { ephemeral: true })
             return response.send({
                 content: await followup(message, {
@@ -482,7 +482,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 }
                 case REGISTER_CMD.name: {
                     await deferReply(message, { ephemeral: true })
-                    if ((message.member?.user.id || message.user?.id) != "604339998312890379") {
+                    if ((message.member!.user.id || message.user!.id) != "604339998312890379") {
                         return response.send({
                             content: await followup(message, {
                                 content: "❌ You can't do this",
@@ -507,7 +507,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 }
                 case INFO_CMD.name: {
                     await deferReply(message, { ephemeral: true })
-                    if ((message.member?.user.id || message.user?.id) != "604339998312890379") {
+                    if ((message.member!.user.id || message.user!.id) != "604339998312890379") {
                         return response.send({
                             content: await followup(message, {
                                 content: "❌ You can't do this",
@@ -563,7 +563,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 }
                 case SNIPPETS_CMD.name: {
-                    let user: string = get(message, "user")! || (message.member?.user.id || message.user?.id)!
+                    let user: string = get(message, "user")! || (message.member!.user.id || message.user!.id)!
                     let id: number = get(message, "id") as unknown as number
                     if (id <= 0) {
                         await deferReply(message, { ephemeral: true })
@@ -588,7 +588,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         color: 0x607387,
                         title: "Snippets",
                         description: `Total snippets: ${totalSnippets.length}`,
-                        fields: [{ name: `Language: ${currentSnippet?.language}`, value: "```" + currentSnippet?.language + "\n" + currentSnippet?.code.slice(0, 1024) + "\n" + "```", inline: false }],
+                        fields: [{ name: `Language: ${currentSnippet!.language}`, value: "```" + currentSnippet!.language + "\n" + currentSnippet!.code.slice(0, 1024) + "\n" + "```", inline: false }],
                     }
                     return response.send({
                         content: await followup(message, {
@@ -911,7 +911,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 })
             }
             else if (message.data!.custom_id!.split(" - ")[0] === "edit") {
-                if ((message.member?.user.id || message.user?.id) != message.data!.custom_id!.split(" - ")[1]) {
+                if ((message.member!.user.id || message.user!.id) != message.data!.custom_id!.split(" - ")[1]) {
                     await deferReply(message, { ephemeral: true })
                     return response.send({
                         content: await followup(message, {
@@ -927,7 +927,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 }
                 await mongoose.connect(url)
-                let originalSnippet = await snippets.findOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: parseInt(message.message.embeds[0].title!.split(" - ")[1].slice(5)) })
+                let originalSnippet = await snippets.findOne({ userId: message.member!.user.id || message.user!.id, evaluatorId: parseInt(message.message.embeds[0].title!.split(" - ")[1].slice(5)) })
                 return response.send({
                     content: await showModal(message, {
                         title: "Run Code",
@@ -944,7 +944,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                         required: true,
                                         min_length: 1,
                                         max_length: 10,
-                                        value: "" || originalSnippet?.language
+                                        value: "" || originalSnippet!.language
                                     }
                                 ]
                             },
@@ -958,7 +958,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                         custom_id: "code",
                                         required: true,
                                         min_length: 5,
-                                        value: "" || originalSnippet?.code
+                                        value: "" || originalSnippet!.code
                                     }
                                 ]
                             },
@@ -994,7 +994,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
             }
             else if (message.data!.custom_id!.split(" - ")[0] === "delete") {
                 await deferReply(message, { ephemeral: true })
-                if ((message.member?.user.id || message.user?.id) != message.data!.custom_id!.split(" - ")[1]) {
+                if ((message.member!.user.id || message.user!.id) != message.data!.custom_id!.split(" - ")[1]) {
                     return response.send({
                         content: await followup(message, {
                             content: "❌ You can't do this",
@@ -1037,8 +1037,8 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 await deferReply(message, { ephemeral: true })
                 await mongoose.connect(url)
                 let currentSnippet = await snippets.findOne({ userId: message.data!.custom_id!.split(" - ")[1], evaluatorId: message.data!.custom_id!.split(" - ")[2] })
-                let language: string = currentSnippet?.language!
-                let code: string = currentSnippet?.code!
+                let language: string = currentSnippet!.language!
+                let code: string = currentSnippet!.code!
                 let version: number = 0
                 let index: number = 0
                 for (let i = 0; i < runtimes.length; i++) {
@@ -1235,7 +1235,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 if (message.data!.custom_id!.startsWith("yes")) {
                     let evaluatorId = message.data!.custom_id!.split(" - ")[2]
                     await mongoose.connect(url)
-                    await snippets.deleteOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: parseInt(evaluatorId) })
+                    await snippets.deleteOne({ userId: message.member!.user.id || message.user!.id, evaluatorId: parseInt(evaluatorId) })
                     await fetch(`https://discord.com/api/v10/channels/${message.channel_id}/messages/${messageId}`, {
                         method: "DELETE",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" }
@@ -1256,7 +1256,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
             }
             else if (message.data!.custom_id!.startsWith("undo")) {
                 await updateDefer(message, { ephemeral: true })
-                if ((message.member?.user.id || message.user?.id) != message.data!.custom_id!.split(" - ")[1]) {
+                if ((message.member!.user.id || message.user!.id) != message.data!.custom_id!.split(" - ")[1]) {
                     return response.send({
                         content: await followup(message, {
                             content: "❌ You can't do this",
@@ -1267,38 +1267,38 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     type: MessageComponentTypes.BUTTON,
                     label: "",
                     style: ButtonStyleTypes.SECONDARY,
-                    custom_id: `undo - ${message.member?.user.id || message.user?.id}`,
+                    custom_id: `undo - ${message.member!.user.id || message.user!.id}`,
                     emoji: { name: "Undo", id: "1125394556804931696" }
                 }
                 await mongoose.connect(url)
-                let oldSnippet = await snippets.findOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: parseInt(message.message.embeds[0].title!.split(" - ")[1].slice(5)) })
-                if (oldSnippet?.history.length! == 1) {
+                let oldSnippet = await snippets.findOne({ userId: message.member!.user.id || message.user!.id, evaluatorId: parseInt(message.message.embeds[0].title!.split(" - ")[1].slice(5)) })
+                if (oldSnippet!.history.length == 1) {
                     undoComponent.disabled = true
                 }
                 let version: number = 0
                 for (let i = 0; i < runtimes.length; i++) {
                     if (runtimes[i].aliases.length != 0) {
                         for (let c = 0; c < runtimes[i].aliases.length; c++) {
-                            if (oldSnippet?.history[oldSnippet?.history.length! - 1].language == runtimes[i].language || oldSnippet?.history[oldSnippet?.history.length! - 1].language == runtimes[i].aliases[c]) {
+                            if (oldSnippet!.history[oldSnippet!.history.length - 1].language == runtimes[i].language || oldSnippet!.history[oldSnippet!.history.length - 1].language == runtimes[i].aliases[c]) {
                                 version = runtimes[i].version
                             }
                         }
                     }
                     else {
-                        if (oldSnippet?.history[oldSnippet?.history.length! - 1].language == runtimes[i].language) {
+                        if (oldSnippet!.history[oldSnippet!.history.length - 1].language == runtimes[i].language) {
                             version = runtimes[i].version
                         }
                     }
                 }
-                let currentId = oldSnippet?.evaluatorId!
+                let currentId = oldSnippet!.evaluatorId!
                 let start: number = Date.now()
                 let result: Response | Result = await fetch("https://emkc.org/api/v2/piston/execute", {
                     method: "POST",
                     body: JSON.stringify({
-                        "language": oldSnippet?.history[oldSnippet?.history.length! - 1].language,
+                        "language": oldSnippet!.history[oldSnippet!.history.length - 1].language,
                         "version": "*",
                         "files": [{
-                            "content": oldSnippet?.history[oldSnippet?.history.length! - 1].code
+                            "content": oldSnippet!.history[oldSnippet!.history.length - 1].code
                         }]
                     })
                 })
@@ -1308,25 +1308,25 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     color: 0x607387,
                     title: "Evaluation Result",
                     fields: [
-                        { name: "Language", value: "```" + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + "```", inline: false },
+                        { name: "Language", value: "```" + "\n" + oldSnippet!.history[oldSnippet!.history.length - 1].language + "\n" + "```", inline: false },
                         { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
-                        { name: "Input", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
-                        { name: "Output", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + result.run.output.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
+                        { name: "Input", value: "```" + oldSnippet!.history[oldSnippet!.history.length - 1].language + "\n" + oldSnippet!.history[oldSnippet!.history.length - 1].code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
+                        { name: "Output", value: "```" + oldSnippet!.history[oldSnippet!.history.length - 1].language + "\n" + result.run.output.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
                         { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                     ],
                     footer: {
                         text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                     }
                 }
-                if (oldSnippet?.history[oldSnippet?.history.length! - 1].code.length > 925) {
+                if (oldSnippet!.history[oldSnippet!.history.length - 1].code.length > 925) {
                     runembed = {
                         color: 0x607387,
                         title: "Evaluation Result",
                         fields: [
-                            { name: "Language", value: "```" + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + "```", inline: false },
+                            { name: "Language", value: "```" + "\n" + oldSnippet!.history[oldSnippet!.history.length - 1].language + "\n" + "```", inline: false },
                             { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
-                            { name: "Input", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**", inline: false },
-                            { name: "Output", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + result.run.output.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
+                            { name: "Input", value: "```" + oldSnippet!.history[oldSnippet!.history.length - 1].language + "\n" + oldSnippet!.history[oldSnippet!.history.length - 1].code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**", inline: false },
+                            { name: "Output", value: "```" + oldSnippet!.history[oldSnippet!.history.length - 1].language + "\n" + result.run.output.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
                             { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                         ],
                         footer: {
@@ -1345,10 +1345,10 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         color: 0x607387,
                         title: "Evaluation Result",
                         fields: [
-                            { name: "Language", value: "```" + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + "```", inline: false },
+                            { name: "Language", value: "```" + "\n" + oldSnippet!.history[oldSnippet!.history.length - 1].language + "\n" + "```", inline: false },
                             { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
-                            { name: "Input", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
-                            { name: "Output", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + result.run.output.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**" + "\n" + `view the entire output [here](${url})`, inline: false },
+                            { name: "Input", value: "```" + oldSnippet!.history[oldSnippet!.history.length - 1].language + "\n" + oldSnippet!.history[oldSnippet!.history.length - 1].code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
+                            { name: "Output", value: "```" + oldSnippet!.history[oldSnippet!.history.length - 1].language + "\n" + result.run.output.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**" + "\n" + `view the entire output [here](${url})`, inline: false },
                             { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                         ],
                         footer: {
@@ -1356,7 +1356,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         }
                     }
                 }
-                if (oldSnippet?.history[oldSnippet?.history.length! - 1].code.length > 925 && result.run.output.length > 925) {
+                if (oldSnippet!.history[oldSnippet!.history.length - 1].code.length > 925 && result.run.output.length > 925) {
                     let url: Response | string = await fetch("https://dpaste.com/api/v2/", {
                         method: "POST",
                         headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "EvalBot" },
@@ -1367,10 +1367,10 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         color: 0x607387,
                         title: "Evaluation Result",
                         fields: [
-                            { name: "Language", value: "```" + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + "```", inline: false },
+                            { name: "Language", value: "```" + "\n" + oldSnippet!.history[oldSnippet!.history.length - 1].language + "\n" + "```", inline: false },
                             { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
-                            { name: "Input", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**", inline: false },
-                            { name: "Output", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + result.run.output.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**" + "\n" + `view the entire output [here](${url})`, inline: false },
+                            { name: "Input", value: "```" + oldSnippet!.history[oldSnippet!.history.length - 1].language + "\n" + oldSnippet!.history[oldSnippet!.history.length - 1].code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**", inline: false },
+                            { name: "Output", value: "```" + oldSnippet!.history[oldSnippet!.history.length - 1].language + "\n" + result.run.output.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**" + "\n" + `view the entire output [here](${url})`, inline: false },
                             { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
                         ],
                         footer: {
@@ -1383,9 +1383,9 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         color: 0x607387,
                         title: "Evaluation Result",
                         fields: [
-                            { name: "Language", value: "```" + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + "```", inline: false },
+                            { name: "Language", value: "```" + "\n" + oldSnippet!.history[oldSnippet!.history.length - 1].language + "\n" + "```", inline: false },
                             { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
-                            { name: "Input", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
+                            { name: "Input", value: "```" + oldSnippet!.history[oldSnippet!.history.length - 1].language + "\n" + oldSnippet!.history[oldSnippet!.history.length - 1].code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
                             { name: "Output", value: "No output!", inline: false },
                         ],
                         footer: {
@@ -1393,14 +1393,14 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         }
                     }
                 }
-                if ((result.run.output.length == 0 || result.run.output == "\n") && oldSnippet?.history[oldSnippet?.history.length! - 1].code.length > 925) {
+                if ((result.run.output.length == 0 || result.run.output == "\n") && oldSnippet!.history[oldSnippet!.history.length - 1].code.length > 925) {
                     runembed = {
                         color: 0x607387,
                         title: "Evaluation Result",
                         fields: [
-                            { name: "Language", value: "```" + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + "```", inline: false },
+                            { name: "Language", value: "```" + "\n" + oldSnippet!.history[oldSnippet!.history.length - 1].language + "\n" + "```", inline: false },
                             { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
-                            { name: "Input", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**", inline: false },
+                            { name: "Input", value: "```" + oldSnippet!.history[oldSnippet!.history.length - 1].language + "\n" + oldSnippet!.history[oldSnippet!.history.length - 1].code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**", inline: false },
                             { name: "Output", value: "No output!", inline: false },
                         ],
                         footer: {
@@ -1409,7 +1409,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     }
                 }
                 runembed.title = `Evaluation Result - [ID: ${currentId}]`
-                await snippets.updateOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: currentId }, { $set: { language: oldSnippet?.history[oldSnippet?.history.length! - 1].language, code: oldSnippet?.history[oldSnippet?.history.length! - 1].code }, $pop: { history: 1 } })
+                await snippets.updateOne({ userId: message.member!.user.id || message.user!.id, evaluatorId: currentId }, { $set: { language: oldSnippet!.history[oldSnippet!.history.length - 1].language, code: oldSnippet!.history[oldSnippet!.history.length - 1].code }, $pop: { history: 1 } })
                 return response.send({
                     content: await editFollowup(message, {
                         embeds: [runembed],
@@ -1421,7 +1421,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                         type: MessageComponentTypes.BUTTON,
                                         label: "",
                                         style: ButtonStyleTypes.PRIMARY,
-                                        custom_id: `edit - ${message.member?.user.id || message.user?.id} - ${currentId + 1}`,
+                                        custom_id: `edit - ${message.member!.user.id || message.user!.id} - ${currentId + 1}`,
                                         emoji: { name: "Edit", id: "1104464874744074370" }
                                     },
                                     undoComponent,
@@ -1429,7 +1429,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                         type: MessageComponentTypes.BUTTON,
                                         label: "",
                                         style: ButtonStyleTypes.DANGER,
-                                        custom_id: `delete - ${message.member?.user.id || message.user?.id}`,
+                                        custom_id: `delete - ${message.member!.user.id || message.user!.id}`,
                                         emoji: { name: "Delete", id: "1104477832308068352" }
                                     }
                                 ]
@@ -1672,7 +1672,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         currentId = i
                     }
                     runembed.title = `Evaluation Result - [ID: ${currentId + 1}]`
-                    await snippets.create({ userId: message.member?.user.id || message.user?.id, language: runtimes[index].language, code: code, evaluatorId: currentId + 1 })
+                    await snippets.create({ userId: message.member!.user.id || message.user!.id, language: runtimes[index].language, code: code, evaluatorId: currentId + 1 })
                     return response.send({
                         content: await followup(message, {
                             embeds: [runembed],
@@ -1684,14 +1684,14 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                             type: MessageComponentTypes.BUTTON,
                                             label: "",
                                             style: ButtonStyleTypes.PRIMARY,
-                                            custom_id: `edit - ${message.member?.user.id || message.user?.id} - ${currentId + 1}`,
+                                            custom_id: `edit - ${message.member!.user.id || message.user!.id} - ${currentId + 1}`,
                                             emoji: { name: "Edit", id: "1104464874744074370" }
                                         },
                                         {
                                             type: MessageComponentTypes.BUTTON,
                                             label: "",
                                             style: ButtonStyleTypes.SECONDARY,
-                                            custom_id: `undo - ${message.member?.user.id || message.user?.id}`,
+                                            custom_id: `undo - ${message.member!.user.id || message.user!.id}`,
                                             emoji: { name: "Undo", id: "1125394556804931696" },
                                             disabled: true
                                         },
@@ -1699,7 +1699,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                             type: MessageComponentTypes.BUTTON,
                                             label: "",
                                             style: ButtonStyleTypes.DANGER,
-                                            custom_id: `delete - ${message.member?.user.id || message.user?.id}`,
+                                            custom_id: `delete - ${message.member!.user.id || message.user!.id}`,
                                             emoji: { name: "Delete", id: "1104477832308068352" }
                                         }
                                     ]
@@ -1917,8 +1917,8 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     await mongoose.connect(url)
                     let currentId = parseInt(message.message.embeds[0].title!.split(" - ")[1].slice(5))
                     runembed.title = `Evaluation Result - [ID: ${currentId}]`
-                    let oldSnippet = await snippets.findOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: currentId })
-                    await snippets.updateOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: currentId }, { $set: { language: runtimes[index].language, code: code }, $push: { history: { language: oldSnippet?.language, code: oldSnippet?.code } } })
+                    let oldSnippet = await snippets.findOne({ userId: message.member!.user.id || message.user!.id, evaluatorId: currentId })
+                    await snippets.updateOne({ userId: message.member!.user.id || message.user!.id, evaluatorId: currentId }, { $set: { language: runtimes[index].language, code: code }, $push: { history: { language: oldSnippet!.language, code: oldSnippet!.code } } })
                     return response.send({
                         content: await editFollowup(message, {
                             embeds: [runembed],
@@ -1930,21 +1930,21 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                             type: MessageComponentTypes.BUTTON,
                                             label: "",
                                             style: ButtonStyleTypes.PRIMARY,
-                                            custom_id: `edit - ${message.member?.user.id || message.user?.id} - ${currentId}`,
+                                            custom_id: `edit - ${message.member!.user.id || message.user!.id} - ${currentId}`,
                                             emoji: { name: "Edit", id: "1104464874744074370" }
                                         },
                                         {
                                             type: MessageComponentTypes.BUTTON,
                                             label: "",
                                             style: ButtonStyleTypes.SECONDARY,
-                                            custom_id: `undo - ${message.member?.user.id || message.user?.id}`,
+                                            custom_id: `undo - ${message.member!.user.id || message.user!.id}`,
                                             emoji: { name: "Undo", id: "1125394556804931696" }
                                         },
                                         {
                                             type: MessageComponentTypes.BUTTON,
                                             label: "",
                                             style: ButtonStyleTypes.DANGER,
-                                            custom_id: `delete - ${message.member?.user.id || message.user?.id}`,
+                                            custom_id: `delete - ${message.member!.user.id || message.user!.id}`,
                                             emoji: { name: "Delete", id: "1104477832308068352" }
                                         }
                                     ]
@@ -1955,7 +1955,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 }
                 case "eval": {
                     await deferReply(message, { ephemeral: true })
-                    if ((message.member?.user.id || message.user?.id) != "604339998312890379") {
+                    if ((message.member!.user.id || message.user!.id) != "604339998312890379") {
                         return response.send({
                             content: await followup(message, {
                                 content: "❌ You can't do this",
