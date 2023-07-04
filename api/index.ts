@@ -1318,6 +1318,96 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                     }
                 }
+                if (oldSnippet?.history[oldSnippet?.history.length! - 1].code.length > 925) {
+                    runembed = {
+                        color: 0x607387,
+                        title: "Evaluation Result",
+                        fields: [
+                            { name: "Language", value: "```" + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + "```", inline: false },
+                            { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
+                            { name: "Input", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**", inline: false },
+                            { name: "Output", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + result.run.output.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
+                            { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
+                        ],
+                        footer: {
+                            text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
+                        }
+                    }
+                }
+                if (result.run.output.length > 925) {
+                    let url: Response | string = await fetch("https://dpaste.com/api/v2/", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "EvalBot" },
+                        body: `title=Evaluation%20Result&content=${result.run.output}&expiry_days=365`
+                    })
+                    url = await url.text() as string
+                    runembed = {
+                        color: 0x607387,
+                        title: "Evaluation Result",
+                        fields: [
+                            { name: "Language", value: "```" + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + "```", inline: false },
+                            { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
+                            { name: "Input", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
+                            { name: "Output", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + result.run.output.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**" + "\n" + `view the entire output [here](${url})`, inline: false },
+                            { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
+                        ],
+                        footer: {
+                            text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
+                        }
+                    }
+                }
+                if (oldSnippet?.history[oldSnippet?.history.length! - 1].code.length > 925 && result.run.output.length > 925) {
+                    let url: Response | string = await fetch("https://dpaste.com/api/v2/", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "EvalBot" },
+                        body: `title=Evaluation%20Result&content=${result.run.output}&expiry_days=365`
+                    })
+                    url = await url.text() as string
+                    runembed = {
+                        color: 0x607387,
+                        title: "Evaluation Result",
+                        fields: [
+                            { name: "Language", value: "```" + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + "```", inline: false },
+                            { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
+                            { name: "Input", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**", inline: false },
+                            { name: "Output", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + result.run.output.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**" + "\n" + `view the entire output [here](${url})`, inline: false },
+                            { name: "Output code", value: "```" + "\n" + result.run.code + "\n" + "```", inline: false }
+                        ],
+                        footer: {
+                            text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
+                        }
+                    }
+                }
+                if (result.run.output.length == 0 || result.run.output == "\n") {
+                    runembed = {
+                        color: 0x607387,
+                        title: "Evaluation Result",
+                        fields: [
+                            { name: "Language", value: "```" + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + "```", inline: false },
+                            { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
+                            { name: "Input", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```", inline: false },
+                            { name: "Output", value: "No output!", inline: false },
+                        ],
+                        footer: {
+                            text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
+                        }
+                    }
+                }
+                if ((result.run.output.length == 0 || result.run.output == "\n") && oldSnippet?.history[oldSnippet?.history.length! - 1].code.length > 925) {
+                    runembed = {
+                        color: 0x607387,
+                        title: "Evaluation Result",
+                        fields: [
+                            { name: "Language", value: "```" + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + "```", inline: false },
+                            { name: "Version", value: "```" + "\n" + version + "\n" + "```", inline: false },
+                            { name: "Input", value: "```" + oldSnippet?.history[oldSnippet?.history.length! - 1].language + "\n" + oldSnippet?.history[oldSnippet?.history.length! - 1].code.slice(0, 925).replace(/`/g, "`\u200b") + "\n" + "```" + "**__TOO LONG__**", inline: false },
+                            { name: "Output", value: "No output!", inline: false },
+                        ],
+                        footer: {
+                            text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
+                        }
+                    }
+                }
                 await snippets.updateOne({ userId: message.member?.user.id || message.user?.id, evaluatorId: currentId }, { $set: { language: oldSnippet?.history[oldSnippet?.history.length! - 1].language, code: oldSnippet?.history[oldSnippet?.history.length! - 1].code }, $pop: { history: 1 } })
                 return response.send({
                     content: await editFollowup(message, {
