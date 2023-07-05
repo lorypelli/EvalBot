@@ -12,9 +12,10 @@
     "@types/express": "^4.17.17",
     "@vercel/node": "^2.15.3",
     "discord-interactions": "^3.4.0",
+    "flourite": "^1.2.3",
     "mongoose": "^7.3.1",
     "os": "^0.1.2",
     "raw-body": "^2.5.2",
-    "serverless_bots_addons": "^5.1.2-20230704"
+    "serverless_bots_addons": "^5.2.0-20230705"
   }
 }
