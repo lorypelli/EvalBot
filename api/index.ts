@@ -1,7 +1,7 @@
 import { InteractionResponseType, InteractionType, verifyKey, MessageComponentTypes, ButtonStyleTypes, TextStyleTypes } from "discord-interactions"
 import getRawBody from "raw-body"
 import { version } from "os"
-import { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followUp, editFollowup, get, autocompleteResult, Interaction, Embeds, AutocompleteOptions, SlashCommandsStructure, ButtonsComponent } from "serverless_bots_addons"
+import { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followUp, editFollowup, get, autocompleteResult, Interaction, Embeds, AutocompleteOptions, SlashCommandsStructure, ButtonsComponent, SelectMenusComponent } from "serverless_bots_addons"
 import mongoose from "mongoose"
 import snippets from "./schemas/Snippet"
 import { Runtimes, PackageSize, PackageName, Result } from "./addons"
@@ -587,12 +587,24 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     await mongoose.connect(url)
                     let totalSnippets = await snippets.find({ userId: user })
                     let currentSnippet = await snippets.findOne({ userId: user, evaluatorId: id })
+                    let historyMenu: SelectMenusComponent = {
+                        type: MessageComponentTypes.STRING_SELECT,
+                        custom_id: `history - ${message.member!.user.id || message.user!.id} - ${id}`,
+                        options: [{ label: "Version 1 (latest)", value: "Version 1 (latest)", default: true }],
+                        disabled: true
+                    }
                     if (currentSnippet == undefined) {
                         return response.send({
                             content: await followUp(message, {
                                 content: "The user doesn't have a snippet with that id"
                             })
                         })
+                    }
+                    if (currentSnippet.history.length != 0) {
+                        historyMenu.disabled = false
+                        for (let i = 1; i <= (currentSnippet.history.length < 25 ? currentSnippet.history.length : 25); i++) {
+                            historyMenu.options!.push({ label: `Version ${i + 1}`, value: `Version ${i + 1}` })
+                        }
                     }
                     let snippetsembed: Embeds = {
                         color: 0x607387,
@@ -615,6 +627,10 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                             emoji: { name: "Play", id: "1124682991692677120" }
                                         }
                                     ]
+                                },
+                                {
+                                    type: MessageComponentTypes.ACTION_ROW,
+                                    components: [historyMenu]
                                 }
                             ]
                         })
@@ -625,7 +641,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     let isCodeblock: boolean = false
                     if (code.startsWith("```") && code.endsWith("```"))
                         code = code.replace(/```/g, "")
-                        isCodeblock = true
+                    isCodeblock = true
                     code = code.replace(/\n/, "")
                     code = code.replace(/\n$/, "")
                     await deferReply(message, { ephemeral: false })
@@ -1123,7 +1139,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 }
             }
-            if (message.data!.custom_id!.split(" - ")[0] === "reload") {
+            if (message.data!.custom_id!.startsWith("reload")) {
                 await updateDefer(message)
                 let result: Response | PackageSize = await fetch(`https://packagephobia.com/v2/api.json?p=${message.data!.custom_id!.split(" - ")[1]}`)
                 if (result.status != 200) {
@@ -1176,7 +1192,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 })
             }
-            else if (message.data!.custom_id!.split(" - ")[0] === "edit") {
+            else if (message.data!.custom_id!.startsWith("edit")) {
                 if ((message.member!.user.id || message.user!.id) != message.data!.custom_id!.split(" - ")[1]) {
                     await deferReply(message, { ephemeral: true })
                     return response.send({
@@ -1258,7 +1274,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 })
             }
-            else if (message.data!.custom_id!.split(" - ")[0] === "delete") {
+            else if (message.data!.custom_id!.startsWith("delete")) {
                 await deferReply(message, { ephemeral: true })
                 if ((message.member!.user.id || message.user!.id) != message.data!.custom_id!.split(" - ")[1]) {
                     return response.send({
@@ -1299,7 +1315,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 })
             }
-            else if (message.data!.custom_id!.split(" - ")[0] === "run_code") {
+            else if (message.data!.custom_id!.startsWith("run_code")) {
                 await deferReply(message, { ephemeral: true })
                 await mongoose.connect(url)
                 let currentSnippet = await snippets.findOne({ userId: message.data!.custom_id!.split(" - ")[1], evaluatorId: message.data!.custom_id!.split(" - ")[2] })
@@ -1697,6 +1713,54 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                         style: ButtonStyleTypes.DANGER,
                                         custom_id: `delete - ${message.member!.user.id || message.user!.id}`,
                                         emoji: { name: "Delete", id: "1104477832308068352" }
+                                    }
+                                ]
+                            }
+                        ]
+                    })
+                })
+            }
+            else if (message.data!.custom_id!.startsWith("history")) {
+                await deferReply(message, { ephemeral: true })
+                let user = message.data!.custom_id!.split(" - ")[1]
+                let id = message.data!.custom_id!.split(" - ")[2]
+                await mongoose.connect(url)
+                let totalSnippets = await snippets.find({ userId: user })
+                let currentSnippet = await snippets.findOne({ userId: user, evaluatorId: id })
+                let snippetsembed: Embeds = {
+                    color: 0x607387,
+                    title: "Snippets",
+                    description: `Total snippets: ${totalSnippets.length}`
+                }
+                if ((parseInt(message.data!.values[0].split(" ")[1]) - 2) < 0) {
+                    snippetsembed = {
+                        color: 0x607387,
+                        title: "Snippets",
+                        description: `Total snippets: ${totalSnippets.length}`,
+                        fields: [{ name: `Language: ${currentSnippet!.language}`, value: "```" + currentSnippet!.language + "\n" + currentSnippet!.code.slice(0, 1024) + "\n" + "```", inline: false }],
+                    }
+                }
+                else {
+                    snippetsembed = {
+                        color: 0x607387,
+                        title: "Snippets",
+                        description: `Total snippets: ${totalSnippets.length}`,
+                        fields: [{ name: `Language: ${(currentSnippet!.history[parseInt(message.data!.values[0].split(" ")[1]) - 2]).language}`, value: "```" + currentSnippet!.history[parseInt(message.data!.values[0].split(" ")[1]) - 2].language + "\n" + currentSnippet!.history[parseInt(message.data!.values[0].split(" ")[1]) - 2].code.slice(0, 1024) + "\n" + "```", inline: false }],
+                    }
+                }
+                return response.send({
+                    content: await followUp(message, {
+                        embeds: [snippetsembed],
+                        components: [
+                            {
+                                type: MessageComponentTypes.ACTION_ROW,
+                                components: [
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        label: "",
+                                        style: ButtonStyleTypes.PRIMARY,
+                                        custom_id: `run_code - ${user} - ${id}`,
+                                        emoji: { name: "Play", id: "1124682991692677120" }
                                     }
                                 ]
                             }
