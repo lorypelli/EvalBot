@@ -1325,6 +1325,13 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 let currentSnippet = await snippets.findOne({ userId: message.data!.custom_id!.split(" - ")[1], evaluatorId: message.data!.custom_id!.split(" - ")[2] })
                 let language: string = ""
                 let code: string = ""
+                if (currentSnippet == undefined) {
+                    return response.send({
+                        content: await followUp(message, {
+                            content: "Snippet not found"
+                        })
+                    })
+                }
                 if (message.data!.custom_id!.split(" - ")[3] == undefined || currentSnippet!.history[parseInt(message.data!.custom_id!.split(" - ")[3])] == undefined) {
                     language = currentSnippet!.language
                     code = currentSnippet!.code
@@ -1741,6 +1748,13 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 await mongoose.connect(url)
                 let totalSnippets = await snippets.find({ userId: user })
                 let currentSnippet = await snippets.findOne({ userId: user, evaluatorId: id })
+                if (currentSnippet == undefined) {
+                    return response.send({
+                        content: await followUp(message, {
+                            content: "Snippet not found"
+                        })
+                    })
+                }
                 let snippetsembed: Embeds
                 if (isLatest == true) {
                     snippetsembed = {
