@@ -590,9 +590,10 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     let historyMenu: SelectMenusComponent = {
                         type: MessageComponentTypes.STRING_SELECT,
                         custom_id: `history - ${message.member!.user.id || message.user!.id} - ${id}`,
-                        options: [{ label: "Version 1 (latest)", value: "Version 1 (latest)", default: true }],
+                        options: [{ label: "", value: "" }],
                         disabled: true
                     }
+                    let latestVersion: number = 1
                     if (currentSnippet == undefined) {
                         return response.send({
                             content: await followUp(message, {
@@ -602,10 +603,13 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     }
                     if (currentSnippet.history.length != 0) {
                         historyMenu.disabled = false
+                        historyMenu.options!.pop()
                         for (let i = 1; i <= (currentSnippet.history.length < 24 ? currentSnippet.history.length : 24); i++) {
-                            historyMenu.options!.push({ label: `Version ${i + 1}`, value: `Version ${i + 1}` })
+                            historyMenu.options!.push({ label: `Version ${i}`, value: `Version ${i}` })
+                            latestVersion = i + 1
                         }
                     }
+                    historyMenu.options!.push({ label: `Version ${latestVersion} (latest)`, value: `Version ${latestVersion} (latest)`, default: true })
                     let snippetsembed: Embeds = {
                         color: 0x607387,
                         title: "Snippets",
@@ -1321,7 +1325,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 let currentSnippet = await snippets.findOne({ userId: message.data!.custom_id!.split(" - ")[1], evaluatorId: message.data!.custom_id!.split(" - ")[2] })
                 let language: string = ""
                 let code: string = ""
-                if (parseInt(message.data!.custom_id!.split(" - ")[3]) < 0 || message.data!.custom_id!.split(" - ")[3] == undefined) {
+                if (message.data!.custom_id!.split(" - ")[3] == undefined || currentSnippet!.history[parseInt(message.data!.custom_id!.split(" - ")[3])] == undefined) {
                     language = currentSnippet!.language
                     code = currentSnippet!.code
                 }
@@ -1732,12 +1736,13 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 await deferReply(message, { ephemeral: true })
                 let user = message.data!.custom_id!.split(" - ")[1]
                 let id = message.data!.custom_id!.split(" - ")[2]
+                let historyEntry: number = parseInt(message.data!.values[0].split(" ")[1]) - 1
+                let isLatest = message.data!.values[0].split(" ")[2] == "(latest)" ? true : false
                 await mongoose.connect(url)
                 let totalSnippets = await snippets.find({ userId: user })
                 let currentSnippet = await snippets.findOne({ userId: user, evaluatorId: id })
                 let snippetsembed: Embeds
-                let historyEntry: number = parseInt(message.data!.values[0].split(" ")[1]) - 2
-                if (historyEntry < 0) {
+                if (isLatest == true) {
                     snippetsembed = {
                         color: 0x607387,
                         title: "Snippets",
