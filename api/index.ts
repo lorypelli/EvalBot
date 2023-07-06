@@ -602,7 +602,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     }
                     if (currentSnippet.history.length != 0) {
                         historyMenu.disabled = false
-                        for (let i = 1; i <= (currentSnippet.history.length < 25 ? currentSnippet.history.length : 25); i++) {
+                        for (let i = 1; i <= (currentSnippet.history.length < 24 ? currentSnippet.history.length : 24); i++) {
                             historyMenu.options!.push({ label: `Version ${i + 1}`, value: `Version ${i + 1}` })
                         }
                     }
