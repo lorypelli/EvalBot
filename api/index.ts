@@ -1727,11 +1727,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 await mongoose.connect(url)
                 let totalSnippets = await snippets.find({ userId: user })
                 let currentSnippet = await snippets.findOne({ userId: user, evaluatorId: id })
-                let snippetsembed: Embeds = {
-                    color: 0x607387,
-                    title: "Snippets",
-                    description: `Total snippets: ${totalSnippets.length}`
-                }
+                let snippetsembed: Embeds
                 if ((parseInt(message.data!.values[0].split(" ")[1]) - 2) < 0) {
                     snippetsembed = {
                         color: 0x607387,
@@ -1741,11 +1737,18 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     }
                 }
                 else {
+                    if (currentSnippet!.history[parseInt(message.data!.values[0].split(" ")[1]) - 2] == undefined) {
+                        return response.send({
+                            content: await followUp(message, {
+                                content: "History entry not found"
+                            })
+                        })
+                    }
                     snippetsembed = {
                         color: 0x607387,
                         title: "Snippets",
                         description: `Total snippets: ${totalSnippets.length}`,
-                        fields: [{ name: `Language: ${(currentSnippet!.history[parseInt(message.data!.values[0].split(" ")[1]) - 2]).language}`, value: "```" + currentSnippet!.history[parseInt(message.data!.values[0].split(" ")[1]) - 2].language + "\n" + currentSnippet!.history[parseInt(message.data!.values[0].split(" ")[1]) - 2].code.slice(0, 1024) + "\n" + "```", inline: false }],
+                        fields: [{ name: `Language: ${currentSnippet!.history[parseInt(message.data!.values[0].split(" ")[1]) - 2].language}`, value: "```" + currentSnippet!.history[parseInt(message.data!.values[0].split(" ")[1]) - 2].language + "\n" + currentSnippet!.history[parseInt(message.data!.values[0].split(" ")[1]) - 2].code.slice(0, 1024) + "\n" + "```", inline: false }],
                     }
                 }
                 return response.send({
