@@ -1319,8 +1319,16 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 await deferReply(message, { ephemeral: true })
                 await mongoose.connect(url)
                 let currentSnippet = await snippets.findOne({ userId: message.data!.custom_id!.split(" - ")[1], evaluatorId: message.data!.custom_id!.split(" - ")[2] })
-                let language: string = currentSnippet!.language!
-                let code: string = currentSnippet!.code!
+                let language: string = ""
+                let code: string = ""
+                if (parseInt(message.data!.custom_id!.split(" - ")[3]) < 0 || message.data!.custom_id!.split(" - ")[3] == undefined) {
+                    language = currentSnippet!.language
+                    code = currentSnippet!.code
+                }
+                else {
+                    language = currentSnippet!.history[parseInt(message.data!.custom_id!.split(" - ")[3])].language
+                    code = currentSnippet!.history[parseInt(message.data!.custom_id!.split(" - ")[3])].code
+                }
                 let version: number = 0
                 let index: number = 0
                 for (let i = 0; i < runtimes.length; i++) {
@@ -1728,7 +1736,8 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 let totalSnippets = await snippets.find({ userId: user })
                 let currentSnippet = await snippets.findOne({ userId: user, evaluatorId: id })
                 let snippetsembed: Embeds
-                if ((parseInt(message.data!.values[0].split(" ")[1]) - 2) < 0) {
+                let historyEntry: number = parseInt(message.data!.values[0].split(" ")[1]) - 2
+                if (historyEntry < 0) {
                     snippetsembed = {
                         color: 0x607387,
                         title: "Snippets",
@@ -1737,7 +1746,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     }
                 }
                 else {
-                    if (currentSnippet!.history[parseInt(message.data!.values[0].split(" ")[1]) - 2] == undefined) {
+                    if (currentSnippet!.history[historyEntry] == undefined) {
                         return response.send({
                             content: await followUp(message, {
                                 content: "History entry not found"
@@ -1748,7 +1757,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         color: 0x607387,
                         title: "Snippets",
                         description: `Total snippets: ${totalSnippets.length}`,
-                        fields: [{ name: `Language: ${currentSnippet!.history[parseInt(message.data!.values[0].split(" ")[1]) - 2].language}`, value: "```" + currentSnippet!.history[parseInt(message.data!.values[0].split(" ")[1]) - 2].language + "\n" + currentSnippet!.history[parseInt(message.data!.values[0].split(" ")[1]) - 2].code.slice(0, 1024) + "\n" + "```", inline: false }],
+                        fields: [{ name: `Language: ${currentSnippet!.history[historyEntry].language}`, value: "```" + currentSnippet!.history[historyEntry].language + "\n" + currentSnippet!.history[historyEntry].code.slice(0, 1024) + "\n" + "```", inline: false }],
                     }
                 }
                 return response.send({
@@ -1762,7 +1771,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                         type: MessageComponentTypes.BUTTON,
                                         label: "",
                                         style: ButtonStyleTypes.PRIMARY,
-                                        custom_id: `run_code - ${user} - ${id}`,
+                                        custom_id: `run_code - ${user} - ${id} - ${historyEntry}`,
                                         emoji: { name: "Play", id: "1124682991692677120" }
                                     }
                                 ]
