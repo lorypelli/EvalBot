@@ -24,3 +24,15 @@ export interface Result {
         code: string
     }
 }
+declare global {
+    namespace NodeJS {
+        interface ProcessEnv {
+            PASSWORD: string,
+            TOKEN: string,
+            PUBLIC_KEY: string,
+            ID: string,
+            TOPGG: string,
+            DBL: string
+        }
+    }
+}
