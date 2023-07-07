@@ -249,7 +249,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     guilds = await guilds.json() as []
                     return response.send({
                         content: await followUp(message, {
-                            content: `The bot is currently on **${guilds.length} servers**. Click the button below to invite the bot!`,
+                            content: `The bot is currently on **${guilds.length} servers**. Click the button below to invite the bot!\nIf you have a problem with the bot, you can join the [support server](https://dsc.gg/evalbotsupport)`,
                             components: [
                                 {
                                     type: MessageComponentTypes.ACTION_ROW,
