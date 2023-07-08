@@ -1556,14 +1556,15 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                 })
             }
             else if (message.data!.custom_id!.startsWith("undo")) {
-                await updateDefer(message)
                 if ((message.member!.user.id || message.user!.id) != message.data!.custom_id!.split(" - ")[1]) {
+                    await deferReply(message, { ephemeral: true })
                     return response.send({
                         content: await followUp(message, {
                             content: "❌ You can't do this",
                         })
                     })
                 }
+                await updateDefer(message)
                 let undoComponent: ButtonsComponent = {
                     type: MessageComponentTypes.BUTTON,
                     label: "",
