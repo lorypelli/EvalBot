@@ -176,7 +176,8 @@ const SNIPPETS_CMD: SlashCommandsStructure = {
                 pl: "Id snippet które chcesz zobaczyć"
             },
             type: ApplicationCommandOptionTypes.NUMBER,
-            required: true
+            required: true,
+            autocomplete: true
         },
         {
             name: "user",
@@ -1836,6 +1837,31 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     let choices: AutocompleteOptions["choices"] = []
                     for (let i = 0; i < 25; i++) {
                         choices.push({ name: result[i].package.name, value: result[i].package.name })
+                    }
+                    return response.send({
+                        content: await autocompleteResult(message, {
+                            choices: choices,
+                        })
+                    })
+                }
+                case SNIPPETS_CMD.name: {
+                    let id: string = get(message, "id")!
+                    await mongoose.connect(url)
+                    let totalSnippets = await snippets.find()
+                    let choices: AutocompleteOptions["choices"] = []
+                    for (let i = 0; i < totalSnippets.length; i++) {
+                        if (id == totalSnippets[i].evaluatorId.toString()) {
+                            choices = [{ name: totalSnippets[i].evaluatorId.toString(), value: totalSnippets[i].evaluatorId.toString() }]
+                        }
+                        else if (id != totalSnippets[i].evaluatorId.toString()) {
+                            choices.push({ name: totalSnippets[i].evaluatorId.toString(), value: totalSnippets[i].evaluatorId.toString() })
+                        }
+                        if (choices.length > 25) {
+                            choices = choices.slice(0, 25)
+                        }
+                        else if (parseInt(id) <= 0) {
+                            choices = []
+                        }
                     }
                     return response.send({
                         content: await autocompleteResult(message, {
