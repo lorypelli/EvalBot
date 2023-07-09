@@ -500,19 +500,19 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                             })
                         })
                     }
-                    await fetch(`https://discord.com/api/v10/applications/${process.env.ID}/commands`, {
+                    let globalCommands: Response = await fetch(`https://discord.com/api/v10/applications/${process.env.ID}/commands`, {
                         method: "PUT",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify([RUN_CMD, LANGS_CMD, INVITE_CMD, VOTE_CMD, SIZE_CMD, CONVERT_CMD, SNIPPETS_CMD, RUN_CONTEXT_MENU])
                     })
-                    await fetch(`https://discord.com/api/v10/applications/${process.env.ID}/guilds/818058268978315286/commands`, {
+                    let guildCommands: Response = await fetch(`https://discord.com/api/v10/applications/${process.env.ID}/guilds/818058268978315286/commands`, {
                         method: "PUT",
                         headers: { "Authorization": `Bot ${process.env.TOKEN}`, "Content-Type": "application/json" },
                         body: JSON.stringify([EVAL_CMD, REGISTER_CMD, INFO_CMD])
                     })
                     return response.send({
                         content: await followUp(message, {
-                            content: "Done!"
+                            content: globalCommands.status == 200 && guildCommands.status == 200 ? "Registered all commands without errors" : "Encountered one or more errors while registering commands:\n" + (globalCommands.status != 200 && guildCommands.status != 200 ? `**GLOBAL COMMANDS** (${globalCommands.status + ": " + globalCommands.statusText})` + "\n" + "```" + "\n" + JSON.stringify(await globalCommands.json(), null, 2) + "```" + "\n" + `**GUILD COMMANDS** (${guildCommands.status + ": " + guildCommands.statusText})` + "\n" + "```" + "\n" + JSON.stringify(await guildCommands.json(), null, 2) + "```" + "\n": globalCommands.status != 200 ? `**GLOBAL COMMANDS** (${globalCommands.status + ": " + globalCommands.statusText})` + "\n" + "```" + "\n" + JSON.stringify(await globalCommands.json(), null, 2) + "```" + "\n" : `**GUILD COMMANDS** (${guildCommands.status + ": " + guildCommands.statusText})` + "\n" + "```" + "\n" + JSON.stringify(await guildCommands.json(), null, 2) + "```" + "\n")
                         })
                     })
                 }
