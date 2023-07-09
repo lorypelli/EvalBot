@@ -1143,6 +1143,27 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                         })
                     })
                 }
+                case "camera": {
+                    await updateDefer(message)
+                    await mongoose.connect(url)
+                    let cameraSnippet = await snippets.findOne({ evaluatorId: parseInt(message.message.embeds[0].title!.split(" - ")[1].slice(5)) })
+                    let image: Response = await fetch("https://code2img.vercel.app/api/to-image?theme=material-dark&language=typescript&background-color=rgb(96, 115, 135)", {
+                        method: "POST",
+                        headers: { "Content-Type": "text/plain" },
+                        body: cameraSnippet!.code
+                    })
+                    let imageBuffer: ArrayBuffer = await image.arrayBuffer()
+                    let buffer: Blob = new Blob([imageBuffer], { type: "image/png" })
+                    let formData: FormData = new FormData()
+                    formData.append("file", buffer, "codesnippet.png")
+                    return response.send({
+                        content: await fetch(`https://discord.com/api/v10/channels/${message.channel_id}/messages`, {
+                            method: "POST",
+                            headers: { "Authorization": `Bot ${process.env.TOKEN}` },
+                            body: formData
+                        })
+                    })
+                }
             }
             if (message.data!.custom_id!.startsWith("reload")) {
                 await updateDefer(message)
@@ -1808,25 +1829,6 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                     })
                 })
             }
-            else if (message.data!.custom_id!.startsWith("camera")) {
-                await updateDefer(message)
-                let image: Response = await fetch("https://code2img.vercel.app/api/to-image?theme=material-dark&language=typescript&background-color=rgb(96, 115, 135)", {
-                    method: "POST",
-                    headers: { "Content-Type": "text/plain" },
-                    body: message.data!.custom_id!.split(" - ")[1]
-                })
-                let imageBuffer: ArrayBuffer = await image.arrayBuffer()
-                let buffer: Blob = new Blob([imageBuffer], { type: "image/png" })
-                let formData: FormData = new FormData()
-                formData.append("file", buffer, "codesnippet.png")
-                return response.send({
-                    content: await fetch(`https://discord.com/api/v10/channels/${message.channel_id}/messages`, {
-                        method: "POST",
-                        headers: { "Authorization": `Bot ${process.env.TOKEN}` },
-                        body: formData
-                    })
-                })
-            }
         }
         else if (message.type === InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE) {
             switch (message.data!.name) {
@@ -2113,7 +2115,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                             type: MessageComponentTypes.BUTTON,
                                             label: "",
                                             style: ButtonStyleTypes.SECONDARY,
-                                            custom_id: `camera - ${code}`,
+                                            custom_id: "camera",
                                             emoji: { name: "Camera", id: "1127175733245128805" }
                                         },
                                         {
@@ -2365,7 +2367,7 @@ export default async (request: import("@vercel/node").VercelRequest, response: i
                                             type: MessageComponentTypes.BUTTON,
                                             label: "",
                                             style: ButtonStyleTypes.SECONDARY,
-                                            custom_id: `camera - ${code}`,
+                                            custom_id: "camera",
                                             emoji: { name: "Camera", id: "1127175733245128805" }
                                         },
                                         {
