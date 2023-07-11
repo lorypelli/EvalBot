@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose"
+import { Schema, model } from 'mongoose';
 interface schema {
     userId: string,
     language: string,
@@ -10,11 +10,11 @@ interface HistoryArray {
     language: string,
     code: string
 }
-let schema = new Schema({
+const schema = new Schema({
     userId: { type: String, required: true },
     language: { type: String, required: true },
     code: { type: String, required: true },
     evaluatorId: { type: Number, default: 0 },
     history: { type: Array, default: [] }
-})
-export = model<schema>("Snippet", schema)
+});
+export = model<schema>('Snippet', schema)
