@@ -65,7 +65,7 @@ const html = `
     <script>
         window.onload = async () => {
             let guilds = await fetch('https://evalbot.vercel.app/api/server_count').then(async g => await g.json());
-            document.getElementById("servercount").innerHTML = \`The bot is currently in \${guilds} servers\`
+            document.getElementById('servercount').innerHTML = \`The bot is currently in \${guilds} servers\`;
         }
     </script>
 </body>
