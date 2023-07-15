@@ -40,6 +40,7 @@ const html = `
             border: 5px solid;
             border-radius: 10px;
             border-color: white;
+            height: 55px;
         }
 
         #navtext {
@@ -69,12 +70,32 @@ const html = `
             margin-right: -2.5px;
             border-radius: 25px;
         }
+
+        #logindiv {
+            text-align: right;
+            margin-top: -85px;
+        }
+        #login {
+            margin-bottom: 10px;
+            margin-right: 10px;
+            width: 150px;
+            height: 25px;
+            font-size: 15px;
+            border: none;
+            color: black;
+            background-color: white;
+            cursor: pointer;
+            border-radius: 25px;
+        }
     </style>
 </head>
 
 <body>
     <nav id="navbar">
         <h1 id="navtext">EvalBot</h1>
+        <div id="logindiv">
+            <button id="login">Login</button>
+        </div>
     </nav>
     <h1>- A discord bot to eval code with the piston api -</h1>
     <img src="/favicon.ico">
@@ -83,9 +104,15 @@ const html = `
     <a href="https://top.gg/bot/1076200668810985634/vote"><button>Vote Me</button></button></a>
     <script>
         window.onload = async () => {
-            let guilds = await fetch('https://evalbot.vercel.app/api/server_count').then(async g => await g.json());
-            document.getElementById('servercount').innerHTML = \`The bot is currently in \${guilds} servers\`;
+            if (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1')) return
+            else {
+                let guilds = await fetch('https://evalbot.vercel.app/api/server_count').then(async g => await g.json());
+                document.getElementById('servercount').innerHTML = \`The bot is currently in \${guilds} servers\`;
+            }
         }
+        document.getElementById('login').addEventListener('click', () => {
+            window.location.href = location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') || window.location.hostname.includes('evalbotbeta') ? 'https://discord.com/api/oauth2/authorize?client_id=1077228141531123852&redirect_uri=http%3A%2F%2F127.0.0.1%3A3000%2Fdashboard&response_type=token&scope=identify%20guilds' : 'https://discord.com/api/oauth2/authorize?client_id=1076200668810985634&redirect_uri=https%3A%2F%2Fevalbot.vercel.app%2Fapi%2Fdashboard&response_type=code&scope=identify%20guilds';
+        })
     </script>
 </body>
 
