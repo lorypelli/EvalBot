@@ -61,7 +61,6 @@ const html = `
             margin-top: 45px;
             width: 300px;
             height: 50px;
-            font-family: 'Martian Mono', monospace;
             font-size: 35px;
             border: none;
             color: black;
