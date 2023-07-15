@@ -16,6 +16,7 @@ const html = `
     <title>EvalBot</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@600&display=swap">
     <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <style>
         * {
             font-family: 'Martian Mono', monospace;
