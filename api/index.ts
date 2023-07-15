@@ -20,6 +20,11 @@ const html = `
     <style>
         * {
             font-family: 'Martian Mono', monospace;
+            text-align: center;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
         }
 
         :focus {
@@ -40,18 +45,30 @@ const html = `
         #navtext {
             font-size: 20px;
             color: white;
-            text-align: center;
         }
 
         h1 {
             color: white;
-            text-align: center;
         }
 
         img {
             display: block;
             margin-left: auto;
             margin-right: auto;
+        }
+
+        button {
+            margin-top: 45px;
+            width: 300px;
+            height: 50px;
+            font-family: 'Martian Mono', monospace;
+            font-size: 35px;
+            border: none;
+            color: black;
+            background-color: white;
+            cursor: pointer;
+            margin-right: -2.5px;
+            border-radius: 25px;
         }
     </style>
 </head>
@@ -63,6 +80,8 @@ const html = `
     <h1>- A discord bot to eval code with the piston api -</h1>
     <img src="/favicon.ico">
     <h1 id="servercount">The bot is currently in 0 servers</h1>
+    <a href="https://canary.discord.com/api/oauth2/authorize?client_id=1076200668810985634&permissions=274877975552&scope=applications.commands%20bot"><button>Invite Me</button></a>
+    <a href="https://top.gg/bot/1076200668810985634/vote"><button>Vote Me</button></button></a>
     <script>
         window.onload = async () => {
             let guilds = await fetch('https://evalbot.vercel.app/api/server_count').then(async g => await g.json());
