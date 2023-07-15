@@ -8,6 +8,70 @@ import snippets from './schemas/Snippet';
 import { Runtimes, PackageSize, PackageName, Result } from './addons';
 import flourite, { DetectedLanguage } from 'flourite';
 const url = `mongodb+srv://EvalBot:${process.env.PASSWORD}@evalbot.crs0qn4.mongodb.net/EvalBot?retryWrites=true&w=majority`;
+const html = `
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>EvalBot</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@600&display=swap">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <style>
+        * {
+            font-family: 'Martian Mono', monospace;
+        }
+
+        :focus {
+            outline: none;
+        }
+
+        body {
+            background-color: #363636;
+            overflow-x: hidden;
+        }
+
+        #navbar {
+            border: 5px solid;
+            border-radius: 10px;
+            border-color: white;
+        }
+
+        #navtext {
+            font-size: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+        }
+
+        img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <nav id="navbar">
+        <h1 id="navtext">EvalBot</h1>
+    </nav>
+    <h1>- A discord bot to eval code with the piston api -</h1>
+    <img src="/favicon.ico">
+    <h1 id="servercount">The bot is currently in 0 servers</h1>
+    <script>
+        window.onload = async () => {
+            let guilds = await fetch('https://evalbot.vercel.app/api/server_count').then(async g => await g.json());
+            document.getElementById("servercount").innerHTML = \`The bot is currently in \${guilds} servers\`
+        }
+    </script>
+</body>
+
+</html>
+`;
 const RUN_CMD: SlashCommandsStructure = {
     name: 'run',
     name_localizations: {
@@ -207,7 +271,7 @@ const RUN_CONTEXT_MENU: SlashCommandsStructure = {
 };
 export default async (request: import('@vercel/node').VercelRequest, response: import('@vercel/node').VercelResponse) => {
     if (request.method !== 'POST') {
-        return response.send({ error: 'Method not allowed' });
+        return response.send(html);
     }
     else if (request.method === 'POST') {
         let runtimes: Response | Runtimes[] = await fetch('https://emkc.org/api/v2/piston/runtimes');
