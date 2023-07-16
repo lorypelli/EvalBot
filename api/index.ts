@@ -380,10 +380,10 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             }
             case VOTE_CMD.name: {
                 await deferReply(message, { ephemeral: true });
-                let guilds: Response | Runtimes[] = await fetch('https://discord.com/api/v10/users/@me/guilds', {
+                let guilds: Response | Guild[] = await fetch('https://discord.com/api/v10/users/@me/guilds', {
                     headers: { 'Authorization': `Bot ${process.env.TOKEN}`, 'Content-Type': 'application/json' }
                 });
-                guilds = await guilds.json() as Runtimes[];
+                guilds = await guilds.json() as Guild[];
                 await fetch(`https://top.gg/api/bots/${process.env.ID}/stats`, {
                     method: 'POST',
                     headers: { 'Authorization': process.env.TOPGG!, 'Content-Type': 'application/json' },
