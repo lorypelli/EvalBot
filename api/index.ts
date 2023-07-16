@@ -8,6 +8,116 @@ import snippets from './schemas/Snippet';
 import { Runtimes, PackageSize, PackageName, Result } from './addons';
 import flourite, { DetectedLanguage } from 'flourite';
 const url = `mongodb+srv://EvalBot:${process.env.PASSWORD}@evalbot.crs0qn4.mongodb.net/EvalBot?retryWrites=true&w=majority`;
+const html = `
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>EvalBot</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@600&display=swap">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <style>
+        * {
+            font-family: 'Martian Mono', monospace;
+            text-align: center;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        :focus {
+            outline: none;
+        }
+
+        body {
+            background-color: #363636;
+            overflow-x: hidden;
+        }
+
+        #navbar {
+            border: 5px solid;
+            border-radius: 10px;
+            border-color: white;
+            height: 55px;
+        }
+
+        #navtext {
+            font-size: 20px;
+            color: white;
+        }
+
+        h1 {
+            color: white;
+        }
+
+        img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        button {
+            margin-top: 45px;
+            width: 300px;
+            height: 50px;
+            font-size: 35px;
+            border: none;
+            color: black;
+            background-color: white;
+            cursor: pointer;
+            margin-right: -2.5px;
+            border-radius: 25px;
+        }
+
+        #logindiv {
+            text-align: right;
+            margin-top: -85px;
+        }
+        #login {
+            margin-bottom: 10px;
+            margin-right: 10px;
+            width: 150px;
+            height: 25px;
+            font-size: 15px;
+            border: none;
+            color: black;
+            background-color: white;
+            cursor: pointer;
+            border-radius: 25px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav id="navbar">
+        <h1 id="navtext">EvalBot</h1>
+        <div id="logindiv">
+            <button id="login">Login</button>
+        </div>
+    </nav>
+    <h1>- A discord bot to eval code with the piston api -</h1>
+    <img src="/favicon.ico">
+    <h1 id="servercount">The bot is currently in 0 servers</h1>
+    <a href="https://canary.discord.com/api/oauth2/authorize?client_id=1076200668810985634&permissions=274877975552&scope=applications.commands%20bot"><button>Invite Me</button></a>
+    <a href="https://top.gg/bot/1076200668810985634/vote"><button>Vote Me</button></button></a>
+    <script>
+        window.onload = async () => {
+            if (window.location.hostname.includes("localhost") || window.location.hostname.includes("127.0.0.1")) return
+            else {
+                let guilds = await fetch("https://evalbot.vercel.app/api/server_count").then(async g => await g.json())
+                document.getElementById("servercount").innerHTML = \`The bot is currently in \${guilds} servers\`
+            }
+        }
+        document.getElementById("login").addEventListener("click", () => {
+            window.location.href = location.hostname.includes("localhost") || window.location.hostname.includes("127.0.0.1") || window.location.hostname.includes("evalbotbeta") ? "https://discord.com/api/oauth2/authorize?client_id=1077228141531123852&redirect_uri=http%3A%2F%2F127.0.0.1%3A3000%2Fdashboard&response_type=token&scope=identify%20guilds%20guilds.members.read" : "https://discord.com/api/oauth2/authorize?client_id=1076200668810985634&redirect_uri=https%3A%2F%2Fevalbot.vercel.app%2Fapi%2Fdashboard&response_type=token&scope=identify%20guilds%20guilds.members.read"
+        })
+    </script>
+</body>
+
+</html>
+`;
 const RUN_CMD: SlashCommandsStructure = {
     name: 'run',
     name_localizations: {
@@ -207,7 +317,7 @@ const RUN_CONTEXT_MENU: SlashCommandsStructure = {
 };
 export default async (request: import('@vercel/node').VercelRequest, response: import('@vercel/node').VercelResponse) => {
     if (request.method !== 'POST') {
-        return response.status(405).send('Method not allowed');
+        return response.send(html);
     }
     else if (request.method === 'POST') {
         let runtimes: Response | Runtimes[] = await fetch('https://emkc.org/api/v2/piston/runtimes');
