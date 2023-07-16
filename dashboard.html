@@ -78,15 +78,15 @@
             let urlParams = new URLSearchParams(window.location.hash.slice(1))
             let accessTokent = urlParams.get("access_token")
             if (!accessTokent) {
-                location.href = window.location.hostname.includes("localhost") || window.location.hostname.includes("127.0.0.1") ? "/" : "/api"
+                location.href = "/"
             }
             let user = await fetch("https://discord.com/api/users/@me", {
                 headers: {
-                    "Authorization": `Bearer {accessTokent}`
+                    "Authorization": `Bearer ${accessTokent}`
                 }
             })
             user = await user.json()
-            document.getElementById("userAvatar").src = `https://cdn.discordapp.com/avatars/{user.id}/{user.avatar}.png`
+            document.getElementById("userAvatar").src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
             document.getElementById("username").innerHTML = user.username
         }
     </script>
