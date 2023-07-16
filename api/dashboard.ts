@@ -52,6 +52,20 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     border-radius: 50%;
                     border: 10px solid;
                     border-color: white;
+                    width: 148px;
+                    height: 148px;
+                }
+        
+                button {
+                    margin-top: 45px;
+                    width: 300px;
+                    height: 50px;
+                    font-size: 35px;
+                    border: none;
+                    color: black;
+                    background-color: white;
+                    margin-right: -2.5px;
+                    border-radius: 25px;
                 }
             </style>
         </head>
@@ -69,14 +83,40 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     if (!accessTokent) {
                         location.href = window.location.hostname.includes("localhost") || window.location.hostname.includes("127.0.0.1") ? "/" : "/api"
                     }
-                    let res = await fetch("https://discord.com/api/users/@me", {
+                    let user = await fetch("https://discord.com/api/users/@me", {
                         headers: {
                             "Authorization": \`Bearer \${accessTokent}\`
                         }
                     })
-                    res = await res.json()
-                    document.getElementById("userAvatar").src = \`https://cdn.discordapp.com/avatars/\${res.id}/\${res.avatar}.png\`
-                    document.getElementById("username").innerHTML = res.username
+                    user = await user.json()
+                    document.getElementById("userAvatar").src = \`https://cdn.discordapp.com/avatars/\${user.id}/\${user.avatar}.png\`
+                    document.getElementById("username").innerHTML = user.username
+                    let guilds = await fetch("https://discord.com/api/users/@me/guilds", {
+                        headers: {
+                            "Authorization": \`Bearer \${accessTokent}\`
+                        }
+                    })
+                    guilds = await guilds.json()
+                    if (guilds.length != 0) {
+                        let h1 = document.createElement("h1")
+                        h1.innerHTML = "Your servers:"
+                        document.body.appendChild(h1)
+                        for (let i = 0; i < guilds.length; i++) {
+                            let guildName = document.createElement("h1")
+                            guildName.innerHTML = guilds[i].name
+                            let guildAvatar = document.createElement("img")
+                            if (guilds[i].icon != null) guildAvatar.src = \`https://cdn.discordapp.com/icons/\${guilds[i].id}/\${guilds[i].icon}.png\`
+                            else guildAvatar.src = "https://cdn.discordapp.com/embed/avatars/0.png"
+                            if (guilds[i].owner == true) guildAvatar.style.cursor = "pointer"
+                            else guildAvatar.style.cursor = "not-allowed"
+                            document.body.appendChild(guildAvatar)
+                            document.body.appendChild(guildName)
+                        }
+                    }
+                    else {
+                        let h1 = document.createElement("h1")
+                        h1.innerHTML = "No Servers"
+                    }
                 };
             </script>
         </body>
