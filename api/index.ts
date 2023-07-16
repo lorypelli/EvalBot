@@ -2,7 +2,7 @@
 import { InteractionResponseType, InteractionType, verifyKey, MessageComponentTypes, ButtonStyleTypes, TextStyleTypes } from 'discord-interactions';
 import getRawBody from 'raw-body';
 import { version } from 'os';
-import { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followUp, editFollowup, get, autocompleteResult, Interaction, Embeds, AutocompleteOptions, SlashCommandsStructure, ButtonsComponent, SelectMenusComponent } from 'serverless_bots_addons';
+import { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followUp, editFollowup, get, autocompleteResult, Interaction, Embeds, AutocompleteOptions, SlashCommandsStructure, ButtonsComponent, SelectMenusComponent, Guild } from 'serverless_bots_addons';
 import mongoose from 'mongoose';
 import snippets from './schemas/Snippet';
 import { Runtimes, PackageSize, PackageName, Result } from './addons';
@@ -355,10 +355,10 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             switch (message.data!.name) {
             case INVITE_CMD.name: {
                 await deferReply(message, { ephemeral: true });
-                let guilds: Response | [] = await fetch('https://discord.com/api/v10/users/@me/guilds', {
+                let guilds: Response | Guild[] = await fetch('https://discord.com/api/v10/users/@me/guilds', {
                     headers: { 'Authorization': `Bot ${process.env.TOKEN}`, 'Content-Type': 'application/json' }
                 });
-                guilds = await guilds.json() as [];
+                guilds = await guilds.json() as Guild[];
                 return response.send({
                     content: await followUp(message, {
                         content: `The bot is currently on **${guilds.length} servers**. Click the button below to invite the bot!\nIf you have a problem with the bot, you can join the [support server](https://dsc.gg/evalbotsupport)`,

@@ -10,18 +10,18 @@
   "license": "ISC",
   "dependencies": {
     "@types/express": "^4.17.17",
-    "@types/node": "^20.4.0",
-    "@vercel/node": "^2.15.3",
+    "@types/node": "^20.4.2",
+    "@vercel/node": "^2.15.5",
     "discord-interactions": "^3.4.0",
-    "flourite": "^1.2.3",
-    "mongoose": "^7.3.1",
+    "flourite": "^1.2.4",
+    "mongoose": "^7.3.4",
     "os": "^0.1.2",
     "raw-body": "^2.5.2",
-    "serverless_bots_addons": "^5.3.4-20230712"
+    "serverless_bots_addons": "^5.3.5-20230716"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
-    "eslint": "^8.44.0"
+    "eslint": "^8.45.0"
   }
 }
