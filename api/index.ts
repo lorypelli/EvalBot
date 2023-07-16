@@ -332,7 +332,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             process.env.PUBLIC_KEY!
         );
         if (!isValidRequest) {
-            return response.status(401).send({ error: 'Unauthorized' });
+            return response.status(401).send('Unauthorized');
         }
         const message: Interaction = request.body;
         let id: string = (process.env.TOKEN)!.split('.')[0];
