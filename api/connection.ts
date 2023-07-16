@@ -7,7 +7,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
     if (request.method === 'POST') {
         if (request.headers.authorization! == process.env.PASSWORD) {
             mongoose.connect(`mongodb+srv://EvalBot:${request.headers.authorization!}@evalbot.crs0qn4.mongodb.net/EvalBot?retryWrites=true&w=majority`).then(() => {
-                response.status(202).send('Connected to the database');
+                response.status(200).send('Connected to the database');
             }).catch(() => {
                 response.status(403).send('An error occurred while connecting');
             });
