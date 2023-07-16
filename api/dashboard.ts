@@ -79,13 +79,13 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             <script>
                 window.onload = async() => {
                     let urlParams = new URLSearchParams(window.location.hash.slice(1))
-                    let accessTokent = urlParams.get("access_token")
-                    if (!accessTokent) {
+                    let accessToken = urlParams.get("access_token")
+                    if (!accessToken) {
                         location.href = window.location.hostname.includes("localhost") || window.location.hostname.includes("127.0.0.1") ? "/" : "/api"
                     }
                     let user = await fetch("https://discord.com/api/users/@me", {
                         headers: {
-                            "Authorization": \`Bearer \${accessTokent}\`
+                            "Authorization": \`Bearer \${accessToken}\`
                         }
                     })
                     user = await user.json()
