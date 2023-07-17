@@ -78,9 +78,9 @@ const html = `
         #login {
             margin-bottom: 10px;
             margin-right: 10px;
-            width: 150px;
+            width: 20%;
             height: 25px;
-            font-size: 15px;
+            font-size: 1.5vw;
             border: none;
             color: black;
             background-color: white;
