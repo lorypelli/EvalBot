@@ -81,7 +81,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     let urlParams = new URLSearchParams(window.location.hash.slice(1))
                     let accessToken = urlParams.get("access_token")
                     if (!accessToken) {
-                        location.href = window.location.hostname.includes("localhost") || window.location.hostname.includes("127.0.0.1") ? "/" : "/api"
+                        location.href = "/api"
                     }
                     let user = await fetch("https://discord.com/api/users/@me", {
                         headers: {
