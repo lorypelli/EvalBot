@@ -334,6 +334,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             process.env.PUBLIC_KEY!
         );
         if (!isValidRequest) {
+            response.setHeader('Content-Type', 'text/plain');
             return response.status(401).send('Unauthorized');
         }
         const message: Interaction = request.body;
