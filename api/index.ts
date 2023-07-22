@@ -206,7 +206,8 @@ const RUN_CONTEXT_MENU: SlashCommandsStructure = {
     description: ''
 };
 export default async (request: import('@vercel/node').VercelRequest, response: import('@vercel/node').VercelResponse) => {
-    const guilds: string = await fetch('https://evalbot.vercel.app/api/server_count').then(async g => await g.json());
+    let guilds: Response | Guild[] = await fetch('https://evalbot.vercel.app/api/guilds');
+    guilds = await guilds.json() as Guild[];
     const html = `
 <!DOCTYPE html>
 <html>
@@ -298,7 +299,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
     </nav>
     <h1>- A discord bot to eval code with the piston api -</h1>
     <img src="/favicon.ico">
-    <h1 id="servercount">The bot is currently in ${guilds} servers</h1>
+    <h1 id="servercount">The bot is currently in ${guilds.length} servers</h1>
     <a href="https://discord.com/api/oauth2/authorize?client_id=1076200668810985634&permissions=274877975552&scope=applications.commands%20bot"><button>Invite Me</button></a>
     <a href="https://top.gg/bot/1076200668810985634/vote"><button>Vote Me</button></button></a>
     <script>

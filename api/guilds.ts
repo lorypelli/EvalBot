@@ -6,9 +6,9 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
     }
     if (request.method === 'GET') {
         let guilds: Response | Guild[] = await fetch('https://discord.com/api/v10/users/@me/guilds', {
-            headers: { 'Authorization': `Bot ${process.env.TOKEN}`, 'Content-Type': 'application/json' }
+            headers: { 'Authorization': `Bot ${process.env.TOKEN}` }
         });
         guilds = await guilds.json() as Guild[];
-        return response.send(guilds.length);
+        return response.send(guilds);
     }
 };
