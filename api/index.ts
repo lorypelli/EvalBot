@@ -206,119 +206,119 @@ const RUN_CONTEXT_MENU: SlashCommandsStructure = {
     description: ''
 };
 export default async (request: import('@vercel/node').VercelRequest, response: import('@vercel/node').VercelResponse) => {
-    let guilds: Response | Guild[] = await fetch('https://evalbot.vercel.app/api/guilds', {
-        headers: { 'Authorization': `Bot ${process.env.TOKEN}` }
-    });
-    if (guilds.status == 401) {
-        guilds = await fetch('https://evalbotbeta.vercel.app/api/guilds', {
+    if (request.method !== 'POST') {
+        let guilds: Response | Guild[] = await fetch('https://evalbot.vercel.app/api/guilds', {
             headers: { 'Authorization': `Bot ${process.env.TOKEN}` }
         });
-    }
-    guilds = await guilds.json() as Guild[];
-    const html = `
-<!DOCTYPE html>
-<html>
-
-<head>
-    <title>EvalBot</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@600&display=swap">
-    <link rel="shortcut icon" href="/favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <style>
-        * {
-            font-family: 'Martian Mono', monospace;
-            text-align: center;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            -moz-user-select: none;
-            user-select: none;
+        if (guilds.status == 401) {
+            guilds = await fetch('https://evalbotbeta.vercel.app/api/guilds', {
+                headers: { 'Authorization': `Bot ${process.env.TOKEN}` }
+            });
         }
-
-        :focus {
-            outline: none;
-        }
-
-        body {
-            background-color: #363636;
-            overflow-x: hidden;
-        }
-
-        #navbar {
-            border: 5px solid;
-            border-radius: 10px;
-            border-color: white;
-            height: 55px;
-        }
-
-        #navtext {
-            font-size: 20px;
-            color: white;
-        }
-
-        h1 {
-            color: white;
-        }
-
-        img {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        button {
-            margin-top: 45px;
-            width: 300px;
-            height: 50px;
-            font-size: 35px;
-            border: none;
-            color: black;
-            background-color: white;
-            cursor: pointer;
-            margin-right: -2.5px;
-            border-radius: 25px;
-        }
-
-        #logindiv {
-            text-align: right;
-            margin-top: -85px;
-        }
-        #login {
-            margin-bottom: 10px;
-            margin-right: 10px;
-            width: 20%;
-            height: 25px;
-            font-size: 1.5vw;
-            border: none;
-            color: black;
-            background-color: white;
-            cursor: pointer;
-            border-radius: 25px;
-        }
-    </style>
-</head>
-
-<body>
-    <nav id="navbar">
-        <h1 id="navtext">EvalBot</h1>
-        <div id="logindiv">
-            <button id="login">Login</button>
-        </div>
-    </nav>
-    <h1>- A discord bot to eval code with the piston api -</h1>
-    <img src="/favicon.ico">
-    <h1 id="servercount">The bot is currently in ${guilds.length} servers</h1>
-    <a href="https://discord.com/api/oauth2/authorize?client_id=1076200668810985634&permissions=274877975552&scope=applications.commands%20bot"><button>Invite Me</button></a>
-    <a href="https://top.gg/bot/1076200668810985634/vote"><button>Vote Me</button></button></a>
-    <script>
-        document.getElementById("login").addEventListener("click", () => {
-            window.location.href = window.location.hostname.includes("evalbotbeta") ? "https://discord.com/api/oauth2/authorize?client_id=1077228141531123852&redirect_uri=https%3A%2F%2Fevalbotbeta.vercel.app%2Fapi%2Fdashboard&response_type=token&scope=identify%20guilds%20guilds.members.read" : "https://discord.com/api/oauth2/authorize?client_id=1076200668810985634&redirect_uri=https%3A%2F%2Fevalbot.vercel.app%2Fapi%2Fdashboard&response_type=token&scope=identify%20guilds%20guilds.members.read"
-        })
-    </script>
-</body>
-
-</html>
-`;
-    if (request.method !== 'POST') {
+        guilds = await guilds.json() as Guild[];
+        const html = `
+    <!DOCTYPE html>
+    <html>
+    
+    <head>
+        <title>EvalBot</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@600&display=swap">
+        <link rel="shortcut icon" href="/favicon.ico">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <style>
+            * {
+                font-family: 'Martian Mono', monospace;
+                text-align: center;
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                -moz-user-select: none;
+                user-select: none;
+            }
+    
+            :focus {
+                outline: none;
+            }
+    
+            body {
+                background-color: #363636;
+                overflow-x: hidden;
+            }
+    
+            #navbar {
+                border: 5px solid;
+                border-radius: 10px;
+                border-color: white;
+                height: 55px;
+            }
+    
+            #navtext {
+                font-size: 20px;
+                color: white;
+            }
+    
+            h1 {
+                color: white;
+            }
+    
+            img {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+    
+            button {
+                margin-top: 45px;
+                width: 300px;
+                height: 50px;
+                font-size: 35px;
+                border: none;
+                color: black;
+                background-color: white;
+                cursor: pointer;
+                margin-right: -2.5px;
+                border-radius: 25px;
+            }
+    
+            #logindiv {
+                text-align: right;
+                margin-top: -85px;
+            }
+            #login {
+                margin-bottom: 10px;
+                margin-right: 10px;
+                width: 20%;
+                height: 25px;
+                font-size: 1.5vw;
+                border: none;
+                color: black;
+                background-color: white;
+                cursor: pointer;
+                border-radius: 25px;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <nav id="navbar">
+            <h1 id="navtext">EvalBot</h1>
+            <div id="logindiv">
+                <button id="login">Login</button>
+            </div>
+        </nav>
+        <h1>- A discord bot to eval code with the piston api -</h1>
+        <img src="/favicon.ico">
+        <h1 id="servercount">The bot is currently in ${guilds.length} servers</h1>
+        <a href="https://discord.com/api/oauth2/authorize?client_id=1076200668810985634&permissions=274877975552&scope=applications.commands%20bot"><button>Invite Me</button></a>
+        <a href="https://top.gg/bot/1076200668810985634/vote"><button>Vote Me</button></button></a>
+        <script>
+            document.getElementById("login").addEventListener("click", () => {
+                window.location.href = window.location.hostname.includes("evalbotbeta") ? "https://discord.com/api/oauth2/authorize?client_id=1077228141531123852&redirect_uri=https%3A%2F%2Fevalbotbeta.vercel.app%2Fapi%2Fdashboard&response_type=token&scope=identify%20guilds%20guilds.members.read" : "https://discord.com/api/oauth2/authorize?client_id=1076200668810985634&redirect_uri=https%3A%2F%2Fevalbot.vercel.app%2Fapi%2Fdashboard&response_type=token&scope=identify%20guilds%20guilds.members.read"
+            })
+        </script>
+    </body>
+    
+    </html>
+    `;
         return response.send(html);
     }
     else if (request.method === 'POST') {
@@ -626,7 +626,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 });
                 return response.send({
                     content: await followUp(message, {
-                        content: globalCommands.status == 200 && guildCommands.status == 200 ? 'Registered all commands without errors' : 'Encountered one or more errors while registering commands:\n' + (globalCommands.status != 200 && guildCommands.status != 200 ? `**GLOBAL COMMANDS** (${globalCommands.status + ': ' + globalCommands.statusText})` + '\n' + '```' + '\n' + JSON.stringify(await globalCommands.json(), null, 2) + '```' + '\n' + `**GUILD COMMANDS** (${guildCommands.status + ': ' + guildCommands.statusText})` + '\n' + '```' + '\n' + JSON.stringify(await guildCommands.json(), null, 2) + '```' + '\n': globalCommands.status != 200 ? `**GLOBAL COMMANDS** (${globalCommands.status + ': ' + globalCommands.statusText})` + '\n' + '```' + '\n' + JSON.stringify(await globalCommands.json(), null, 2) + '```' + '\n' : `**GUILD COMMANDS** (${guildCommands.status + ': ' + guildCommands.statusText})` + '\n' + '```' + '\n' + JSON.stringify(await guildCommands.json(), null, 2) + '```' + '\n')
+                        content: globalCommands.status == 200 && guildCommands.status == 200 ? 'Registered all commands without errors' : 'Encountered one or more errors while registering commands:\n' + (globalCommands.status != 200 && guildCommands.status != 200 ? `**GLOBAL COMMANDS** (${globalCommands.status + ': ' + globalCommands.statusText})` + '\n' + '```' + '\n' + JSON.stringify(await globalCommands.json(), null, 2) + '```' + '\n' + `**GUILD COMMANDS** (${guildCommands.status + ': ' + guildCommands.statusText})` + '\n' + '```' + '\n' + JSON.stringify(await guildCommands.json(), null, 2) + '```' + '\n' : globalCommands.status != 200 ? `**GLOBAL COMMANDS** (${globalCommands.status + ': ' + globalCommands.statusText})` + '\n' + '```' + '\n' + JSON.stringify(await globalCommands.json(), null, 2) + '```' + '\n' : `**GUILD COMMANDS** (${guildCommands.status + ': ' + guildCommands.statusText})` + '\n' + '```' + '\n' + JSON.stringify(await guildCommands.json(), null, 2) + '```' + '\n')
                     })
                 });
             }
