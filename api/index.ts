@@ -209,6 +209,11 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
     let guilds: Response | Guild[] = await fetch('https://evalbot.vercel.app/api/guilds', {
         headers: { 'Authorization': `Bot ${process.env.TOKEN}` }
     });
+    if (guilds.status == 401) {
+        guilds = await fetch('https://evalbotbeta.vercel.app/api/guilds', {
+            headers: { 'Authorization': `Bot ${process.env.TOKEN}` }
+        });
+    }
     guilds = await guilds.json() as Guild[];
     const html = `
 <!DOCTYPE html>
