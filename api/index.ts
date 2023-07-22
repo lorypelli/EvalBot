@@ -206,7 +206,9 @@ const RUN_CONTEXT_MENU: SlashCommandsStructure = {
     description: ''
 };
 export default async (request: import('@vercel/node').VercelRequest, response: import('@vercel/node').VercelResponse) => {
-    let guilds: Response | Guild[] = await fetch('https://evalbot.vercel.app/api/guilds');
+    let guilds: Response | Guild[] = await fetch('https://evalbot.vercel.app/api/guilds', {
+        headers: { 'Authorization': `Bot ${process.env.TOKEN}` }
+    });
     guilds = await guilds.json() as Guild[];
     const html = `
 <!DOCTYPE html>
@@ -748,7 +750,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     });
             }
             case RUN_CONTEXT_MENU.name: {
-                await deferReply(message, { ephemeral: false })
+                await deferReply(message, { ephemeral: false });
                 let code: string = message.data!.resolved!.messages![message.data!.target_id!].content;
                 let isCodeblock: boolean = false;
                 if (code.startsWith('```') && code.endsWith('```'))
