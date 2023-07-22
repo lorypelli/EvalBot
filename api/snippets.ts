@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import snippets from './schemas/Snippet';
 export default async (request: import('@vercel/node').VercelRequest, response: import('@vercel/node').VercelResponse) => {
-    response.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:3000, https://evalbotbeta.vercel.app');
+    response.setHeader('Access-Control-Allow-Origin', 'https://evalbotbeta.vercel.app');
     if (request.method !== 'POST') {
         return response.status(405).send('Method not allowed');
     }
@@ -11,7 +11,6 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
         }
         if (request.headers.authorization === process.env.PASSWORD) {
             mongoose.connect(`mongodb+srv://EvalBot:${request.headers.authorization}@evalbot.crs0qn4.mongodb.net/EvalBot?retryWrites=true&w=majority`).then(() => {
-                console.log(request.body.user);
                 snippets.find({ userId: request.body.user }).then(s => {
                     if (s.length == 0) {
                         return response.status(404).send('The user doesn\'t have any snippet');
