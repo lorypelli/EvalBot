@@ -748,6 +748,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     });
             }
             case RUN_CONTEXT_MENU.name: {
+                await deferReply(message, { ephemeral: false })
                 let code: string = message.data!.resolved!.messages![message.data!.target_id!].content;
                 let isCodeblock: boolean = false;
                 if (code.startsWith('```') && code.endsWith('```'))
@@ -755,7 +756,6 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 isCodeblock = true;
                 code = code.replace(/\n/, '');
                 code = code.replace(/\n$/, '');
-                await deferReply(message, { ephemeral: false });
                 const res: DetectedLanguage = flourite(code);
                 let language: string = res.language.toLowerCase();
                 let version: number = 0;
