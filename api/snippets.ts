@@ -13,7 +13,11 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
         }
         if (request.headers.authorization === process.env.PASSWORD) {
             mongoose.connect(`mongodb+srv://EvalBot:${request.headers.authorization}@evalbot.crs0qn4.mongodb.net/EvalBot?retryWrites=true&w=majority`).then(() => {
-                snippets.find({ userId: request.body.user }).then(s => {
+                if (request.query.user.length == 0) {
+                    response.setHeader('Content-Type', 'text/plain');
+                    return response.status(400).send('User ID is required');
+                }
+                snippets.find({ userId: request.query.user }).then(s => {
                     if (s.length == 0) {
                         response.setHeader('Content-Type', 'text/plain');
                         return response.status(404).send('The user doesn\'t have any snippet');
