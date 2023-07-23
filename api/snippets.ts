@@ -7,13 +7,13 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
         return response.status(405).send('Method not allowed');
     }
     if (request.method === 'POST') {
-        if (request.headers.authorization == undefined || request.headers.authorization == ''.trim()) {
+        if (request.headers.authorization == undefined || request.headers.authorization.trim() == '') {
             response.setHeader('Content-Type', 'text/plain');
             return response.status(400).send('Missing authorization header');
         }
         if (request.headers.authorization === process.env.PASSWORD) {
             mongoose.connect(`mongodb+srv://EvalBot:${request.headers.authorization}@evalbot.crs0qn4.mongodb.net/EvalBot?retryWrites=true&w=majority`).then(() => {
-                if (request.query.user.length == 0) {
+                if (request.query.user == undefined || request.query.user.toString().trim() == '') {
                     response.setHeader('Content-Type', 'text/plain');
                     return response.status(400).send('User ID is required');
                 }
