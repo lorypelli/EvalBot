@@ -17,6 +17,9 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
     }
     else {
         while (isRealStatusCode.status != 200) {
+            if (request.query.status) {
+                return response.redirect(307, '/api/status');
+            }
             randomStatus = Math.floor(Math.random() * (999 - 100 + 1) + 100);
             isRealStatusCode = await fetch(`https://http.dog/${randomStatus}.json`);
             if (isRealStatusCode.status == 200) {
