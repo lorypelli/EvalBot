@@ -10,15 +10,18 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
         title: '',
         url: ''
     };
-    let randomStatus: number = parseInt(request.query.status as string) >= 100 || parseInt(request.query.status as string) <= 999 ? parseInt(request.query.status as string) : Math.floor(Math.random() * (999 - 100 + 1) + 100);
+    if ((request.query.status != undefined && isNaN(parseInt(request.query.status as string))) || (parseInt(request.query.status as string) < 200 || parseInt(request.query.status as string) > 999)) {
+        return response.redirect(307, '/api/status');
+    }
+    let randomStatus: number = parseInt(request.query.status as string) >= 200 || parseInt(request.query.status as string) <= 999 ? parseInt(request.query.status as string) : Math.floor(Math.random() * (999 - 200 + 1) + 200);
     while (randomStatus == 204 || randomStatus == 304) {
         if (request.query.status) {
             return response.redirect(307, '/api/status');
         }
-        randomStatus = Math.floor(Math.random() * (999 - 100 + 1) + 100);
+        randomStatus = Math.floor(Math.random() * (999 - 200 + 1) + 200);
     }
     while (randomStatus == 500 && parseInt(request.query.status as string) != 500) {
-        randomStatus = Math.floor(Math.random() * (999 - 100 + 1) + 100);
+        randomStatus = Math.floor(Math.random() * (999 - 200 + 1) + 200);
     }
     let isRealStatusCode: Response | Status = await fetch(`https://http.dog/${randomStatus}.json`);
     if (isRealStatusCode.status == 200) {
@@ -29,7 +32,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             if (request.query.status) {
                 return response.redirect(307, '/api/status');
             }
-            randomStatus = Math.floor(Math.random() * (999 - 100 + 1) + 100);
+            randomStatus = Math.floor(Math.random() * (999 - 200 + 1) + 200);
             isRealStatusCode = await fetch(`https://http.dog/${randomStatus}.json`);
             if (isRealStatusCode.status == 200) {
                 statusCode = await isRealStatusCode.json();
