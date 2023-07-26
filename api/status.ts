@@ -11,6 +11,15 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
         url: ''
     };
     let randomStatus: number = parseInt(request.query.status as string) >= 100 || parseInt(request.query.status as string) <= 999 ? parseInt(request.query.status as string) : Math.floor(Math.random() * (999 - 100 + 1) + 100);
+    while (randomStatus == 204) {
+        if (request.query.status) {
+            return response.redirect(307, '/api/status');
+        }
+        randomStatus = Math.floor(Math.random() * (999 - 100 + 1) + 100);
+    }
+    while (randomStatus == 500 && parseInt(request.query.status as string) != 500) {
+        randomStatus = Math.floor(Math.random() * (999 - 100 + 1) + 100);
+    }
     let isRealStatusCode: Response | Status = await fetch(`https://http.dog/${randomStatus}.json`);
     if (isRealStatusCode.status == 200) {
         statusCode = await isRealStatusCode.json();
