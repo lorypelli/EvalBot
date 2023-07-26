@@ -11,7 +11,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
         url: ''
     };
     let randomStatus: number = parseInt(request.query.status as string) >= 100 || parseInt(request.query.status as string) <= 999 ? parseInt(request.query.status as string) : Math.floor(Math.random() * (999 - 100 + 1) + 100);
-    while (randomStatus == 204) {
+    while (randomStatus == 204 || randomStatus == 304) {
         if (request.query.status) {
             return response.redirect(307, '/api/status');
         }
