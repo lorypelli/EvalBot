@@ -13,7 +13,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
     if (request.query.status && (request.query.status.includes(' ') || request.query.status.includes('-') || request.query.status.includes('*') || request.query.status.includes('/'))) {
         for (let i = 0; i < request.query.status.length; i++) {
             if ([' ', '-', '*', '/'].includes((request.query.status as string).charAt(i + 1))) {
-                switch((request.query.status as string).charAt(i + 1)) {
+                switch ((request.query.status as string).charAt(i + 1)) {
                 case ' ': {
                     return response.redirect(307, '/api/status');
                 }
