@@ -15,7 +15,8 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             if ([' ', '-', '*', '/'].includes((request.query.status as string).charAt(i + 1))) {
                 switch ((request.query.status as string).charAt(i + 1)) {
                 case ' ': {
-                    return response.redirect(307, '/api/status');
+                    request.query.status = (parseInt((request.query.status as string).split(' ')[0]) + parseInt((request.query.status as string).split(' ')[1]) as unknown as string);
+                    break;
                 }
                 case '-': {
                     request.query.status = (parseInt((request.query.status as string).split('-')[0]) - parseInt((request.query.status as string).split('-')[1]) as unknown as string);
