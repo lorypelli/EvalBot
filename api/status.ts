@@ -10,6 +10,30 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
         title: '',
         url: ''
     };
+    if (request.query.status && (request.query.status.includes(' ') || request.query.status.includes('-') || request.query.status.includes('*') || request.query.status.includes('/'))) {
+        for (let i = 0; i < request.query.status.length; i++) {
+            if ([' ', '-', '*', '/'].includes((request.query.status as string).charAt(i + 1))) {
+                switch((request.query.status as string).charAt(i + 1)) {
+                case ' ': {
+                    return response.redirect(307, '/api/status');
+                }
+                case '-': {
+                    request.query.status = (parseInt((request.query.status as string).split('-')[0]) - parseInt((request.query.status as string).split('-')[1]) as unknown as string);
+                    break;
+                }
+                case '*': {
+                    request.query.status = (parseInt((request.query.status as string).split('*')[0]) * parseInt((request.query.status as string).split('*')[1]) as unknown as string);
+                    break;
+                }
+                case '/': {
+                    request.query.status = (parseInt((request.query.status as string).split('/')[0]) / parseInt((request.query.status as string).split('/')[1]) as unknown as string);
+                    break;
+                }
+                }
+            }
+        }
+        return response.redirect(307, `/api/status?status=${request.query.status}`);
+    }
     if ((request.query.status != undefined && isNaN(parseInt(request.query.status as string))) || (parseInt(request.query.status as string) < 200 || parseInt(request.query.status as string) > 999)) {
         return response.redirect(307, '/api/status');
     }
