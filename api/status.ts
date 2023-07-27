@@ -15,25 +15,40 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             if ([' ', '-', '*', '/'].includes((request.query.status as string).charAt(i + 1))) {
                 switch ((request.query.status as string).charAt(i + 1)) {
                 case ' ': {
-                    request.query.status = (parseInt((request.query.status as string).split(' ')[0]) + parseInt((request.query.status as string).split(' ')[1]) as unknown as string);
-                    break;
+                    let statusNumber = parseInt((request.query.status as string).split(' ')[0]);
+                    for (let i = 0; i < (request.query.status as string).split(' ').length; i++) {
+                        if (i == 0) continue;
+                        else statusNumber += parseInt((request.query.status as string).split(' ')[i]);
+                    }
+                    return response.redirect(307, `/api/status?status=${statusNumber}`);
                 }
                 case '-': {
-                    request.query.status = (parseInt((request.query.status as string).split('-')[0]) - parseInt((request.query.status as string).split('-')[1]) as unknown as string);
-                    break;
+                    let statusNumber = parseInt((request.query.status as string).split('-')[0]);
+                    for (let i = 0; i < (request.query.status as string).split('-').length; i++) {
+                        if (i == 0) continue;
+                        else statusNumber -= parseInt((request.query.status as string).split('-')[i]);
+                    }
+                    return response.redirect(307, `/api/status?status=${statusNumber}`);
                 }
                 case '*': {
-                    request.query.status = (parseInt((request.query.status as string).split('*')[0]) * parseInt((request.query.status as string).split('*')[1]) as unknown as string);
-                    break;
+                    let statusNumber = parseInt((request.query.status as string).split('*')[0]);
+                    for (let i = 0; i < (request.query.status as string).split('*').length; i++) {
+                        if (i == 0) continue;
+                        else statusNumber *= parseInt((request.query.status as string).split('*')[i]);
+                    }
+                    return response.redirect(307, `/api/status?status=${statusNumber}`);
                 }
                 case '/': {
-                    request.query.status = (parseInt((request.query.status as string).split('/')[0]) / parseInt((request.query.status as string).split('/')[1]) as unknown as string);
-                    break;
+                    let statusNumber = parseInt((request.query.status as string).split('/')[0]);
+                    for (let i = 0; i < (request.query.status as string).split('/').length; i++) {
+                        if (i == 0) continue;
+                        else statusNumber /= parseInt((request.query.status as string).split('/')[i]);
+                    }
+                    return response.redirect(307, `/api/status?status=${statusNumber}`);
                 }
                 }
             }
         }
-        return response.redirect(307, `/api/status?status=${request.query.status}`);
     }
     if ((request.query.status != undefined && isNaN(parseInt(request.query.status as string))) || (parseInt(request.query.status as string) < 200 || parseInt(request.query.status as string) > 999)) {
         return response.redirect(307, '/api/status');
