@@ -1,4 +1,52 @@
+import { URLSearchParams } from 'url';
+import { AuthResult } from './addons';
+import { User } from 'serverless_bots_addons';
 export default async (request: import('@vercel/node').VercelRequest, response: import('@vercel/node').VercelResponse) => {
+    if (!request.query.code) {
+        return response.redirect(307, '/api');
+    }
+    let formData = new URLSearchParams({
+        client_id: process.env.ID,
+        client_secret: process.env.CLIENT_SECRET,
+        grant_type: 'authorization_code',
+        code: request.query.code.toString(),
+        redirect_uri: 'https://evalbot.vercel.app/api/dashboard'
+    });
+    let res: Response | AuthResult = await fetch('https://discord.com/api/v10/oauth2/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData.toString()
+    });
+    if (res.status != 200) {
+        formData = new URLSearchParams({
+            client_id: process.env.ID,
+            client_secret: process.env.CLIENT_SECRET,
+            grant_type: 'authorization_code',
+            code: request.query.code.toString(),
+            redirect_uri: 'https://evalbotbeta.vercel.app/api/dashboard'
+        });
+        res = await fetch('https://discord.com/api/v10/oauth2/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formData.toString()
+        });
+    }
+    res = await res.json() as AuthResult;
+    console.log(res);
+    let user: Response | User = await fetch('https://discord.com/api/v10/users/@me', {
+        headers: { 'Authorization': `Bearer ${res.access_token}` }
+    });
+    user = await user.json() as User;
+    console.log(user);
+    let userSnippets: Response | [] = await fetch(`https://evalbotbeta.vercel.app/api/snippets?user=${user.id}`, {
+        headers: { 'Authorization': process.env.PASSWORD }
+    });
+    if (userSnippets.status == 200) {
+        userSnippets = await userSnippets.json() as [];
+    }
+    else {
+        userSnippets = [];
+    }
     if (request.method === 'GET') {
         const html = `
         <!DOCTYPE html>
@@ -74,25 +122,9 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             <nav id="navbar">
                 <h1 id="navtext">EvalBot</h1>
             </nav>
-            <img id="userAvatar">
-            <h1 id="username"></h1>
-            <script>
-                window.onload = async() => {
-                    let urlParams = new URLSearchParams(window.location.hash.slice(1))
-                    let accessToken = urlParams.get("access_token")
-                    if (!accessToken) {
-                        location.href = "/api"
-                    }
-                    let user = await fetch("https://discord.com/api/users/@me", {
-                        headers: {
-                            "Authorization": \`Bearer \${accessToken}\`
-                        }
-                    })
-                    user = await user.json()
-                    document.getElementById("userAvatar").src = \`https://cdn.discordapp.com/avatars/\${user.id}/\${user.avatar}.png\`
-                    document.getElementById("username").innerHTML = user.username
-                }
-            </script>
+            <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png">
+            <h1>${user.username}</h1>
+            <h1>The user has a total of ${userSnippets.length} snippets</h1>
         </body>
         
         </html>

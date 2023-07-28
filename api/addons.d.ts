@@ -1,3 +1,4 @@
+
 export interface Runtimes {
     language: string,
     version: number,
@@ -24,9 +25,17 @@ export interface Result {
         code: string
     }
 }
+export interface AuthResult {
+    token_type: string,
+    access_token: string,
+    expires_in: number,
+    refresh_token: string,
+    scope: string
+}
 declare global {
     namespace NodeJS {
         interface ProcessEnv {
+            CLIENT_SECRET: string,
             PASSWORD: string,
             TOKEN: string,
             PUBLIC_KEY: string,
