@@ -5,7 +5,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
         response.setHeader('Content-Type', 'text/plain');
         return response.status(405).send('Method not allowed');
     }
-    if (request.method === 'GET' && request.headers.authorization === `Bot ${process.env.TOKEN}`) {
+    else if (request.method === 'GET' && request.headers.authorization === `Bot ${process.env.TOKEN}`) {
         let guilds: Response | Guild[] = await fetch('https://discord.com/api/v10/users/@me/guilds', {
             headers: { 'Authorization': `Bot ${process.env.TOKEN}` }
         });

@@ -312,7 +312,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
         <a href="https://top.gg/bot/1076200668810985634/vote"><button>Vote Me</button></button></a>
         <script>
             document.getElementById("login").addEventListener("click", () => {
-                window.location.href = window.location.hostname.includes("evalbotbeta") ? "https://discord.com/api/oauth2/authorize?client_id=1077228141531123852&redirect_uri=https%3A%2F%2Fevalbotbeta.vercel.app%2Fapi%2Fdashboard&response_type=code&scope=identify%20guilds%20guilds.members.read" : "https://discord.com/api/oauth2/authorize?client_id=1076200668810985634&redirect_uri=https%3A%2F%2Fevalbot.vercel.app%2Fapi%2Fdashboard&response_type=code&scope=identify%20guilds%20guilds.members.read"
+                window.location.href = "/api/login"
             })
         </script>
     </body>
