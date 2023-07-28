@@ -32,12 +32,10 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
         });
     }
     res = await res.json() as AuthResult;
-    console.log(res);
     let user: Response | User = await fetch('https://discord.com/api/v10/users/@me', {
         headers: { 'Authorization': `Bearer ${res.access_token}` }
     });
     user = await user.json() as User;
-    console.log(user);
     let userSnippets: Response | [] = await fetch(`https://evalbotbeta.vercel.app/api/snippets?user=${user.id}`, {
         headers: { 'Authorization': process.env.PASSWORD }
     });
