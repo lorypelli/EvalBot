@@ -2,11 +2,7 @@ import mongoose from 'mongoose';
 import snippets from './schemas/Snippet';
 export default async (request: import('@vercel/node').VercelRequest, response: import('@vercel/node').VercelResponse) => {
     response.setHeader('Access-Control-Allow-Origin', 'https://evalbotbeta.vercel.app');
-    if (request.method !== 'POST') {
-        response.setHeader('Content-Type', 'text/plain');
-        return response.status(405).send('Method not allowed');
-    }
-    if (request.method === 'POST') {
+    if (request.method === 'GET') {
         if (request.headers.authorization == undefined || request.headers.authorization.trim() == '') {
             response.setHeader('Content-Type', 'text/plain');
             return response.status(400).send('Missing authorization header');
@@ -18,11 +14,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     return response.status(400).send('User ID is required');
                 }
                 snippets.find({ userId: request.query.user }).then(s => {
-                    if (s.length == 0) {
-                        response.setHeader('Content-Type', 'text/plain');
-                        return response.status(404).send('The user doesn\'t have any snippet');
-                    }
-                    return response.status(302).send(s);
+                    return response.send(s);
                 }).catch(() => {
                     response.setHeader('Content-Type', 'text/plain');
                     return response.status(403).send('An error occurred while finding user snippets');
@@ -36,5 +28,9 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             response.setHeader('Content-Type', 'text/plain');
             return response.status(406).send('Wrong password');
         }
+    }
+    if (request.method !== 'GET') {
+        response.setHeader('Content-Type', 'text/plain');
+        return response.status(405).send('Method not allowed');
     }
 };
