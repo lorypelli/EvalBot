@@ -1,6 +1,7 @@
 import { URLSearchParams } from 'url';
 import { AuthResult } from './addons';
 import { User } from 'serverless_bots_addons';
+import { snippet } from './schemas/Snippet';
 export default async (request: import('@vercel/node').VercelRequest, response: import('@vercel/node').VercelResponse) => {
     if (request.method === 'GET') {
         if (!request.query.code) {
@@ -40,15 +41,15 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             return response.redirect(307, '/api/login');
         }
         user = await user.json() as User;
-        let userSnippets: Response | [] = await fetch(`https://evalbotbeta.vercel.app/api/snippets?user=${user.id}`, {
+        let userSnippets: Response | snippet[] = await fetch(`https://evalbotbeta.vercel.app/api/snippets?user=${user.id}`, {
             headers: { 'Authorization': process.env.PASSWORD }
         });
         if (userSnippets.status == 200) {
-            userSnippets = await userSnippets.json() as [];
+            userSnippets = await userSnippets.json() as snippet[];
         }
         else {
             userSnippets = [];
-        }    
+        }
         const html = `
         <!DOCTYPE html>
         <html>
@@ -146,6 +147,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png">
             <h1>${user.username}</h1>
             <h1>The user has a total of ${userSnippets.length} snippets</h1>
+            <h1>${userSnippets.map(s => s.language + '<br>' + s.code).join('<br>')}</h1>
             <script>
             document.getElementById("logout").addEventListener("click", () => {
                 window.location.href = "/api"

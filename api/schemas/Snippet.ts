@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-interface schema {
+export interface snippet {
     userId: string,
     language: string,
     code: string,
@@ -17,4 +17,4 @@ const schema = new Schema({
     evaluatorId: { type: Number, default: 0 },
     history: { type: Array, default: [] }
 });
-export = model<schema>('Snippet', schema)
+export default model<snippet>('Snippet', schema);
