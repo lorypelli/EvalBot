@@ -66,6 +66,10 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     color: white;
                 }
         
+                #userSnippets {
+                    font-size: 1.5vw
+                }
+
                 img {
                     display: block;
                     margin-left: auto;
@@ -119,7 +123,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png">
             <h1>${user.username}</h1>
             <h1>The user has a total of ${userSnippets.length} snippets</h1>
-            <h1>${userSnippets.map(s => s.language + '<br>' + (s.code.length > 80 ? s.code.match(/.{1,80}/g)!.join('<br>') : s.code) + '<br>').join('<br>')}</h1>
+            <h1 id="userSnippets">${userSnippets.map(s => s.language + '<br>' + (s.code.length > 80 ? s.code.match(/.{1,80}/g)!.join('<br>') : s.code) + '<br>').join('<br>')}</h1>
             <script>
             document.getElementById("logout").addEventListener("click", () => {
                 window.location.href = "/api"
