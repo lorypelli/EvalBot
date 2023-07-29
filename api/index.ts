@@ -288,7 +288,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 margin-right: 10px;
                 width: 20%;
                 height: 25px;
-                font-size: 1.5vw;
+                font-size: 1.vw;
                 border: none;
                 color: black;
                 background-color: white;
