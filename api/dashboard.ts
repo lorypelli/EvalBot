@@ -1,41 +1,13 @@
-import { URLSearchParams } from 'url';
-import { AuthResult } from './addons';
 import { User } from 'serverless_bots_addons';
 import { snippet } from './schemas/Snippet';
 export default async (request: import('@vercel/node').VercelRequest, response: import('@vercel/node').VercelResponse) => {
-    if (request.method === 'GET') {
-        if (!request.query.code) {
-            return response.redirect(307, '/api/login');
-        }
-        let formData = new URLSearchParams({
-            client_id: process.env.ID,
-            client_secret: process.env.CLIENT_SECRET,
-            grant_type: 'authorization_code',
-            code: request.query.code.toString(),
-            redirect_uri: 'https://evalbot.vercel.app/api/dashboard'
-        });
-        let res: Response | AuthResult = await fetch('https://discord.com/api/v10/oauth2/token', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: formData.toString()
-        });
-        if (res.status != 200) {
-            formData = new URLSearchParams({
-                client_id: process.env.ID,
-                client_secret: process.env.CLIENT_SECRET,
-                grant_type: 'authorization_code',
-                code: request.query.code.toString(),
-                redirect_uri: 'https://evalbotbeta.vercel.app/api/dashboard'
-            });
-            res = await fetch('https://discord.com/api/v10/oauth2/token', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: formData.toString()
-            });
-        }
-        res = await res.json() as AuthResult;
-        let user: Response | User = await fetch('https://discord.com/api/v10/users/@me', {
-            headers: { 'Authorization': `Bearer ${res.access_token}` }
+    if (request.method !== 'GET') {
+        response.setHeader('Content-Type', 'text/plain');
+        return response.status(405).send('Method not allowed');
+    }
+    else if (request.method === 'GET') {
+        let user: Response | User = await fetch(`https://discord.com/api/v10/users/${request.query.user}`, {
+            headers: { 'Authorization': `Bot ${process.env.TOKEN}` }
         });
         if (user.status != 200) {
             return response.redirect(307, '/api/login');
@@ -147,7 +119,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png">
             <h1>${user.username}</h1>
             <h1>The user has a total of ${userSnippets.length} snippets</h1>
-            <h1>${userSnippets.map(s => s.language + '<br>' + (s.code.length > 80 ? s.code.match(/.{1,80}/g)!.join('<br>') : s.code)).join('<br>')}</h1>
+            <h1>${userSnippets.map(s => s.language + '<br>' + (s.code.length > 80 ? s.code.match(/.{1,80}/g)!.join('<br>') : s.code) + '<br>').join('<br>')}</h1>
             <script>
             document.getElementById("logout").addEventListener("click", () => {
                 window.location.href = "/api"
