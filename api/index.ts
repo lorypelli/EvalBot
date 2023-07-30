@@ -18,7 +18,8 @@ const RUN_CMD: SlashCommandsStructure = {
         it: 'Esegui un codice (Piston API)',
         pl: 'Uruchom kod (Piston API)'
     },
-    type: ApplicationCommandTypes.CHAT_INPUT
+    type: ApplicationCommandTypes.CHAT_INPUT,
+    default_member_permissions: null
 };
 const LANGS_CMD: SlashCommandsStructure = {
     name: 'languages',
@@ -31,7 +32,8 @@ const LANGS_CMD: SlashCommandsStructure = {
         it: 'Mostra i linguaggi di programmazione supportati',
         pl: 'Pokaż obsługiwane języki programowania'
     },
-    type: ApplicationCommandTypes.CHAT_INPUT
+    type: ApplicationCommandTypes.CHAT_INPUT,
+    default_member_permissions: null
 };
 const INVITE_CMD: SlashCommandsStructure = {
     name: 'invite',
@@ -44,7 +46,8 @@ const INVITE_CMD: SlashCommandsStructure = {
         it: 'Ottieni il link d\'invito del bot',
         pl: 'Uzyskaj link z zaproszeniem bota'
     },
-    type: ApplicationCommandTypes.CHAT_INPUT
+    type: ApplicationCommandTypes.CHAT_INPUT,
+    default_member_permissions: null
 };
 const VOTE_CMD: SlashCommandsStructure = {
     name: 'vote',
@@ -57,7 +60,8 @@ const VOTE_CMD: SlashCommandsStructure = {
         it: 'Vota per il bot su topgg',
         pl: 'Głosuj na bota na topgg'
     },
-    type: ApplicationCommandTypes.CHAT_INPUT
+    type: ApplicationCommandTypes.CHAT_INPUT,
+    default_member_permissions: null
 };
 const SIZE_CMD: SlashCommandsStructure = {
     name: 'size',
@@ -71,6 +75,7 @@ const SIZE_CMD: SlashCommandsStructure = {
         pl: 'Uzyskaj rozmiar pakietu npm'
     },
     type: ApplicationCommandTypes.CHAT_INPUT,
+    default_member_permissions: null,
     options: [
         {
             name: 'name',
@@ -92,17 +97,20 @@ const SIZE_CMD: SlashCommandsStructure = {
 const EVAL_CMD: SlashCommandsStructure = {
     name: 'eval',
     description: 'Eval code (only developer)',
-    type: ApplicationCommandTypes.CHAT_INPUT
+    type: ApplicationCommandTypes.CHAT_INPUT,
+    default_member_permissions: null
 };
 const REGISTER_CMD: SlashCommandsStructure = {
     name: 'register',
     description: 'Register slash commands (only developer)',
-    type: ApplicationCommandTypes.CHAT_INPUT
+    type: ApplicationCommandTypes.CHAT_INPUT,
+    default_member_permissions: null
 };
 const INFO_CMD: SlashCommandsStructure = {
     name: 'info',
     description: 'Get bot info (only developer)',
-    type: ApplicationCommandTypes.CHAT_INPUT
+    type: ApplicationCommandTypes.CHAT_INPUT,
+    default_member_permissions: null
 };
 const CONVERT_CMD: SlashCommandsStructure = {
     name: 'convert',
@@ -116,6 +124,7 @@ const CONVERT_CMD: SlashCommandsStructure = {
         pl: 'Konwertuj liczbę dziesiętną na jedną lub odwrotnie'
     },
     type: ApplicationCommandTypes.CHAT_INPUT,
+    default_member_permissions: null,
     options: [
         {
             name: 'system',
@@ -163,6 +172,7 @@ const SNIPPETS_CMD: SlashCommandsStructure = {
         pl: 'Zobacz snippets lub snippets innego użytkownika'
     },
     type: ApplicationCommandTypes.CHAT_INPUT,
+    default_member_permissions: null,
     options: [
         {
             name: 'id',
@@ -202,7 +212,8 @@ const RUN_CONTEXT_MENU: SlashCommandsStructure = {
         pl: 'Uruchom'
     },
     type: ApplicationCommandTypes.MESSAGE,
-    description: ''
+    description: '',
+    default_member_permissions: null
 };
 export default async (request: import('@vercel/node').VercelRequest, response: import('@vercel/node').VercelResponse) => {
     if (request.method !== 'POST') {
@@ -616,7 +627,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 });
                 return response.send({
                     content: await followUp(message, {
-                        content: globalCommands.status == 200 && guildCommands.status == 200 ? 'Registered all commands without errors' : 'Encountered one or more errors while registering commands:\n' + (globalCommands.status != 200 && guildCommands.status != 200 ? `**GLOBAL COMMANDS** (${globalCommands.status + ': ' + globalCommands.statusText})` + '\n' + '```' + '\n' + JSON.stringify(await globalCommands.json(), null, 2) + '```' + '\n' + `**GUILD COMMANDS** (${guildCommands.status + ': ' + guildCommands.statusText})` + '\n' + '```' + '\n' + JSON.stringify(await guildCommands.json(), null, 2) + '```' + '\n' : globalCommands.status != 200 ? `**GLOBAL COMMANDS** (${globalCommands.status + ': ' + globalCommands.statusText})` + '\n' + '```' + '\n' + JSON.stringify(await globalCommands.json(), null, 2) + '```' + '\n' : `**GUILD COMMANDS** (${guildCommands.status + ': ' + guildCommands.statusText})` + '\n' + '```' + '\n' + JSON.stringify(await guildCommands.json(), null, 2) + '```' + '\n')
+                        content: globalCommands.status == 200 && guildCommands.status == 200 ? '✅ Registered all commands without errors' : '❌ Encountered one or more errors while registering commands:\n' + (globalCommands.status != 200 && guildCommands.status != 200 ? `**GLOBAL COMMANDS** (${globalCommands.status + ': ' + globalCommands.statusText})` + '\n' + '```' + '\n' + JSON.stringify(await globalCommands.json(), null, 2) + '```' + '\n' + `**GUILD COMMANDS** (${guildCommands.status + ': ' + guildCommands.statusText})` + '\n' + '```' + '\n' + JSON.stringify(await guildCommands.json(), null, 2) + '```' + '\n' : globalCommands.status != 200 ? `**GLOBAL COMMANDS** (${globalCommands.status + ': ' + globalCommands.statusText})` + '\n' + '```' + '\n' + JSON.stringify(await globalCommands.json(), null, 2) + '```' + '\n' : `**GUILD COMMANDS** (${guildCommands.status + ': ' + guildCommands.statusText})` + '\n' + '```' + '\n' + JSON.stringify(await guildCommands.json(), null, 2) + '```' + '\n')
                     })
                 });
             }
