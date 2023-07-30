@@ -1,7 +1,7 @@
 /* eslint-disable no-self-assign */
 import { InteractionResponseType, InteractionType, MessageComponentTypes, ButtonStyleTypes, TextStyleTypes } from 'discord-interactions';
 import { version } from 'os';
-import { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followUp, editFollowup, get, autocompleteResult, Embeds, AutocompleteOptions, SlashCommandsStructure, ButtonsComponent, SelectMenusComponent, Guild, login } from 'serverless_bots_addons';
+import { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, deferUpdate, showModal, followUp, editFollowup, get, autocompleteResult, Embeds, AutocompleteOptions, SlashCommandsStructure, ButtonsComponent, SelectMenusComponent, Guild, login } from 'serverless_bots_addons';
 import mongoose from 'mongoose';
 import snippets from './schemas/Snippet';
 import { Runtimes, PackageSize, PackageName, Result } from './addons';
@@ -1006,7 +1006,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
         else if (message.type === InteractionType.MESSAGE_COMPONENT) {
             switch (message.data!.custom_id!) {
             case 'next1': {
-                await updateDefer(message);
+                await deferUpdate(message);
                 const languages: Embeds['fields'] = [{ name: '', value: '', inline: false }];
                 for (let c = 0; c < runtimes.length; c++) {
                     languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true });
@@ -1046,7 +1046,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 });
             }
             case 'next2': {
-                await updateDefer(message);
+                await deferUpdate(message);
                 const languages: Embeds['fields'] = [{ name: '', value: '', inline: false }];
                 for (let c = 0; c < runtimes.length; c++) {
                     languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true });
@@ -1086,7 +1086,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 });
             }
             case 'next3': {
-                await updateDefer(message);
+                await deferUpdate(message);
                 const languages: Embeds['fields'] = [{ name: '', value: '', inline: false }];
                 for (let c = 0; c < runtimes.length; c++) {
                     languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true });
@@ -1127,7 +1127,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 });
             }
             case 'previous2': {
-                await updateDefer(message);
+                await deferUpdate(message);
                 const languages: Embeds['fields'] = [{ name: '', value: '', inline: false }];
                 for (let c = 0; c < runtimes.length; c++) {
                     languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true });
@@ -1168,7 +1168,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 });
             }
             case 'previous3': {
-                await updateDefer(message);
+                await deferUpdate(message);
                 const languages: Embeds['fields'] = [{ name: '', value: '', inline: false }];
                 for (let c = 0; c < runtimes.length; c++) {
                     languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true });
@@ -1208,7 +1208,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 });
             }
             case 'previous4': {
-                await updateDefer(message);
+                await deferUpdate(message);
                 const languages: Embeds['fields'] = [{ name: '', value: '', inline: false }];
                 for (let c = 0; c < runtimes.length; c++) {
                     languages.push({ name: `Language: ${runtimes[c].language}`, value: `Version: ${runtimes[c].version}`, inline: true });
@@ -1248,7 +1248,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 });
             }
             case 'camera': {
-                await updateDefer(message);
+                await deferUpdate(message);
                 await mongoose.connect(url);
                 const cameraSnippet = await snippets.findOne({ evaluatorId: parseInt(message.message.embeds[0].title!.split(' - ')[1].slice(5)) });
                 const image: Response = await fetch('https://code2img.vercel.app/api/to-image?theme=material-dark&language=typescript&background-color=rgb(96, 115, 135)', {
@@ -1270,7 +1270,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             }
             }
             if (message.data!.custom_id!.startsWith('reload')) {
-                await updateDefer(message);
+                await deferUpdate(message);
                 let result: Response | PackageSize = await fetch(`https://packagephobia.com/v2/api.json?p=${message.data!.custom_id!.split(' - ')[1]}`);
                 if (result.status != 200) {
                     return response.send({
@@ -1657,7 +1657,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 });
             }
             else if (message.data!.custom_id!.startsWith('yes') || message.data!.custom_id!.startsWith('no')) {
-                await updateDefer(message);
+                await deferUpdate(message);
                 const messageId = message.data!.custom_id!.split(' - ')[1];
                 if (message.data!.custom_id!.startsWith('yes')) {
                     const evaluatorId = message.data!.custom_id!.split(' - ')[2];
@@ -1690,7 +1690,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         })
                     });
                 }
-                await updateDefer(message);
+                await deferUpdate(message);
                 const undoComponent: ButtonsComponent = {
                     type: MessageComponentTypes.BUTTON,
                     label: '',
@@ -2236,7 +2236,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 });
             }
             case 'runedit': {
-                await updateDefer(message);
+                await deferUpdate(message);
                 const language: string = get(message, 'language')!.toLowerCase().trim();
                 let code: string = get(message, 'code')!.trim();
                 const input: string = '' || get(message, 'input')!.trim();
