@@ -1,8 +1,7 @@
 /* eslint-disable no-self-assign */
-import { InteractionResponseType, InteractionType, verifyKey, MessageComponentTypes, ButtonStyleTypes, TextStyleTypes } from 'discord-interactions';
-import getRawBody from 'raw-body';
+import { InteractionResponseType, InteractionType, MessageComponentTypes, ButtonStyleTypes, TextStyleTypes } from 'discord-interactions';
 import { version } from 'os';
-import { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followUp, editFollowup, get, autocompleteResult, Interaction, Embeds, AutocompleteOptions, SlashCommandsStructure, ButtonsComponent, SelectMenusComponent, Guild } from 'serverless_bots_addons';
+import { ApplicationCommandTypes, ApplicationCommandOptionTypes, deferReply, updateDefer, showModal, followUp, editFollowup, get, autocompleteResult, Embeds, AutocompleteOptions, SlashCommandsStructure, ButtonsComponent, SelectMenusComponent, Guild, login } from 'serverless_bots_addons';
 import mongoose from 'mongoose';
 import snippets from './schemas/Snippet';
 import { Runtimes, PackageSize, PackageName, Result } from './addons';
@@ -324,20 +323,11 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
     else if (request.method === 'POST') {
         let runtimes: Response | Runtimes[] = await fetch('https://emkc.org/api/v2/piston/runtimes');
         runtimes = await runtimes.json() as Runtimes[];
-        const signature: string | string[] = request.headers['x-signature-ed25519']!;
-        const timestamp: string | string[] = request.headers['x-signature-timestamp']!;
-        const body: Buffer = await getRawBody(request);
-        const isValidRequest: boolean = verifyKey(
-            body,
-            signature as string,
-            timestamp as string,
-            process.env.PUBLIC_KEY!
-        );
-        if (!isValidRequest) {
+        const message = await login(request);
+        if (message.status === 401) {
             response.setHeader('Content-Type', 'text/plain');
             return response.status(401).send('Unauthorized');
         }
-        const message: Interaction = request.body;
         let id: string = (process.env.TOKEN)!.split('.')[0];
         const buffer: Buffer = Buffer.from(id, 'base64');
         id = buffer.toString('utf8');
