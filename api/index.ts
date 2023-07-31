@@ -1995,7 +1995,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 const language = get(message, 'language')!.toLowerCase().trim();
                 let code = get(message, 'code')!.trim();
                 const input = '' || get(message, 'input')!.trim();
-                let packages = '' || get(message, 'packages')!.trim();
+                let packages: string | string[] = '' || get(message, 'packages')!.trim();
                 let version = 0;
                 let index = 0;
                 for (let i = 0; i < runtimes.length; i++) {
@@ -2251,7 +2251,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 const language = get(message, 'language')!.toLowerCase().trim();
                 let code = get(message, 'code')!.trim();
                 const input = '' || get(message, 'input')!.trim();
-                let packages = '' || get(message, 'packages')!.trim();
+                let packages: string | string[] = '' || get(message, 'packages')!.trim();
                 let version = 0;
                 let index = 0;
                 for (let i = 0; i < runtimes.length; i++) {
