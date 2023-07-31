@@ -339,8 +339,8 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             response.setHeader('Content-Type', 'text/plain');
             return response.status(401).send('Unauthorized');
         }
-        let id: string = (process.env.TOKEN)!.split('.')[0];
-        const buffer: Buffer = Buffer.from(id, 'base64');
+        let id = (process.env.TOKEN)!.split('.')[0];
+        const buffer = Buffer.from(id, 'base64');
         id = buffer.toString('utf8');
         if (id == '1077228141531123852' && (message.member!.user.id || message.user!.id) != '604339998312890379') {
             await deferReply(message, { ephemeral: true });
@@ -640,8 +640,8 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         })
                     });
                 }
-                const totalRam: number = (process.memoryUsage().heapTotal / (1024 * 1024)).toFixed(3) as unknown as number;
-                const usedRam: number = (process.memoryUsage().heapUsed / (1024 * 1024)).toFixed(3) as unknown as number;
+                const totalRam = (process.memoryUsage().heapTotal / (1024 * 1024)).toFixed(3) as unknown as number;
+                const usedRam = (process.memoryUsage().heapUsed / (1024 * 1024)).toFixed(3) as unknown as number;
                 return response.send({
                     content: await followUp(message, {
                         embeds: [
@@ -662,8 +662,8 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             }
             case CONVERT_CMD.name: {
                 await deferReply(message, { ephemeral: true });
-                const originalNumber: number = get(message, 'number')! as unknown as number;
-                const system: string = get(message, 'system')!;
+                const originalNumber = get(message, 'number')! as unknown as number;
+                const system = get(message, 'system')!;
                 let number: number | string = 0;
                 switch (system) {
                 case 'Decimal to Binary': {
@@ -689,8 +689,8 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 });
             }
             case SNIPPETS_CMD.name: {
-                const user: string = get(message, 'user')! || (message.member!.user.id || message.user!.id)!;
-                const id: number = get(message, 'id') as unknown as number;
+                const user = get(message, 'user')! || (message.member!.user.id || message.user!.id)!;
+                const id = get(message, 'id') as unknown as number;
                 if (id <= 0) {
                     await deferReply(message, { ephemeral: true });
                     return response.send({
@@ -758,17 +758,17 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             }
             case RUN_CONTEXT_MENU.name: {
                 await deferReply(message, { ephemeral: false });
-                let code: string = message.data!.resolved!.messages![message.data!.target_id!].content;
-                let isCodeblock: boolean = false;
+                let code = message.data!.resolved!.messages![message.data!.target_id!].content;
+                let isCodeblock = false;
                 if (code.startsWith('```') && code.endsWith('```'))
                     code = code.replace(/```/g, '');
                 isCodeblock = true;
                 code = code.replace(/\n/, '');
                 code = code.replace(/\n$/, '');
                 const res: DetectedLanguage = flourite(code);
-                let language: string = res.language.toLowerCase();
-                let version: number = 0;
-                let index: number = 0;
+                let language = res.language.toLowerCase();
+                let version = 0;
+                let index = 0;
                 for (let i = 0; i < runtimes.length; i++) {
                     if (code.startsWith(runtimes[i].language) && !isCodeblock != false) {
                         language = runtimes[i].language;
@@ -852,7 +852,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         code = 'fun main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
                     }
                 }
-                const start: number = Date.now();
+                const start = Date.now();
                 let result: Response | Result = await fetch('https://emkc.org/api/v2/piston/execute', {
                     method: 'POST',
                     body: JSON.stringify({
@@ -864,7 +864,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     })
                 });
                 result = await result.json() as Result;
-                const end: number = Date.now();
+                const end = Date.now();
                 let runembed: Embeds = {
                     color: 0x607387,
                     title: 'Evaluation Result',
@@ -971,7 +971,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 }
                 await mongoose.connect(url);
                 const currentEvaluatorId = await snippets.find();
-                let currentId: number = 0;
+                let currentId = 0;
                 for (let i = 1; i <= currentEvaluatorId.length; i++) {
                     currentId = i;
                 }
@@ -1262,14 +1262,14 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 await deferUpdate(message);
                 await mongoose.connect(url);
                 const cameraSnippet = await snippets.findOne({ evaluatorId: parseInt(message.message.embeds[0].title!.split(' - ')[1].slice(5)) });
-                const image: Response = await fetch('https://code2img.vercel.app/api/to-image?theme=material-dark&language=typescript&background-color=rgb(96, 115, 135)', {
+                const image = await fetch('https://code2img.vercel.app/api/to-image?theme=material-dark&language=typescript&background-color=rgb(96, 115, 135)', {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain' },
                     body: cameraSnippet!.code
                 });
-                const imageBuffer: ArrayBuffer = await image.arrayBuffer();
-                const buffer: Blob = new Blob([imageBuffer], { type: 'image/png' });
-                const formData: FormData = new FormData();
+                const imageBuffer = await image.arrayBuffer();
+                const buffer = new Blob([imageBuffer], { type: 'image/png' });
+                const formData = new FormData();
                 formData.append('file', buffer, 'codesnippet.png');
                 return response.send({
                     content: await fetch(`https://discord.com/api/v10/channels/${message.channel_id}/messages`, {
@@ -1460,8 +1460,8 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 await deferReply(message, { ephemeral: true });
                 await mongoose.connect(url);
                 const currentSnippet = await snippets.findOne({ userId: message.data!.custom_id!.split(' - ')[1], evaluatorId: message.data!.custom_id!.split(' - ')[2] });
-                let language: string = '';
-                let code: string = '';
+                let language = '';
+                let code = '';
                 if (currentSnippet == undefined) {
                     return response.send({
                         content: await followUp(message, {
@@ -1477,8 +1477,8 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     language = currentSnippet!.history[parseInt(message.data!.custom_id!.split(' - ')[3])].language;
                     code = currentSnippet!.history[parseInt(message.data!.custom_id!.split(' - ')[3])].code;
                 }
-                let version: number = 0;
-                let index: number = 0;
+                let version = 0;
+                let index = 0;
                 for (let i = 0; i < runtimes.length; i++) {
                     if (runtimes[i].aliases.length != 0) {
                         for (let c = 0; c < runtimes[i].aliases.length; c++) {
@@ -1544,7 +1544,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         code = 'fun main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
                     }
                 }
-                const start: number = Date.now();
+                const start = Date.now();
                 let result: Response | Result = await fetch('https://emkc.org/api/v2/piston/execute', {
                     method: 'POST',
                     body: JSON.stringify({
@@ -1556,7 +1556,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     })
                 });
                 result = await result.json() as Result;
-                const end: number = Date.now();
+                const end = Date.now();
                 let runembed: Embeds = {
                     color: 0x607387,
                     title: 'Evaluation Result',
@@ -1714,7 +1714,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 if (oldSnippet!.history.length == 1) {
                     undoComponent.disabled = true;
                 }
-                let version: number = 0;
+                let version = 0;
                 for (let i = 0; i < runtimes.length; i++) {
                     if (runtimes[i].aliases.length != 0) {
                         for (let c = 0; c < runtimes[i].aliases.length; c++) {
@@ -1730,7 +1730,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     }
                 }
                 const currentId = oldSnippet!.evaluatorId!;
-                const start: number = Date.now();
+                const start = Date.now();
                 let result: Response | Result = await fetch('https://emkc.org/api/v2/piston/execute', {
                     method: 'POST',
                     body: JSON.stringify({
@@ -1742,7 +1742,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     })
                 });
                 result = await result.json() as Result;
-                const end: number = Date.now();
+                const end = Date.now();
                 let runembed: Embeds = {
                     color: 0x607387,
                     title: 'Evaluation Result',
@@ -1888,7 +1888,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 await deferReply(message, { ephemeral: true });
                 const user = message.data!.custom_id!.split(' - ')[1];
                 const id = message.data!.custom_id!.split(' - ')[2];
-                const historyEntry: number = parseInt(message.data!.values[0].split(' ')[1]) - 1;
+                const historyEntry = parseInt(message.data!.values[0].split(' ')[1]) - 1;
                 const isLatest = message.data!.values[0].split(' ')[2] == '(latest)' ? true : false;
                 await mongoose.connect(url);
                 const totalSnippets = await snippets.find({ userId: user });
@@ -1948,7 +1948,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
         else if (message.type === InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE) {
             switch (message.data!.name) {
             case SIZE_CMD.name: {
-                const pkg: string = get(message, 'name')!;
+                const pkg = get(message, 'name')!;
                 let result: Response | PackageName[] = await fetch(`https://api.npms.io/v2/search/suggestions?q=${pkg}`);
                 result = await result.json() as PackageName[];
                 const choices: AutocompleteOptions['choices'] = [];
@@ -1962,7 +1962,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 });
             }
             case SNIPPETS_CMD.name: {
-                const id: string = get(message, 'id')!;
+                const id = get(message, 'id')!;
                 await mongoose.connect(url);
                 const totalSnippets = await snippets.find();
                 let choices: AutocompleteOptions['choices'] = [];
@@ -1992,12 +1992,12 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             switch (message.data!.custom_id!) {
             case 'run': {
                 await deferReply(message, { ephemeral: false });
-                const language: string = get(message, 'language')!.toLowerCase().trim();
-                let code: string = get(message, 'code')!.trim();
-                const input: string = '' || get(message, 'input')!.trim();
-                let packages: string | string[] = '' || get(message, 'packages')!.trim();
-                let version: number = 0;
-                let index: number = 0;
+                const language = get(message, 'language')!.toLowerCase().trim();
+                let code = get(message, 'code')!.trim();
+                const input = '' || get(message, 'input')!.trim();
+                let packages = '' || get(message, 'packages')!.trim();
+                let version = 0;
+                let index = 0;
                 for (let i = 0; i < runtimes.length; i++) {
                     if (runtimes[i].aliases.length != 0) {
                         for (let c = 0; c < runtimes[i].aliases.length; c++) {
@@ -2071,7 +2071,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         code = 'fun main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
                     }
                 }
-                const start: number = Date.now();
+                const start = Date.now();
                 let result: Response | Result = await fetch('https://emkc.org/api/v2/piston/execute', {
                     method: 'POST',
                     body: JSON.stringify({
@@ -2085,7 +2085,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     })
                 });
                 result = await result.json() as Result;
-                const end: number = Date.now();
+                const end = Date.now();
                 let runembed: Embeds = {
                     color: 0x607387,
                     title: 'Evaluation Result',
@@ -2191,14 +2191,14 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     };
                 }
                 if (input) {
-                        runembed.fields!.push({ name: 'Input from user', value: '```' + '\n' + input + '\n' + '```', inline: false });
+                    runembed.fields!.push({ name: 'Input from user', value: '```' + '\n' + input + '\n' + '```', inline: false });
                 }
                 if (packages && runtimes[index].language == 'python') {
-                        runembed.fields!.push({ name: 'Packages', value: '```' + '\n' + packages.toString().replace(/,/g, '\n') + '\n' + '```', inline: false });
+                    runembed.fields!.push({ name: 'Packages', value: '```' + '\n' + packages.toString().replace(/,/g, '\n') + '\n' + '```', inline: false });
                 }
                 await mongoose.connect(url);
                 const currentEvaluatorId = await snippets.find();
-                let currentId: number = 0;
+                let currentId = 0;
                 for (let i = 1; i <= currentEvaluatorId.length; i++) {
                     currentId = i;
                 }
@@ -2248,12 +2248,12 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             }
             case 'runedit': {
                 await deferUpdate(message);
-                const language: string = get(message, 'language')!.toLowerCase().trim();
-                let code: string = get(message, 'code')!.trim();
-                const input: string = '' || get(message, 'input')!.trim();
-                let packages: string | string[] = '' || get(message, 'packages')!.trim();
-                let version: number = 0;
-                let index: number = 0;
+                const language = get(message, 'language')!.toLowerCase().trim();
+                let code = get(message, 'code')!.trim();
+                const input = '' || get(message, 'input')!.trim();
+                let packages = '' || get(message, 'packages')!.trim();
+                let version = 0;
+                let index = 0;
                 for (let i = 0; i < runtimes.length; i++) {
                     if (runtimes[i].aliases.length != 0) {
                         for (let c = 0; c < runtimes[i].aliases.length; c++) {
@@ -2327,7 +2327,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         code = 'fun main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
                     }
                 }
-                const start: number = Date.now();
+                const start = Date.now();
                 let result: Response | Result = await fetch('https://emkc.org/api/v2/piston/execute', {
                     method: 'POST',
                     body: JSON.stringify({
@@ -2341,7 +2341,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     })
                 });
                 result = await result.json() as Result;
-                const end: number = Date.now();
+                const end = Date.now();
                 let runembed: Embeds = {
                     color: 0x607387,
                     title: 'Evaluation Result',
@@ -2447,10 +2447,10 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     };
                 }
                 if (input) {
-                        runembed.fields!.push({ name: 'Input from user', value: '```' + '\n' + input + '\n' + '```', inline: false });
+                    runembed.fields!.push({ name: 'Input from user', value: '```' + '\n' + input + '\n' + '```', inline: false });
                 }
                 if (packages && runtimes[index].language == 'python') {
-                        runembed.fields!.push({ name: 'Packages', value: '```' + '\n' + packages.toString().replace(/,/g, '\n') + '\n' + '```', inline: false });
+                    runembed.fields!.push({ name: 'Packages', value: '```' + '\n' + packages.toString().replace(/,/g, '\n') + '\n' + '```', inline: false });
                 }
                 await mongoose.connect(url);
                 const currentId = parseInt(message.message.embeds[0].title!.split(' - ')[1].slice(5));
