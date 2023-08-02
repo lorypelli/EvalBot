@@ -17,7 +17,7 @@
     "mongoose": "^7.4.1",
     "os": "^0.1.2",
     "raw-body": "^2.5.2",
-    "serverless_bots_addons": "^5.5.1-20230802"
+    "serverless_bots_addons": "^5.5.7-20230802"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.2.1",
