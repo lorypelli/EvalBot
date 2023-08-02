@@ -640,8 +640,8 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         })
                     });
                 }
-                const totalRam = (process.memoryUsage().heapTotal / (1024 * 1024)).toFixed(3) as unknown as number;
-                const usedRam = (process.memoryUsage().heapUsed / (1024 * 1024)).toFixed(3) as unknown as number;
+                const totalRam = parseFloat((process.memoryUsage().heapTotal / (1024 * 1024)).toFixed(3));
+                const usedRam = parseFloat((process.memoryUsage().heapUsed / (1024 * 1024)).toFixed(3));
                 return response.send({
                     content: await followUp(message, {
                         embeds: [
@@ -651,7 +651,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                                 fields: [
                                     { name: 'Total RAM:', value: '```' + totalRam + ' MB' + '```', inline: false },
                                     { name: 'Used RAM:', value: '```' + usedRam + ' MB' + '```', inline: false },
-                                    { name: 'Used RAM Percentage:', value: '```' + ((usedRam * 100 / totalRam).toFixed(2)) + ' %' + '```', inline: false },
+                                    { name: 'Used RAM Percentage:', value: '```' + parseFloat((usedRam * 100 / totalRam).toFixed(2)) + ' %' + '```', inline: false },
                                     { name: 'I am running on:', value: '```' + process.platform + ' – ' + version() + ' – ' + process.cwd() + '```', inline: false },
                                     { name: 'Versions', value: '```' + JSON.stringify(process.versions, null, 2) + '```', inline: false }
                                 ]
