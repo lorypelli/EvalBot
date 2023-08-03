@@ -70,7 +70,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 }
         
                 #userSnippets {
-                    font-size: 1.5vw
+                    font-size: 2vw
                 }
 
                 img {
