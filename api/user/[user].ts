@@ -1,11 +1,14 @@
 import { User } from 'serverless_bots_addons';
-import { snippet } from './schemas/Snippet';
+import { snippet } from '../schemas/Snippet';
 export default async (request: import('@vercel/node').VercelRequest, response: import('@vercel/node').VercelResponse) => {
     if (request.method !== 'GET') {
         response.setHeader('Content-Type', 'text/plain');
         return response.status(405).send('Method not allowed');
     }
     else if (request.method === 'GET') {
+        if (isNaN(parseInt(request.query.user as string))) {
+            return response.redirect(307, '/api/login');
+        }
         let user: Response | User = await fetch(`https://discord.com/api/v10/users/${request.query.user}`, {
             headers: { 'Authorization': `Bot ${process.env.TOKEN}` }
         });

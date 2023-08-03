@@ -76,7 +76,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
     <body>
         <script>
             window.onload = () => {
-                window.location.href = "/api/dashboard?user=${user.id}"
+                window.location.href = "/api/user/${user.id}"
             }
         </script>
     </body>
