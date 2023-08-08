@@ -730,7 +730,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         color: 0x607387,
                         title: 'Snippets',
                         description: `Total snippets: ${totalSnippets.length}`,
-                        fields: [{ name: `Language: ${currentSnippet!.language}`, value: '```' + currentSnippet!.language + '\n' + currentSnippet!.code.slice(0, 1024) + '\n' + '```', inline: false }],
+                        fields: [{ name: `Language: ${currentSnippet!.language}`, value: '```' + currentSnippet!.language + '\n' + currentSnippet!.code.slice(0, 875) + '\n' + '```', inline: false }],
                     };
                     return response.send({
                         content: await followUp(message, {
@@ -871,23 +871,23 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     fields: [
                         { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                         { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                        { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
-                        { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                        { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                        { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
                         { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                     ],
                     footer: {
                         text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                     }
                 };
-                if (code.length > 925) {
+                if (code.length > 875) {
                     runembed = {
                         color: 0x607387,
                         title: 'Evaluation Result',
                         fields: [
                             { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
-                            { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
+                            { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
                             { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                         ],
                         footer: {
@@ -895,7 +895,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         }
                     };
                 }
-                if (result.run.output.length > 925) {
+                if (result.run.output.length > 875) {
                     let url: Response | string = await fetch('https://dpaste.com/api/v2/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'EvalBot' },
@@ -908,8 +908,8 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         fields: [
                             { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
-                            { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**' + '\n' + `view the entire output [here](${url})`, inline: false },
+                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                            { name: 'Output', value: '**__TOO LONG__**' + '\n' + `view the output [here](${url})`, inline: false },
                             { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                         ],
                         footer: {
@@ -917,7 +917,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         }
                     };
                 }
-                if (code.length > 925 && result.run.output.length > 925) {
+                if (code.length > 875 && result.run.output.length > 875) {
                     let url: Response | string = await fetch('https://dpaste.com/api/v2/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'EvalBot' },
@@ -930,8 +930,8 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         fields: [
                             { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
-                            { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**' + '\n' + `view the entire output [here](${url})`, inline: false },
+                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
+                            { name: 'Output', value: '**__TOO LONG__**' + '\n' + `view the output [here](${url})`, inline: false },
                             { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                         ],
                         footer: {
@@ -946,7 +946,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         fields: [
                             { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
                             { name: 'Output', value: 'No output!', inline: false },
                         ],
                         footer: {
@@ -954,14 +954,14 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         }
                     };
                 }
-                if ((result.run.output.length == 0 || result.run.output == '\n') && code.length > 925) {
+                if ((result.run.output.length == 0 || result.run.output == '\n') && code.length > 875) {
                     runembed = {
                         color: 0x607387,
                         title: 'Evaluation Result',
                         fields: [
                             { name: 'Language', value: '```' + '\n' + language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
+                            { name: 'Input', value: '```' + language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
                             { name: 'Output', value: 'No output!', inline: false },
                         ],
                         footer: {
@@ -1563,23 +1563,23 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     fields: [
                         { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                         { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                        { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
-                        { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                        { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                        { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
                         { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                     ],
                     footer: {
                         text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                     }
                 };
-                if (code.length > 925) {
+                if (code.length > 875) {
                     runembed = {
                         color: 0x607387,
                         title: 'Evaluation Result',
                         fields: [
                             { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
-                            { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
+                            { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
                             { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                         ],
                         footer: {
@@ -1587,7 +1587,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         }
                     };
                 }
-                if (result.run.output.length > 925) {
+                if (result.run.output.length > 875) {
                     let url: Response | string = await fetch('https://dpaste.com/api/v2/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'EvalBot' },
@@ -1600,8 +1600,8 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         fields: [
                             { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
-                            { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**' + '\n' + `view the entire output [here](${url})`, inline: false },
+                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                            { name: 'Output', value: '**__TOO LONG__**' + '\n' + `view the output [here](${url})`, inline: false },
                             { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                         ],
                         footer: {
@@ -1609,7 +1609,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         }
                     };
                 }
-                if (code.length > 925 && result.run.output.length > 925) {
+                if (code.length > 875 && result.run.output.length > 875) {
                     let url: Response | string = await fetch('https://dpaste.com/api/v2/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'EvalBot' },
@@ -1622,8 +1622,8 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         fields: [
                             { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
-                            { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**' + '\n' + `view the entire output [here](${url})`, inline: false },
+                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
+                            { name: 'Output', value: '**__TOO LONG__**' + '\n' + `view the output [here](${url})`, inline: false },
                             { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                         ],
                         footer: {
@@ -1638,7 +1638,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         fields: [
                             { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
                             { name: 'Output', value: 'No output!', inline: false },
                         ],
                         footer: {
@@ -1646,14 +1646,14 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         }
                     };
                 }
-                if ((result.run.output.length == 0 || result.run.output == '\n') && code.length > 925) {
+                if ((result.run.output.length == 0 || result.run.output == '\n') && code.length > 875) {
                     runembed = {
                         color: 0x607387,
                         title: 'Evaluation Result',
                         fields: [
                             { name: 'Language', value: '```' + '\n' + language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
+                            { name: 'Input', value: '```' + language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
                             { name: 'Output', value: 'No output!', inline: false },
                         ],
                         footer: {
@@ -1749,23 +1749,23 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     fields: [
                         { name: 'Language', value: '```' + '\n' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + '```', inline: false },
                         { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                        { name: 'Input', value: '```' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + oldSnippet!.history[oldSnippet!.history.length - 1].code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
-                        { name: 'Output', value: '```' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                        { name: 'Input', value: '```' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + oldSnippet!.history[oldSnippet!.history.length - 1].code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                        { name: 'Output', value: '```' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + result.run.output.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
                         { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                     ],
                     footer: {
                         text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                     }
                 };
-                if (oldSnippet!.history[oldSnippet!.history.length - 1].code.length > 925) {
+                if (oldSnippet!.history[oldSnippet!.history.length - 1].code.length > 875) {
                     runembed = {
                         color: 0x607387,
                         title: 'Evaluation Result',
                         fields: [
                             { name: 'Language', value: '```' + '\n' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + oldSnippet!.history[oldSnippet!.history.length - 1].code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
-                            { name: 'Output', value: '```' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                            { name: 'Input', value: '```' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + oldSnippet!.history[oldSnippet!.history.length - 1].code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
+                            { name: 'Output', value: '```' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + result.run.output.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
                             { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                         ],
                         footer: {
@@ -1773,7 +1773,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         }
                     };
                 }
-                if (result.run.output.length > 925) {
+                if (result.run.output.length > 875) {
                     let url: Response | string = await fetch('https://dpaste.com/api/v2/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'EvalBot' },
@@ -1786,8 +1786,8 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         fields: [
                             { name: 'Language', value: '```' + '\n' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + oldSnippet!.history[oldSnippet!.history.length - 1].code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
-                            { name: 'Output', value: '```' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**' + '\n' + `view the entire output [here](${url})`, inline: false },
+                            { name: 'Input', value: '```' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + oldSnippet!.history[oldSnippet!.history.length - 1].code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                            { name: 'Output', value: '**__TOO LONG__**' + '\n' + `view the output [here](${url})`, inline: false },
                             { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                         ],
                         footer: {
@@ -1795,7 +1795,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         }
                     };
                 }
-                if (oldSnippet!.history[oldSnippet!.history.length - 1].code.length > 925 && result.run.output.length > 925) {
+                if (oldSnippet!.history[oldSnippet!.history.length - 1].code.length > 875 && result.run.output.length > 875) {
                     let url: Response | string = await fetch('https://dpaste.com/api/v2/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'EvalBot' },
@@ -1808,8 +1808,8 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         fields: [
                             { name: 'Language', value: '```' + '\n' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + oldSnippet!.history[oldSnippet!.history.length - 1].code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
-                            { name: 'Output', value: '```' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**' + '\n' + `view the entire output [here](${url})`, inline: false },
+                            { name: 'Input', value: '```' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + oldSnippet!.history[oldSnippet!.history.length - 1].code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
+                            { name: 'Output', value: '**__TOO LONG__**' + '\n' + `view the output [here](${url})`, inline: false },
                             { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                         ],
                         footer: {
@@ -1824,7 +1824,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         fields: [
                             { name: 'Language', value: '```' + '\n' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + oldSnippet!.history[oldSnippet!.history.length - 1].code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                            { name: 'Input', value: '```' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + oldSnippet!.history[oldSnippet!.history.length - 1].code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
                             { name: 'Output', value: 'No output!', inline: false },
                         ],
                         footer: {
@@ -1832,14 +1832,14 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         }
                     };
                 }
-                if ((result.run.output.length == 0 || result.run.output == '\n') && oldSnippet!.history[oldSnippet!.history.length - 1].code.length > 925) {
+                if ((result.run.output.length == 0 || result.run.output == '\n') && oldSnippet!.history[oldSnippet!.history.length - 1].code.length > 875) {
                     runembed = {
                         color: 0x607387,
                         title: 'Evaluation Result',
                         fields: [
                             { name: 'Language', value: '```' + '\n' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + oldSnippet!.history[oldSnippet!.history.length - 1].code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
+                            { name: 'Input', value: '```' + oldSnippet!.history[oldSnippet!.history.length - 1].language + '\n' + oldSnippet!.history[oldSnippet!.history.length - 1].code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
                             { name: 'Output', value: 'No output!', inline: false },
                         ],
                         footer: {
@@ -1906,7 +1906,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         color: 0x607387,
                         title: 'Snippets',
                         description: `Total snippets: ${totalSnippets.length}`,
-                        fields: [{ name: `Language: ${currentSnippet!.language}`, value: '```' + currentSnippet!.language + '\n' + currentSnippet!.code.slice(0, 1024) + '\n' + '```', inline: false }],
+                        fields: [{ name: `Language: ${currentSnippet!.language}`, value: '```' + currentSnippet!.language + '\n' + currentSnippet!.code.slice(0, 875) + '\n' + '```', inline: false }],
                     };
                 }
                 else {
@@ -1921,7 +1921,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         color: 0x607387,
                         title: 'Snippets',
                         description: `Total snippets: ${totalSnippets.length}`,
-                        fields: [{ name: `Language: ${currentSnippet!.history[historyEntry].language}`, value: '```' + currentSnippet!.history[historyEntry].language + '\n' + currentSnippet!.history[historyEntry].code.slice(0, 1024) + '\n' + '```', inline: false }],
+                        fields: [{ name: `Language: ${currentSnippet!.history[historyEntry].language}`, value: '```' + currentSnippet!.history[historyEntry].language + '\n' + currentSnippet!.history[historyEntry].code.slice(0, 875) + '\n' + '```', inline: false }],
                     };
                 }
                 return response.send({
@@ -2092,23 +2092,23 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     fields: [
                         { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                         { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                        { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
-                        { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                        { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                        { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
                         { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                     ],
                     footer: {
                         text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                     }
                 };
-                if (code.length > 925) {
+                if (code.length > 875) {
                     runembed = {
                         color: 0x607387,
                         title: 'Evaluation Result',
                         fields: [
                             { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
-                            { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
+                            { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
                             { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                         ],
                         footer: {
@@ -2116,7 +2116,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         }
                     };
                 }
-                if (result.run.output.length > 925) {
+                if (result.run.output.length > 875) {
                     let url: Response | string = await fetch('https://dpaste.com/api/v2/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'EvalBot' },
@@ -2129,8 +2129,8 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         fields: [
                             { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
-                            { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**' + '\n' + `view the entire output [here](${url})`, inline: false },
+                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                            { name: 'Output', value: '**__TOO LONG__**' + '\n' + `view the output [here](${url})`, inline: false },
                             { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                         ],
                         footer: {
@@ -2138,7 +2138,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         }
                     };
                 }
-                if (code.length > 925 && result.run.output.length > 925) {
+                if (code.length > 875 && result.run.output.length > 875) {
                     let url: Response | string = await fetch('https://dpaste.com/api/v2/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'EvalBot' },
@@ -2151,8 +2151,8 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         fields: [
                             { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
-                            { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**' + '\n' + `view the entire output [here](${url})`, inline: false },
+                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
+                            { name: 'Output', value: '**__TOO LONG__**' + '\n' + `view the output [here](${url})`, inline: false },
                             { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                         ],
                         footer: {
@@ -2167,7 +2167,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         fields: [
                             { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
                             { name: 'Output', value: 'No output!', inline: false },
                         ],
                         footer: {
@@ -2175,14 +2175,14 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         }
                     };
                 }
-                if ((result.run.output.length == 0 || result.run.output == '\n') && code.length > 925) {
+                if ((result.run.output.length == 0 || result.run.output == '\n') && code.length > 875) {
                     runembed = {
                         color: 0x607387,
                         title: 'Evaluation Result',
                         fields: [
                             { name: 'Language', value: '```' + '\n' + language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
+                            { name: 'Input', value: '```' + language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
                             { name: 'Output', value: 'No output!', inline: false },
                         ],
                         footer: {
@@ -2191,10 +2191,10 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     };
                 }
                 if (input) {
-                    runembed.fields!.push({ name: 'Input from user', value: '```' + '\n' + input + '\n' + '```', inline: false });
+                    runembed.fields!.push({ name: 'Input from user', value: '```' + '\n' + input.slice(0, 50) + '\n' + '```', inline: false });
                 }
                 if (packages && runtimes[index].language == 'python') {
-                    runembed.fields!.push({ name: 'Packages', value: '```' + '\n' + packages.toString().replace(/,/g, '\n') + '\n' + '```', inline: false });
+                    runembed.fields!.push({ name: 'Packages', value: '```' + '\n' + packages.toString().replace(/,/g, '\n').slice(0, 50) + '\n' + '```', inline: false });
                 }
                 await mongoose.connect(url);
                 const currentEvaluatorId = await snippets.find();
@@ -2348,23 +2348,23 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     fields: [
                         { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                         { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                        { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
-                        { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                        { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                        { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
                         { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                     ],
                     footer: {
                         text: `The code took ${Math.floor(end - start).toFixed(0)}ms to be executed`
                     }
                 };
-                if (code.length > 925) {
+                if (code.length > 875) {
                     runembed = {
                         color: 0x607387,
                         title: 'Evaluation Result',
                         fields: [
                             { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
-                            { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
+                            { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
                             { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                         ],
                         footer: {
@@ -2372,7 +2372,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         }
                     };
                 }
-                if (result.run.output.length > 925) {
+                if (result.run.output.length > 875) {
                     let url: Response | string = await fetch('https://dpaste.com/api/v2/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'EvalBot' },
@@ -2385,8 +2385,8 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         fields: [
                             { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
-                            { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**' + '\n' + `view the entire output [here](${url})`, inline: false },
+                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                            { name: 'Output', value: '**__TOO LONG__**' + '\n' + `view the output [here](${url})`, inline: false },
                             { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                         ],
                         footer: {
@@ -2394,7 +2394,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         }
                     };
                 }
-                if (code.length > 925 && result.run.output.length > 925) {
+                if (code.length > 875 && result.run.output.length > 875) {
                     let url: Response | string = await fetch('https://dpaste.com/api/v2/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'EvalBot' },
@@ -2407,8 +2407,8 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         fields: [
                             { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
-                            { name: 'Output', value: '```' + runtimes[index].language + '\n' + result.run.output.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**' + '\n' + `view the entire output [here](${url})`, inline: false },
+                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
+                            { name: 'Output', value: '**__TOO LONG__**' + '\n' + `view the output [here](${url})`, inline: false },
                             { name: 'Output code', value: '```' + '\n' + result.run.code + '\n' + '```', inline: false }
                         ],
                         footer: {
@@ -2423,7 +2423,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         fields: [
                             { name: 'Language', value: '```' + '\n' + runtimes[index].language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
+                            { name: 'Input', value: '```' + runtimes[index].language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```', inline: false },
                             { name: 'Output', value: 'No output!', inline: false },
                         ],
                         footer: {
@@ -2431,14 +2431,14 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         }
                     };
                 }
-                if ((result.run.output.length == 0 || result.run.output == '\n') && code.length > 925) {
+                if ((result.run.output.length == 0 || result.run.output == '\n') && code.length > 875) {
                     runembed = {
                         color: 0x607387,
                         title: 'Evaluation Result',
                         fields: [
                             { name: 'Language', value: '```' + '\n' + language + '\n' + '```', inline: false },
                             { name: 'Version', value: '```' + '\n' + version + '\n' + '```', inline: false },
-                            { name: 'Input', value: '```' + language + '\n' + code.slice(0, 925).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
+                            { name: 'Input', value: '```' + language + '\n' + code.slice(0, 875).replace(/`/g, '`\u200b') + '\n' + '```' + '**__TOO LONG__**', inline: false },
                             { name: 'Output', value: 'No output!', inline: false },
                         ],
                         footer: {
@@ -2447,10 +2447,10 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     };
                 }
                 if (input) {
-                    runembed.fields!.push({ name: 'Input from user', value: '```' + '\n' + input + '\n' + '```', inline: false });
+                    runembed.fields!.push({ name: 'Input from user', value: '```' + '\n' + input.slice(0, 50) + '\n' + '```', inline: false });
                 }
                 if (packages && runtimes[index].language == 'python') {
-                    runembed.fields!.push({ name: 'Packages', value: '```' + '\n' + packages.toString().replace(/,/g, '\n') + '\n' + '```', inline: false });
+                    runembed.fields!.push({ name: 'Packages', value: '```' + '\n' + packages.toString().replace(/,/g, '\n').slice(0, 50) + '\n' + '```', inline: false });
                 }
                 await mongoose.connect(url);
                 const currentId = parseInt(message.message.embeds[0].title!.split(' - ')[1].slice(5));
