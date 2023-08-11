@@ -293,6 +293,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 text-align: right;
                 margin-top: -85px;
             }
+            
             #login {
                 margin-bottom: 10px;
                 margin-right: 10px;
