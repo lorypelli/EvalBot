@@ -1003,6 +1003,13 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                                     {
                                         type: MessageComponentTypes.BUTTON,
                                         label: '',
+                                        style: ButtonStyleTypes.SECONDARY,
+                                        custom_id: 'camera',
+                                        emoji: { name: 'Camera', id: '1127175733245128805' }
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        label: '',
                                         style: ButtonStyleTypes.DANGER,
                                         custom_id: `delete - ${message.member!.user.id || message.user!.id}`,
                                         emoji: { name: 'Delete', id: '1104477832308068352' }
