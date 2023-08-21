@@ -1048,6 +1048,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         content: await followUp(message, {
                             embeds: [
                                 {
+                                    color: 0x607387,
                                     title: 'Calculator',
                                     description: '```|```'
                                 }
@@ -2232,6 +2233,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     content: await editFollowup(message, {
                         embeds: [
                             {
+                                color: 0x607387,
                                 title: 'Calculator',
                                 description: '```' + oldDescription + message.data!.custom_id + '|' + '```'
                             }
@@ -2418,6 +2420,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     content: await editFollowup(message, {
                         embeds: [
                             {
+                                color: 0x607387,
                                 title: 'Calculator',
                                 description: '```' + oldDescription + message.data!.custom_id + '|' + '```'
                             }
@@ -2604,6 +2607,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     content: await editFollowup(message, {
                         embeds: [
                             {
+                                color: 0x607387,
                                 title: 'Calculator',
                                 description: '```' + oldDescription + ' ' + message.data!.custom_id + ' ' + '|' + '```'
                             }
@@ -2792,7 +2796,6 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     }
                     else {
                         newDescription = oldDescription;
-                        break;
                     }
                 }
                 let res = eval(newDescription);
@@ -2806,6 +2809,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     content: await editFollowup(message, {
                         embeds: [
                             {
+                                color: 0x607387,
                                 title: 'Calculator',
                                 description: '```' + res + '|' + '```'
                             }
@@ -2998,6 +3002,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     content: await editFollowup(message, {
                         embeds: [
                             {
+                                color: 0x607387,
                                 title: 'Calculator',
                                 description: '```' + newDescription + '|' + '```'
                             }
@@ -3179,6 +3184,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     content: await editFollowup(message, {
                         embeds: [
                             {
+                                color: 0x607387,
                                 title: 'Calculator',
                                 description: '```|```'
                             }
@@ -3358,7 +3364,194 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 await deferUpdate(message);
                 return response.send({
                     content: await editFollowup(message, {
-                        components: []
+                        components: [
+                            {
+                                type: MessageComponentTypes.ACTION_ROW,
+                                components: [
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: 'Open',
+                                        style: ButtonStyleTypes.SUCCESS,
+                                        label: 'Open the Calculator'
+                                    }
+                                ]
+                            }
+                        ]
+                    })
+                });
+            }
+            else if (message.data!.custom_id == 'Open') {
+                await deferUpdate(message);
+                return response.send({
+                    content: await editFollowup(message, {
+                        components: [
+                            {
+                                type: MessageComponentTypes.ACTION_ROW,
+                                components: [
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: '1',
+                                        style: ButtonStyleTypes.SECONDARY,
+                                        label: '1'
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: '2',
+                                        style: ButtonStyleTypes.SECONDARY,
+                                        label: '2'
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: '3',
+                                        style: ButtonStyleTypes.SECONDARY,
+                                        label: '3'
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: '+',
+                                        style: ButtonStyleTypes.PRIMARY,
+                                        label: '+'
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: 'CANC',
+                                        style: ButtonStyleTypes.DANGER,
+                                        label: '⌫'
+                                    }
+                                ]
+                            },
+                            {
+                                type: MessageComponentTypes.ACTION_ROW,
+                                components: [
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: '4',
+                                        style: ButtonStyleTypes.SECONDARY,
+                                        label: '4'
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: '5',
+                                        style: ButtonStyleTypes.SECONDARY,
+                                        label: '5'
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: '6',
+                                        style: ButtonStyleTypes.SECONDARY,
+                                        label: '6'
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: '-',
+                                        style: ButtonStyleTypes.PRIMARY,
+                                        label: '-'
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: 'Clear',
+                                        style: ButtonStyleTypes.DANGER,
+                                        label: 'Clear'
+                                    }
+                                ]
+                            },
+                            {
+                                type: MessageComponentTypes.ACTION_ROW,
+                                components: [
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: '7',
+                                        style: ButtonStyleTypes.SECONDARY,
+                                        label: '7'
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: '8',
+                                        style: ButtonStyleTypes.SECONDARY,
+                                        label: '8'
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: '9',
+                                        style: ButtonStyleTypes.SECONDARY,
+                                        label: '9'
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: '*',
+                                        style: ButtonStyleTypes.PRIMARY,
+                                        label: '×'
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: 'Exit',
+                                        style: ButtonStyleTypes.DANGER,
+                                        label: 'Exit'
+                                    }
+                                ]
+                            },
+                            {
+                                type: MessageComponentTypes.ACTION_ROW,
+                                components: [
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: '(',
+                                        style: ButtonStyleTypes.SUCCESS,
+                                        label: '('
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: '0',
+                                        style: ButtonStyleTypes.SECONDARY,
+                                        label: '0'
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: ')',
+                                        style: ButtonStyleTypes.SUCCESS,
+                                        label: ')'
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: '/',
+                                        style: ButtonStyleTypes.PRIMARY,
+                                        label: '÷'
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: 'ㅤ',
+                                        style: ButtonStyleTypes.DANGER,
+                                        label: 'ㅤ',
+                                        disabled: true
+                                    }
+                                ]
+                            },
+                            {
+                                type: MessageComponentTypes.ACTION_ROW,
+                                components: [
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: '=',
+                                        style: ButtonStyleTypes.SUCCESS,
+                                        label: 'ㅤㅤㅤㅤㅤㅤ=ㅤㅤㅤㅤㅤㅤ'
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: 'ㅤㅤ',
+                                        style: ButtonStyleTypes.SUCCESS,
+                                        label: 'ㅤ',
+                                        disabled: true
+                                    },
+                                    {
+                                        type: MessageComponentTypes.BUTTON,
+                                        custom_id: 'ㅤㅤㅤ',
+                                        style: ButtonStyleTypes.DANGER,
+                                        label: 'ㅤ',
+                                        disabled: true
+                                    }
+                                ]
+                            }
+                        ]
                     })
                 });
             }
