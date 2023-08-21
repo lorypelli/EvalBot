@@ -2796,7 +2796,6 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                     }
                 }
                 let res = eval(newDescription);
-                console.log(res);
                 if (res == undefined) {
                     res = oldDescription;
                 }
