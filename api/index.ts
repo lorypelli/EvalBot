@@ -2799,7 +2799,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 if (res == undefined) {
                     res = oldDescription;
                 }
-                else if (res == 'NaN' || res == 'Infinity') {
+                else if (Number.isNaN(res) || res == 'Infinity') {
                     res = '∞';
                 }
                 return response.send({
