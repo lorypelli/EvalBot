@@ -2788,10 +2788,16 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 for (let i = 0; i < description.length; i++) {
                     if (description[0] != '(' && (description[i] == '(' && (description[i - 1] != '*' && description[i - 1] in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']))) {
                         newDescription = oldDescription.slice(0, i) + '*' + oldDescription.slice(i);
+                        break;
+                    }
+                    else {
+                        newDescription = oldDescription;
+                        break;
                     }
                 }
                 let res = eval(newDescription);
-                if (!res) {
+                console.log(res);
+                if (res == undefined) {
                     res = oldDescription;
                 }
                 else if (res == 'Infinity') {
