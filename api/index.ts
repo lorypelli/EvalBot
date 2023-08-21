@@ -3544,7 +3544,6 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 const embed = message.message.embeds[0];
                 const oldDescription = embed.description!.replace(/```/g, '').split('');
                 let newDescription = '';
-                console.log(oldDescription);
                 for (let i = 0; i < oldDescription.length; i++) {
                     if (oldDescription[i] == '|') {
                         if (oldDescription[i - 1] == ' ') {
