@@ -3544,11 +3544,21 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 const embed = message.message.embeds[0];
                 const oldDescription = embed.description!.replace(/```/g, '').split('');
                 let newDescription = '';
+                console.log(oldDescription);
                 for (let i = 0; i < oldDescription.length; i++) {
                     if (oldDescription[i] == '|') {
-                        const temp = '|';
-                        oldDescription[i] = oldDescription[i - 1];
-                        oldDescription[i - 1] = temp;
+                        if (oldDescription[i - 1] == ' ') {
+                            const temp = '|';
+                            oldDescription[i] = oldDescription[i - 3];
+                            oldDescription[i - 3] = temp;
+                            break;
+                        }
+                        else {
+                            const temp = '|';
+                            oldDescription[i] = oldDescription[i - 1];
+                            oldDescription[i - 1] = temp;
+                            break;
+                        }
                     }
                 }
                 newDescription = oldDescription.join('');
@@ -3737,10 +3747,18 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 let newDescription = '';
                 for (let i = 0; i < oldDescription.length; i++) {
                     if (oldDescription[i] == '|') {
-                        const temp = '|';
-                        oldDescription[i] = oldDescription[i + 1];
-                        oldDescription[i + 1] = temp;
-                        break;
+                        if (oldDescription[i + 1] == '+' || oldDescription[i + 1] == '-' || oldDescription[i + 1] == '*' || oldDescription[i + 1] == '/') {
+                            const temp = '|';
+                            oldDescription[i] = oldDescription[i + 3];
+                            oldDescription[i + 3] = temp;
+                            break;
+                        }
+                        else {
+                            const temp = '|';
+                            oldDescription[i] = oldDescription[i + 1];
+                            oldDescription[i + 1] = temp;
+                            break;
+                        }
                     }
                 }
                 newDescription = oldDescription.join('');
