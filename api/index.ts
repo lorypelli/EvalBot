@@ -1200,23 +1200,21 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                                     components: [
                                         {
                                             type: MessageComponentTypes.BUTTON,
+                                            custom_id: 'left',
+                                            style: ButtonStyleTypes.SUCCESS,
+                                            label: '❮'
+                                        },
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
+                                            custom_id: 'right',
+                                            style: ButtonStyleTypes.SUCCESS,
+                                            label: '❯',
+                                        },
+                                        {
+                                            type: MessageComponentTypes.BUTTON,
                                             custom_id: '=',
                                             style: ButtonStyleTypes.SUCCESS,
                                             label: 'ㅤㅤㅤㅤㅤㅤ=ㅤㅤㅤㅤㅤㅤ'
-                                        },
-                                        {
-                                            type: MessageComponentTypes.BUTTON,
-                                            custom_id: 'ㅤㅤ',
-                                            style: ButtonStyleTypes.SUCCESS,
-                                            label: 'ㅤ',
-                                            disabled: true
-                                        },
-                                        {
-                                            type: MessageComponentTypes.BUTTON,
-                                            custom_id: 'ㅤㅤㅤ',
-                                            style: ButtonStyleTypes.DANGER,
-                                            label: 'ㅤ',
-                                            disabled: true
                                         }
                                     ]
                                 }
