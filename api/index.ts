@@ -2223,9 +2223,20 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             else if (message.data!.custom_id! in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']) {
                 await deferUpdate(message);
                 const embed = message.message.embeds[0];
-                let oldDescription = embed.description!.replace(/```/g, '').replace('|', '');
-                if (oldDescription == '∞') {
-                    oldDescription = '';
+                const oldDescription = embed.description!.replace(/```/g, '').split('');
+                let newDescription = '';
+                for (let i = 0; i < oldDescription.length; i++) {
+                    if (oldDescription[i] == '|') {
+                        oldDescription.splice(i + 1, 0, message.data!.custom_id!);
+                        const temp = '|';
+                        oldDescription[i] = message.data!.custom_id!;
+                        oldDescription[i + 1] = temp;
+                        break;
+                    }
+                }
+                newDescription = oldDescription.join('');
+                if (newDescription == '∞') {
+                    newDescription = '';
                 }
                 return response.send({
                     content: await editFollowup(message, {
@@ -2233,7 +2244,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                             {
                                 color: 0x607387,
                                 title: 'Calculator',
-                                description: '```' + oldDescription + message.data!.custom_id + '|' + '```'
+                                description: '```' + newDescription + '```'
                             }
                         ],
                         components: [
@@ -2408,9 +2419,20 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             else if (message.data!.custom_id == '(' || message.data!.custom_id == ')') {
                 await deferUpdate(message);
                 const embed = message.message.embeds[0];
-                let oldDescription = embed.description!.replace(/```/g, '').replace('|', '');
-                if (oldDescription == '∞') {
-                    oldDescription = '';
+                const oldDescription = embed.description!.replace(/```/g, '').split('');
+                let newDescription = '';
+                for (let i = 0; i < oldDescription.length; i++) {
+                    if (oldDescription[i] == '|') {
+                        oldDescription.splice(i + 1, 0, message.data!.custom_id!);
+                        const temp = '|';
+                        oldDescription[i] = message.data!.custom_id!;
+                        oldDescription[i + 1] = temp;
+                        break;
+                    }
+                }
+                newDescription = oldDescription.join('');
+                if (newDescription == '∞') {
+                    newDescription = '';
                 }
                 return response.send({
                     content: await editFollowup(message, {
@@ -2418,7 +2440,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                             {
                                 color: 0x607387,
                                 title: 'Calculator',
-                                description: '```' + oldDescription + message.data!.custom_id + '|' + '```'
+                                description: '```' + newDescription + '```'
                             }
                         ],
                         components: [
@@ -2593,9 +2615,20 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             else if (message.data!.custom_id == '+' || message.data!.custom_id == '-' || message.data!.custom_id == '*' || message.data!.custom_id! == '/') {
                 await deferUpdate(message);
                 const embed = message.message.embeds[0];
-                let oldDescription = embed.description!.replace(/```/g, '').replace('|', '');
-                if (oldDescription == '∞') {
-                    oldDescription = '';
+                const oldDescription = embed.description!.replace(/```/g, '').split('');
+                let newDescription = '';
+                for (let i = 0; i < oldDescription.length; i++) {
+                    if (oldDescription[i] == '|') {
+                        oldDescription.splice(i + 1, 0, message.data!.custom_id);
+                        const temp = '|';
+                        oldDescription[i] = message.data!.custom_id!;
+                        oldDescription[i + 1] = temp;
+                        break;
+                    }
+                }
+                newDescription = oldDescription.join('');
+                if (newDescription == '∞') {
+                    newDescription = '';
                 }
                 return response.send({
                     content: await editFollowup(message, {
@@ -2603,7 +2636,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                             {
                                 color: 0x607387,
                                 title: 'Calculator',
-                                description: '```' + oldDescription + ' ' + message.data!.custom_id + ' ' + '|' + '```'
+                                description: '```' + newDescription + '```'
                             }
                         ],
                         components: [
@@ -2978,23 +3011,22 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
             else if (message.data!.custom_id == 'CANC') {
                 await deferUpdate(message);
                 const embed = message.message.embeds[0];
-                const oldDescription = embed.description!.replace(/```/g, '').replace('|', '').split(' ');
+                const oldDescription = embed.description!.replace(/```/g, '').split('');
                 let newDescription = '';
                 for (let i = 0; i < oldDescription.length; i++) {
-                    if (oldDescription[i] == '') {
-                        newDescription = embed.description!.replace(/```/g, '').replace('|', '').slice(0, -3);
-                    }
-                    else {
-                        newDescription = embed.description!.replace(/```/g, '').replace('|', '').slice(0, -1);
+                    if (oldDescription[0] != '|' && oldDescription[i] == '|') {
+                        oldDescription.splice(i - 1, 1);
+                        break;
                     }
                 }
+                newDescription = oldDescription.join('');
                 return response.send({
                     content: await editFollowup(message, {
                         embeds: [
                             {
                                 color: 0x607387,
                                 title: 'Calculator',
-                                description: '```' + newDescription + '|' + '```'
+                                description: '```' + newDescription + '```'
                             }
                         ],
                         components: [
@@ -3546,18 +3578,10 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 let newDescription = '';
                 for (let i = 0; i < oldDescription.length; i++) {
                     if (oldDescription[i] == '|') {
-                        if (oldDescription[i - 1] == ' ') {
-                            const temp = '|';
-                            oldDescription[i] = oldDescription[i - 3];
-                            oldDescription[i - 3] = temp;
-                            break;
-                        }
-                        else {
-                            const temp = '|';
-                            oldDescription[i] = oldDescription[i - 1];
-                            oldDescription[i - 1] = temp;
-                            break;
-                        }
+                        const temp = '|';
+                        oldDescription[i] = oldDescription[i - 1];
+                        oldDescription[i - 1] = temp;
+                        break;
                     }
                 }
                 newDescription = oldDescription.join('');
@@ -3746,18 +3770,10 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 let newDescription = '';
                 for (let i = 0; i < oldDescription.length; i++) {
                     if (oldDescription[i] == '|') {
-                        if (oldDescription[i + 1] == '+' || oldDescription[i + 1] == '-' || oldDescription[i + 1] == '*' || oldDescription[i + 1] == '/') {
-                            const temp = '|';
-                            oldDescription[i] = oldDescription[i + 3];
-                            oldDescription[i + 3] = temp;
-                            break;
-                        }
-                        else {
-                            const temp = '|';
-                            oldDescription[i] = oldDescription[i + 1];
-                            oldDescription[i + 1] = temp;
-                            break;
-                        }
+                        const temp = '|';
+                        oldDescription[i] = oldDescription[i + 1];
+                        oldDescription[i + 1] = temp;
+                        break;
                     }
                 }
                 newDescription = oldDescription.join('');
