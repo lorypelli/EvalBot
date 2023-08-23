@@ -2226,6 +2226,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 let newDescription = '';
                 for (let i = 0; i < oldDescription.length; i++) {
                     if (oldDescription[i] == '|') {
+                        oldDescription.splice(i + 1, 0, message.data!.custom_id!);
                         const temp = '|';
                         oldDescription[i] = message.data!.custom_id!;
                         oldDescription[i + 1] = temp;
@@ -2420,6 +2421,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 let newDescription = '';
                 for (let i = 0; i < oldDescription.length; i++) {
                     if (oldDescription[i] == '|') {
+                        oldDescription.splice(i + 1, 0, message.data!.custom_id!);
                         const temp = '|';
                         oldDescription[i] = message.data!.custom_id!;
                         oldDescription[i + 1] = temp;
@@ -2614,6 +2616,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 let newDescription = '';
                 for (let i = 0; i < oldDescription.length; i++) {
                     if (oldDescription[i] == '|') {
+                        oldDescription.splice(i + 1, 0, message.data!.custom_id!);
                         const temp = '|';
                         oldDescription[i] = message.data!.custom_id!;
                         oldDescription[i + 1] = temp;
@@ -2808,6 +2811,7 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                 let newDescription = '';
                 for (let i = 0; i < oldDescription.length; i++) {
                     if (oldDescription[i] == '|') {
+                        oldDescription.splice(i + 1, 0, message.data!.custom_id);
                         const temp = '|';
                         oldDescription[i] = message.data!.custom_id!;
                         oldDescription[i + 1] = temp;
