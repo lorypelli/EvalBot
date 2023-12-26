@@ -833,46 +833,48 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                             })
                         });
                     }
-                    if (runtimes[index].language == 'go') {
-                        if (code.includes('func main() {')) code = code;
-                        else {
-                            code = 'package main' + '\n' + 'import "fmt"' + '\n' + 'func main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                    switch (runtimes[index].language) {
+                        case 'go': {
+                            if (!code.includes('func main() {)')) {
+                                code = 'package main' + '\n' + 'import "fmt"' + '\n' + 'func main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                            }
+                            break;
                         }
-                    }
-                    else if (runtimes[index].language == 'rust') {
-                        if (code.includes('fn main() {')) code = code;
-                        else {
-                            code = 'use std::io;' + '\n' + 'fn main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                        case 'rust': {
+                            if (!code.includes('fn main() {')) {
+                                code = 'use std::io;' + '\n' + 'fn main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                            }
+                            break;
                         }
-                    }
-                    else if (runtimes[index].language == 'c') {
-                        if (code.includes('int main() {')) code = code;
-                        else {
-                            code = '#include <stdio.h>' + '\n' + 'int main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                        case 'c': {
+                            if (!code.includes('int main() {')) {
+                                code = '#include <stdio.h>' + '\n' + 'int main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '  return 0;' + '\n' + '}';
+                            }
+                            break;
                         }
-                    }
-                    else if (runtimes[index].language == 'c++') {
-                        if (code.includes('int main() {')) code = code;
-                        else {
-                            code = '#include <iostream>' + '\n' + 'using namespace std;' + '\n' + 'int main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                        case 'c++': {
+                            if (!code.includes('int main() {')) {
+                                code = '#include <iostream>' + '\n' + 'using namespace std;' + '\n' + 'int main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '  return 0;' + '\n' + '}';
+                            }
+                            break;
                         }
-                    }
-                    else if (runtimes[index].language == 'csharp') {
-                        if (code.includes('static void Main(string[] args) {')) code = code;
-                        else {
-                            code = 'using System;' + '\n' + 'class Program {' + '\n' + '  static void Main(string[] args) {' + '\n' + '    ' + code.replace(/\n/g, '\n    ') + '\n' + '  }' + '\n' + '}';
+                        case 'csharp': {
+                            if (!code.includes('static void Main(string[] args) {')) {
+                                code = 'using System;' + '\n' + 'class Program {' + '\n' + '  static void Main(string[] args) {' + '\n' + '    ' + code.replace(/\n/g, '\n    ') + '\n' + '  }' + '\n' + '}';
+                            }
+                            break;
                         }
-                    }
-                    else if (runtimes[index].language == 'java') {
-                        if (code.includes('public static void Main(string[] args) {')) code = code;
-                        else {
-                            code = 'public class Main {' + '\n' + '  public static void main(String[] args) {' + '\n' + '    ' + code.replace(/\n/g, '\n    ') + '\n' + '  }' + '\n' + '}';
+                        case 'java': {
+                            if (!code.includes('public static void Main(string[] args) {')) {
+                                code = 'public class Main {' + '\n' + '  public static void main(String[] args) {' + '\n' + '    ' + code.replace(/\n/g, '\n    ') + '\n' + '  }' + '\n' + '}';
+                            }
+                            break;
                         }
-                    }
-                    else if (runtimes[index].language == 'kotlin') {
-                        if (code.includes('fun main() {')) code = code;
-                        else {
-                            code = 'fun main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                        case 'kotlin': {
+                            if (!code.includes('fun main() {')) {
+                                code = 'fun main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                                break;
+                            }
                         }
                     }
                     const start = Date.now();
@@ -1777,46 +1779,48 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         })
                     });
                 }
-                if (runtimes[index].language == 'go') {
-                    if (code.includes('func main() {')) code = code;
-                    else {
-                        code = 'package main' + '\n' + 'import "fmt"' + '\n' + 'func main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                switch (runtimes[index].language) {
+                    case 'go': {
+                        if (!code.includes('func main() {)')) {
+                            code = 'package main' + '\n' + 'import "fmt"' + '\n' + 'func main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                        }
+                        break;
                     }
-                }
-                else if (runtimes[index].language == 'rust') {
-                    if (code.includes('fn main() {')) code = code;
-                    else {
-                        code = 'use std::io;' + '\n' + 'fn main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                    case 'rust': {
+                        if (!code.includes('fn main() {')) {
+                            code = 'use std::io;' + '\n' + 'fn main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                        }
+                        break;
                     }
-                }
-                else if (runtimes[index].language == 'c') {
-                    if (code.includes('int main() {')) code = code;
-                    else {
-                        code = '#include <stdio.h>' + '\n' + 'int main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                    case 'c': {
+                        if (!code.includes('int main() {')) {
+                            code = '#include <stdio.h>' + '\n' + 'int main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '  return 0;' + '\n' + '}';
+                        }
+                        break;
                     }
-                }
-                else if (runtimes[index].language == 'c++') {
-                    if (code.includes('int main() {')) code = code;
-                    else {
-                        code = '#include <iostream>' + '\n' + 'using namespace std;' + '\n' + 'int main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                    case 'c++': {
+                        if (!code.includes('int main() {')) {
+                            code = '#include <iostream>' + '\n' + 'using namespace std;' + '\n' + 'int main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '  return 0;' + '\n' + '}';
+                        }
+                        break;
                     }
-                }
-                else if (runtimes[index].language == 'csharp') {
-                    if (code.includes('static void Main(string[] args) {')) code = code;
-                    else {
-                        code = 'using System;' + '\n' + 'class Program {' + '\n' + '  static void Main(string[] args) {' + '\n' + '    ' + code.replace(/\n/g, '\n    ') + '\n' + '  }' + '\n' + '}';
+                    case 'csharp': {
+                        if (!code.includes('static void Main(string[] args) {')) {
+                            code = 'using System;' + '\n' + 'class Program {' + '\n' + '  static void Main(string[] args) {' + '\n' + '    ' + code.replace(/\n/g, '\n    ') + '\n' + '  }' + '\n' + '}';
+                        }
+                        break;
                     }
-                }
-                else if (runtimes[index].language == 'java') {
-                    if (code.includes('public static void Main(string[] args) {')) code = code;
-                    else {
-                        code = 'public class Main {' + '\n' + '  public static void main(String[] args) {' + '\n' + '    ' + code.replace(/\n/g, '\n    ') + '\n' + '  }' + '\n' + '}';
+                    case 'java': {
+                        if (!code.includes('public static void Main(string[] args) {')) {
+                            code = 'public class Main {' + '\n' + '  public static void main(String[] args) {' + '\n' + '    ' + code.replace(/\n/g, '\n    ') + '\n' + '  }' + '\n' + '}';
+                        }
+                        break;
                     }
-                }
-                else if (runtimes[index].language == 'kotlin') {
-                    if (code.includes('fun main() {')) code = code;
-                    else {
-                        code = 'fun main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                    case 'kotlin': {
+                        if (!code.includes('fun main() {')) {
+                            code = 'fun main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                            break;
+                        }
                     }
                 }
                 const start = Date.now();
@@ -4225,46 +4229,48 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         }
                         code = imports.join('\n') + '\n' + code;
                     }
-                    else if (runtimes[index].language == 'go') {
-                        if (code.includes('func main() {')) code = code;
-                        else {
-                            code = 'package main' + '\n' + 'import "fmt"' + '\n' + 'func main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                    switch (runtimes[index].language) {
+                        case 'go': {
+                            if (!code.includes('func main() {)')) {
+                                code = 'package main' + '\n' + 'import "fmt"' + '\n' + 'func main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                            }
+                            break;
                         }
-                    }
-                    else if (runtimes[index].language == 'rust') {
-                        if (code.includes('fn main() {')) code = code;
-                        else {
-                            code = 'use std::io;' + '\n' + 'fn main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                        case 'rust': {
+                            if (!code.includes('fn main() {')) {
+                                code = 'use std::io;' + '\n' + 'fn main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                            }
+                            break;
                         }
-                    }
-                    else if (runtimes[index].language == 'c') {
-                        if (code.includes('int main() {')) code = code;
-                        else {
-                            code = '#include <stdio.h>' + '\n' + 'int main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                        case 'c': {
+                            if (!code.includes('int main() {')) {
+                                code = '#include <stdio.h>' + '\n' + 'int main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '  return 0;' + '\n' + '}';
+                            }
+                            break;
                         }
-                    }
-                    else if (runtimes[index].language == 'c++') {
-                        if (code.includes('int main() {')) code = code;
-                        else {
-                            code = '#include <iostream>' + '\n' + 'using namespace std;' + '\n' + 'int main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                        case 'c++': {
+                            if (!code.includes('int main() {')) {
+                                code = '#include <iostream>' + '\n' + 'using namespace std;' + '\n' + 'int main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '  return 0;' + '\n' + '}';
+                            }
+                            break;
                         }
-                    }
-                    else if (runtimes[index].language == 'csharp') {
-                        if (code.includes('static void Main(string[] args) {')) code = code;
-                        else {
-                            code = 'using System;' + '\n' + 'class Program {' + '\n' + '  static void Main(string[] args) {' + '\n' + '    ' + code.replace(/\n/g, '\n    ') + '\n' + '  }' + '\n' + '}';
+                        case 'csharp': {
+                            if (!code.includes('static void Main(string[] args) {')) {
+                                code = 'using System;' + '\n' + 'class Program {' + '\n' + '  static void Main(string[] args) {' + '\n' + '    ' + code.replace(/\n/g, '\n    ') + '\n' + '  }' + '\n' + '}';
+                            }
+                            break;
                         }
-                    }
-                    else if (runtimes[index].language == 'java') {
-                        if (code.includes('public static void Main(string[] args) {')) code = code;
-                        else {
-                            code = 'public class Main {' + '\n' + '  public static void main(String[] args) {' + '\n' + '    ' + code.replace(/\n/g, '\n    ') + '\n' + '  }' + '\n' + '}';
+                        case 'java': {
+                            if (!code.includes('public static void Main(string[] args) {')) {
+                                code = 'public class Main {' + '\n' + '  public static void main(String[] args) {' + '\n' + '    ' + code.replace(/\n/g, '\n    ') + '\n' + '  }' + '\n' + '}';
+                            }
+                            break;
                         }
-                    }
-                    else if (runtimes[index].language == 'kotlin') {
-                        if (code.includes('fun main() {')) code = code;
-                        else {
-                            code = 'fun main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                        case 'kotlin': {
+                            if (!code.includes('fun main() {')) {
+                                code = 'fun main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                                break;
+                            }
                         }
                     }
                     const start = Date.now();
@@ -4481,46 +4487,48 @@ export default async (request: import('@vercel/node').VercelRequest, response: i
                         }
                         code = imports.join('\n') + '\n' + code;
                     }
-                    else if (runtimes[index].language == 'go') {
-                        if (code.includes('func main() {')) code = code;
-                        else {
-                            code = 'package main' + '\n' + 'import "fmt"' + '\n' + 'func main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                    switch (runtimes[index].language) {
+                        case 'go': {
+                            if (!code.includes('func main() {)')) {
+                                code = 'package main' + '\n' + 'import "fmt"' + '\n' + 'func main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                            }
+                            break;
                         }
-                    }
-                    else if (runtimes[index].language == 'rust') {
-                        if (code.includes('fn main() {')) code = code;
-                        else {
-                            code = 'use std::io;' + '\n' + 'fn main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                        case 'rust': {
+                            if (!code.includes('fn main() {')) {
+                                code = 'use std::io;' + '\n' + 'fn main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                            }
+                            break;
                         }
-                    }
-                    else if (runtimes[index].language == 'c') {
-                        if (code.includes('int main() {')) code = code;
-                        else {
-                            code = '#include <stdio.h>' + '\n' + 'int main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                        case 'c': {
+                            if (!code.includes('int main() {')) {
+                                code = '#include <stdio.h>' + '\n' + 'int main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '  return 0;' + '\n' + '}';
+                            }
+                            break;
                         }
-                    }
-                    else if (runtimes[index].language == 'c++') {
-                        if (code.includes('int main() {')) code = code;
-                        else {
-                            code = '#include <iostream>' + '\n' + 'using namespace std;' + '\n' + 'int main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                        case 'c++': {
+                            if (!code.includes('int main() {')) {
+                                code = '#include <iostream>' + '\n' + 'using namespace std;' + '\n' + 'int main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '  return 0;' + '\n' + '}';
+                            }
+                            break;
                         }
-                    }
-                    else if (runtimes[index].language == 'csharp') {
-                        if (code.includes('static void Main(string[] args) {')) code = code;
-                        else {
-                            code = 'using System;' + '\n' + 'class Program {' + '\n' + '  static void Main(string[] args) {' + '\n' + '    ' + code.replace(/\n/g, '\n    ') + '\n' + '  }' + '\n' + '}';
+                        case 'csharp': {
+                            if (!code.includes('static void Main(string[] args) {')) {
+                                code = 'using System;' + '\n' + 'class Program {' + '\n' + '  static void Main(string[] args) {' + '\n' + '    ' + code.replace(/\n/g, '\n    ') + '\n' + '  }' + '\n' + '}';
+                            }
+                            break;
                         }
-                    }
-                    else if (runtimes[index].language == 'java') {
-                        if (code.includes('public static void Main(string[] args) {')) code = code;
-                        else {
-                            code = 'public class Main {' + '\n' + '  public static void main(String[] args) {' + '\n' + '    ' + code.replace(/\n/g, '\n    ') + '\n' + '  }' + '\n' + '}';
+                        case 'java': {
+                            if (!code.includes('public static void Main(string[] args) {')) {
+                                code = 'public class Main {' + '\n' + '  public static void main(String[] args) {' + '\n' + '    ' + code.replace(/\n/g, '\n    ') + '\n' + '  }' + '\n' + '}';
+                            }
+                            break;
                         }
-                    }
-                    else if (runtimes[index].language == 'kotlin') {
-                        if (code.includes('fun main() {')) code = code;
-                        else {
-                            code = 'fun main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                        case 'kotlin': {
+                            if (!code.includes('fun main() {')) {
+                                code = 'fun main() {' + '\n' + '  ' + code.replace(/\n/g, '\n  ') + '\n' + '}';
+                                break;
+                            }
                         }
                     }
                     const start = Date.now();
